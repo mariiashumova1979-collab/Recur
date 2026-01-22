@@ -128,8 +128,16 @@
     }
 
     @media (max-width: 640px) {
-      .collection-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; }
-      .collection-tab { white-space: nowrap; }
+      .collection-tabs {
+        display: flex;
+        flex-wrap: wrap;   /* перенос строк */
+        gap: 6px;
+      }
+
+      .collection-tab {
+        white-space: normal; /* разрешаем перенос */
+        flex: 0 0 auto;
+      }
     }
 
     @media (max-width: 640px) {
@@ -144,6 +152,17 @@
         scroll-snap-type: x mandatory;
       }
       .collection-item { scroll-snap-align: start; padding: 12px 10px; }
+    @media (max-width: 640px) {
+      .collection-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* одна колонка */
+        gap: 8px;
+      }
+
+      .collection-item {
+        padding: 12px;
+      }
+}
   </style>
 </head>
 <body>
