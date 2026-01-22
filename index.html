@@ -122,47 +122,55 @@
     .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--color-gray-900); border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); color: var(--color-white); font-size: 0.875rem; transform: translateY(100px); opacity: 0; transition: all 300ms ease; }
     .toast.visible { transform: translateY(0); opacity: 1; }
     .toast svg { color: var(--color-success); }
+    
     @media (max-width: 640px) {
-      .page-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .page-header { flex-direction: column; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
       .uk-container { padding-left: 12px; padding-right: 12px; }
+      .card-body { padding: 16px; }
+      .subscription-option { padding: 16px; }
+      .subscription-icon { width: 36px; height: 36px; border-radius: 8px; }
     }
 
+    /* Tabs: wrap, no horizontal scroll */
     @media (max-width: 640px) {
       .collection-tabs {
         display: flex;
-        flex-wrap: wrap;   /* перенос строк */
+        flex-wrap: wrap;
         gap: 6px;
+        margin-bottom: 12px;
+        overflow-x: hidden; /* ensure no horizontal scroll */
       }
 
       .collection-tab {
-        white-space: normal; /* разрешаем перенос */
+        white-space: normal;
         flex: 0 0 auto;
+        padding: 8px 12px;
+        font-size: 0.813rem;
       }
     }
 
+    /* Collections: single column list on mobile, no horizontal scroll */
     @media (max-width: 640px) {
       .collection-grid {
         display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: 140px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 10px;
-        padding-bottom: 6px;
-        scroll-snap-type: x mandatory;
-      }
-      .collection-item { scroll-snap-align: start; padding: 12px 10px; }
-    @media (max-width: 640px) {
-      .collection-grid {
-        display: grid;
-        grid-template-columns: 1fr; /* одна колонка */
+        grid-template-columns: 1fr;
         gap: 8px;
+        overflow: visible;
       }
 
       .collection-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: left;
         padding: 12px;
+        gap: 12px;
       }
-}
+
+      .collection-item .instrument-icon { width: 40px; height: 40px; }
+      .collection-item-name { text-align: left; }
+    }
+
   </style>
 </head>
 <body>
