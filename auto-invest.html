@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-invest | Recurring Purchases</title>
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET
+       ============================================ */
+    :root {
+      --color-primary: #2563eb;
+      --color-primary-hover: #1d4ed8;
+      --color-primary-light: #dbeafe;
+      --color-success: #10b981;
+      --color-success-light: #d1fae5;
+      --color-warning: #f59e0b;
+      --color-warning-light: #fef3c7;
+      --color-error: #ef4444;
+      --color-error-light: #fee2e2;
+      --color-gray-50: #f9fafb;
+      --color-gray-100: #f3f4f6;
+      --color-gray-200: #e5e7eb;
+      --color-gray-300: #d1d5db;
+      --color-gray-400: #9ca3af;
+      --color-gray-500: #6b7280;
+      --color-gray-600: #4b5563;
+      --color-gray-700: #374151;
+      --color-gray-800: #1f2937;
+      --color-gray-900: #111827;
+      --color-white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-gray-50);
+      color: var(--color-gray-900);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding: 32px 24px 64px;
+      }
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+
+    .header-content h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-gray-900);
+      letter-spacing: -0.025em;
+    }
+
+    .header-content p {
+      font-size: 0.938rem;
+      color: var(--color-gray-500);
+      margin-top: 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--color-gray-100);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-gray-600);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--color-success);
+      border-radius: 50%;
+    }
+
+    /* ============================================
+       CARD
+       ============================================ */
+    .card {
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card + .card {
+      margin-top: 16px;
+    }
+
+    .card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-gray-900);
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* ============================================
+       WARNING BANNER
+       ============================================ */
+    .warning-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--color-warning-light);
+      border: 1px solid var(--color-warning);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+    }
+
+    .warning-banner.visible {
+      display: flex;
+    }
+
+    .warning-banner svg {
+      flex-shrink: 0;
+      color: var(--color-warning);
+    }
+
+    .warning-banner p {
+      font-size: 0.875rem;
+      color: var(--color-gray-800);
+    }
+
+    /* ============================================
+       INSTRUMENT SELECTOR (DROPDOWN)
+       ============================================ */
+    .instrument-selector {
+      position: relative;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--color-gray-400);
+      pointer-events: none;
+      transition: color var(--transition-fast);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 44px;
+      font-size: 0.938rem;
+      font-family: inherit;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      background: var(--color-white);
+      color: var(--color-gray-900);
+      transition: all var(--transition-fast);
+    }
+
+    .search-input::placeholder {
+      color: var(--color-gray-400);
+    }
+
+    .search-input:hover {
+      border-color: var(--color-gray-400);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    .search-input-wrapper:focus-within .search-icon {
+      color: var(--color-primary);
+    }
+
+    .clear-button {
+      position: absolute;
+      right: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-full);
+      color: var(--color-gray-500);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .clear-button:hover {
+      background: var(--color-gray-200);
+      color: var(--color-gray-700);
+    }
+
+    .clear-button.visible {
+      display: flex;
+    }
+
+    .helper-text {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      margin-top: 8px;
+    }
+
+    /* Dropdown */
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 360px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      display: none;
+    }
+
+    .dropdown.open {
+      display: block;
+    }
+
+    .dropdown-list {
+      list-style: none;
+      padding: 6px;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item.highlighted {
+      background: var(--color-gray-50);
+    }
+
+    .dropdown-item:focus {
+      outline: none;
+      background: var(--color-primary-light);
+    }
+
+    .dropdown-item.selected {
+      background: var(--color-primary-light);
+    }
+
+    .instrument-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-white);
+    }
+
+    .instrument-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .instrument-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .instrument-ticker {
+      font-weight: 600;
+      font-size: 0.938rem;
+      color: var(--color-gray-900);
+    }
+
+    .instrument-name {
+      font-size: 0.875rem;
+      color: var(--color-gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .instrument-description {
+      font-size: 0.75rem;
+      color: var(--color-gray-400);
+      margin-top: 2px;
+    }
+
+    .micro-tag {
+      display: inline-flex;
+      padding: 2px 8px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-full);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+    }
+
+    .micro-tag.etf {
+      background: var(--color-success-light);
+      color: var(--color-success);
+    }
+
+    .highlight {
+      background: var(--color-warning-light);
+      color: var(--color-gray-900);
+      border-radius: 2px;
+    }
+
+    .dropdown-empty {
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .dropdown-empty svg {
+      color: var(--color-gray-300);
+      margin-bottom: 8px;
+    }
+
+    .dropdown-empty p {
+      font-size: 0.875rem;
+      color: var(--color-gray-500);
+    }
+
+    /* ============================================
+       COLLECTIONS
+       ============================================ */
+    .collections {
+      margin-top: 24px;
+    }
+
+    .collection-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .collection-tab {
+      padding: 8px 16px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-full);
+      color: var(--color-gray-600);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .collection-tab:hover {
+      border-color: var(--color-gray-300);
+      background: var(--color-gray-50);
+    }
+
+    .collection-tab:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px var(--color-primary-light);
+    }
+
+    .collection-tab.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .collection-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .collection-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 12px;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .collection-item:hover {
+      border-color: var(--color-gray-300);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .collection-item:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px var(--color-primary-light);
+    }
+
+    .collection-item.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    .collection-item .instrument-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 1rem;
+    }
+
+    .collection-item-ticker {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--color-gray-900);
+    }
+
+    .collection-item-name {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .collection-empty {
+      grid-column: 1 / -1;
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--color-gray-500);
+      font-size: 0.875rem;
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    .skeleton-item {
+      height: 100px;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ============================================
+       FORM
+       ============================================ */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-gray-700);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.938rem;
+      font-family: inherit;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      background: var(--color-white);
+      color: var(--color-gray-900);
+      transition: all var(--transition-fast);
+    }
+
+    .form-input:hover {
+      border-color: var(--color-gray-400);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    .form-input:disabled {
+      background: var(--color-gray-100);
+      color: var(--color-gray-400);
+      cursor: not-allowed;
+    }
+
+    .input-with-prefix {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all var(--transition-fast);
+    }
+
+    .input-with-prefix:hover {
+      border-color: var(--color-gray-400);
+    }
+
+    .input-with-prefix:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    .input-prefix {
+      padding: 12px 14px;
+      background: var(--color-gray-50);
+      border-right: 1px solid var(--color-gray-300);
+      font-size: 0.938rem;
+      color: var(--color-gray-500);
+      font-weight: 500;
+    }
+
+    .input-with-prefix .form-input {
+      border: none;
+      box-shadow: none;
+    }
+
+    .input-with-prefix .form-input:focus {
+      box-shadow: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .radio-option {
+      flex: 1;
+    }
+
+    .radio-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .radio-option label {
+      display: block;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      color: var(--color-gray-600);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .radio-option label:hover {
+      border-color: var(--color-gray-400);
+      background: var(--color-gray-50);
+    }
+
+    .radio-option input:focus + label {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px var(--color-primary-light);
+    }
+
+    .radio-option input:checked + label {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      font-size: 0.938rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-primary:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    .btn-primary:disabled {
+      background: var(--color-gray-300);
+      color: var(--color-gray-500);
+      cursor: not-allowed;
+    }
+
+    /* ============================================
+       SUMMARY PANEL
+       ============================================ */
+    .summary-panel {
+      display: none;
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: var(--color-success-light);
+      border: 1px solid var(--color-success);
+      border-radius: var(--radius-md);
+    }
+
+    .summary-panel.visible {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .summary-panel svg {
+      flex-shrink: 0;
+      color: var(--color-success);
+    }
+
+    .summary-panel p {
+      font-size: 0.875rem;
+      color: var(--color-gray-800);
+    }
+
+    .summary-panel strong {
+      font-weight: 600;
+    }
+
+    /* ============================================
+       TOAST
+       ============================================ */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--color-gray-900);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xl);
+      color: var(--color-white);
+      font-size: 0.875rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 300ms ease;
+    }
+
+    .toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast svg {
+      color: var(--color-success);
+    }
+
+    /* ============================================
+       ACCESSIBILITY
+       ============================================ */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus visible for keyboard navigation */
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    button:focus:not(:focus-visible),
+    input:focus:not(:focus-visible) {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-content">
+        <h1>Auto-invest</h1>
+        <p>Schedule recurring purchases</p>
+      </div>
+      <div class="badge" aria-label="Using mock data">
+        <span class="badge-dot"></span>
+        Mock data
+      </div>
+    </header>
+
+    <!-- INSTRUMENT SELECTOR CARD -->
+    <section class="card" aria-labelledby="selector-heading">
+      <div class="card-header">
+        <h2 id="selector-heading">Select instrument</h2>
+      </div>
+      <div class="card-body">
+        <!-- Warning Banner -->
+        <div id="warning-banner" class="warning-banner" role="alert" aria-live="polite">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 6V10M10 14H10.01M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p id="warning-message"></p>
+        </div>
+
+        <!-- Instrument Selector -->
+        <div class="instrument-selector">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search by ticker or company name..."
+              autocomplete="off"
+              role="combobox"
+              aria-expanded="false"
+              aria-controls="dropdown"
+              aria-autocomplete="list"
+              aria-describedby="search-helper"
+            >
+            <button
+              type="button"
+              id="clear-button"
+              class="clear-button"
+              aria-label="Clear selection"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <p id="search-helper" class="helper-text">Only instruments eligible for recurring purchases are shown (mock).</p>
+
+          <div id="dropdown" class="dropdown" role="listbox" aria-label="Instruments">
+            <ul id="dropdown-list" class="dropdown-list"></ul>
+          </div>
+        </div>
+
+        <!-- Collections -->
+        <div class="collections">
+          <div class="collection-tabs" role="tablist" aria-label="Instrument collections">
+            <button class="collection-tab active" role="tab" aria-selected="true" data-collection="popular" id="tab-popular" aria-controls="panel-popular">Popular</button>
+            <button class="collection-tab" role="tab" aria-selected="false" data-collection="recent" id="tab-recent" aria-controls="panel-recent">Recently searched</button>
+            <button class="collection-tab" role="tab" aria-selected="false" data-collection="dividend" id="tab-dividend" aria-controls="panel-dividend">Dividend</button>
+            <button class="collection-tab" role="tab" aria-selected="false" data-collection="tech" id="tab-tech" aria-controls="panel-tech">Tech</button>
+            <button class="collection-tab" role="tab" aria-selected="false" data-collection="healthcare" id="tab-healthcare" aria-controls="panel-healthcare">Healthcare</button>
+          </div>
+          <div id="collection-panel" class="collection-grid" role="tabpanel" aria-labelledby="tab-popular">
+            <!-- Collection items will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECURRING PURCHASE SETUP CARD -->
+    <section class="card" aria-labelledby="setup-heading">
+      <div class="card-header">
+        <h2 id="setup-heading">Setup recurring purchase</h2>
+      </div>
+      <div class="card-body">
+        <form id="purchase-form" novalidate>
+          <div class="form-group">
+            <label for="amount" class="form-label">Amount</label>
+            <div class="input-with-prefix">
+              <span class="input-prefix">USD</span>
+              <input
+                type="number"
+                id="amount"
+                class="form-input"
+                placeholder="0.00"
+                min="0.01"
+                step="0.01"
+                aria-describedby="amount-error"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Frequency</label>
+            <div class="radio-group" role="radiogroup" aria-label="Purchase frequency">
+              <div class="radio-option">
+                <input type="radio" id="freq-weekly" name="frequency" value="weekly" checked>
+                <label for="freq-weekly">Weekly</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="freq-monthly" name="frequency" value="monthly">
+                <label for="freq-monthly">Monthly</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" id="day-selector">
+              <label for="weekday" class="form-label">Day of week</label>
+              <select id="weekday" class="form-input">
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="monthday-selector" style="display: none;">
+              <label for="monthday" class="form-label">Day of month</label>
+              <select id="monthday" class="form-input">
+                <!-- Days 1-28 will be generated -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="start-date" class="form-label">Start date</label>
+              <input type="date" id="start-date" class="form-input">
+            </div>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary" disabled>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create schedule
+          </button>
+        </form>
+
+        <div id="summary-panel" class="summary-panel" role="status" aria-live="polite">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p id="summary-text"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container" aria-live="polite">
+    <div id="toast" class="toast" role="alert">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span id="toast-message"></span>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // DATA
+    // ============================================
+    const instruments = [
+      { id: 1, ticker: 'AAPL', name: 'Apple Inc.', description: 'Consumer electronics & software', sector: 'Tech', popularityScore: 98, iconColor: '#A2AAAD' },
+      { id: 2, ticker: 'MSFT', name: 'Microsoft Corporation', description: 'Software & cloud computing', sector: 'Tech', popularityScore: 97, iconColor: '#00A4EF' },
+      { id: 3, ticker: 'GOOGL', name: 'Alphabet Inc.', description: 'Search & advertising', sector: 'Tech', popularityScore: 95, iconColor: '#4285F4' },
+      { id: 4, ticker: 'AMZN', name: 'Amazon.com Inc.', description: 'E-commerce & cloud services', sector: 'Tech', popularityScore: 96, iconColor: '#FF9900' },
+      { id: 5, ticker: 'NVDA', name: 'NVIDIA Corporation', description: 'Graphics & AI chips', sector: 'Tech', popularityScore: 94, iconColor: '#76B900' },
+      { id: 6, ticker: 'META', name: 'Meta Platforms Inc.', description: 'Social media & VR', sector: 'Tech', popularityScore: 89, iconColor: '#0668E1' },
+      { id: 7, ticker: 'TSLA', name: 'Tesla Inc.', description: 'Electric vehicles & energy', sector: 'Tech', popularityScore: 92, iconColor: '#CC0000' },
+      { id: 8, ticker: 'BRK.B', name: 'Berkshire Hathaway', description: 'Diversified holdings', sector: 'Finance', popularityScore: 88, iconColor: '#2E3192' },
+      { id: 9, ticker: 'JNJ', name: 'Johnson & Johnson', description: 'Pharmaceuticals & medical', sector: 'Healthcare', popularityScore: 85, iconColor: '#D51900', isPopular: true, tags: ['Dividend'] },
+      { id: 10, ticker: 'V', name: 'Visa Inc.', description: 'Payment processing', sector: 'Finance', popularityScore: 86, iconColor: '#1A1F71' },
+      { id: 11, ticker: 'PG', name: 'Procter & Gamble', description: 'Consumer goods', sector: 'Consumer', popularityScore: 82, iconColor: '#003DA5', tags: ['Dividend'] },
+      { id: 12, ticker: 'UNH', name: 'UnitedHealth Group', description: 'Health insurance', sector: 'Healthcare', popularityScore: 84, iconColor: '#002677' },
+      { id: 13, ticker: 'HD', name: 'Home Depot Inc.', description: 'Home improvement retail', sector: 'Consumer', popularityScore: 80, iconColor: '#F96302', tags: ['Dividend'] },
+      { id: 14, ticker: 'MA', name: 'Mastercard Inc.', description: 'Payment technology', sector: 'Finance', popularityScore: 83, iconColor: '#EB001B' },
+      { id: 15, ticker: 'DIS', name: 'Walt Disney Company', description: 'Entertainment & media', sector: 'Consumer', popularityScore: 81, iconColor: '#113CCF' },
+      { id: 16, ticker: 'PYPL', name: 'PayPal Holdings', description: 'Digital payments', sector: 'Finance', popularityScore: 75, iconColor: '#003087' },
+      { id: 17, ticker: 'NFLX', name: 'Netflix Inc.', description: 'Streaming entertainment', sector: 'Tech', popularityScore: 79, iconColor: '#E50914' },
+      { id: 18, ticker: 'ADBE', name: 'Adobe Inc.', description: 'Creative software', sector: 'Tech', popularityScore: 78, iconColor: '#FF0000' },
+      { id: 19, ticker: 'CRM', name: 'Salesforce Inc.', description: 'Cloud CRM software', sector: 'Tech', popularityScore: 76, iconColor: '#00A1E0' },
+      { id: 20, ticker: 'INTC', name: 'Intel Corporation', description: 'Semiconductors', sector: 'Tech', popularityScore: 72, iconColor: '#0071C5', tags: ['Dividend'] },
+      { id: 21, ticker: 'CSCO', name: 'Cisco Systems', description: 'Networking equipment', sector: 'Tech', popularityScore: 70, iconColor: '#1BA0D7', tags: ['Dividend'] },
+      { id: 22, ticker: 'PFE', name: 'Pfizer Inc.', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 77, iconColor: '#0093D0', tags: ['Dividend'] },
+      { id: 23, ticker: 'MRK', name: 'Merck & Co.', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 74, iconColor: '#00857C', tags: ['Dividend'] },
+      { id: 24, ticker: 'ABBV', name: 'AbbVie Inc.', description: 'Biopharmaceuticals', sector: 'Healthcare', popularityScore: 73, iconColor: '#071D49', tags: ['Dividend'] },
+      { id: 25, ticker: 'TMO', name: 'Thermo Fisher Scientific', description: 'Lab equipment & services', sector: 'Healthcare', popularityScore: 71, iconColor: '#003B71' },
+      { id: 26, ticker: 'ABT', name: 'Abbott Laboratories', description: 'Medical devices & diagnostics', sector: 'Healthcare', popularityScore: 69, iconColor: '#005CAB', tags: ['Dividend'] },
+      { id: 27, ticker: 'LLY', name: 'Eli Lilly and Company', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 87, iconColor: '#D52B1E' },
+      { id: 28, ticker: 'KO', name: 'Coca-Cola Company', description: 'Beverages', sector: 'Consumer', popularityScore: 68, iconColor: '#F40009', tags: ['Dividend'] },
+      { id: 29, ticker: 'PEP', name: 'PepsiCo Inc.', description: 'Beverages & snacks', sector: 'Consumer', popularityScore: 67, iconColor: '#004B93', tags: ['Dividend'] },
+      { id: 30, ticker: 'COST', name: 'Costco Wholesale', description: 'Warehouse retail', sector: 'Consumer', popularityScore: 66, iconColor: '#E31837' },
+      { id: 31, ticker: 'WMT', name: 'Walmart Inc.', description: 'Retail & e-commerce', sector: 'Consumer', popularityScore: 65, iconColor: '#0071CE', tags: ['Dividend'] },
+      { id: 32, ticker: 'NKE', name: 'Nike Inc.', description: 'Athletic apparel & footwear', sector: 'Consumer', popularityScore: 64, iconColor: '#111111' },
+      { id: 33, ticker: 'MCD', name: "McDonald's Corporation", description: 'Fast food restaurants', sector: 'Consumer', popularityScore: 63, iconColor: '#FFC72C', tags: ['Dividend'] },
+      { id: 34, ticker: 'BA', name: 'Boeing Company', description: 'Aerospace & defense', sector: 'Industrial', popularityScore: 62, iconColor: '#0033A0' },
+      { id: 35, ticker: 'CAT', name: 'Caterpillar Inc.', description: 'Construction equipment', sector: 'Industrial', popularityScore: 61, iconColor: '#FFCD11', tags: ['Dividend'] },
+      { id: 36, ticker: 'GE', name: 'General Electric', description: 'Industrial conglomerate', sector: 'Industrial', popularityScore: 60, iconColor: '#3253DC' },
+      { id: 37, ticker: 'IBM', name: 'IBM Corporation', description: 'Enterprise technology', sector: 'Tech', popularityScore: 59, iconColor: '#054ADA', tags: ['Dividend'] },
+      { id: 38, ticker: 'ORCL', name: 'Oracle Corporation', description: 'Database & cloud software', sector: 'Tech', popularityScore: 58, iconColor: '#F80000' },
+      { id: 39, ticker: 'AMD', name: 'Advanced Micro Devices', description: 'Semiconductors', sector: 'Tech', popularityScore: 90, iconColor: '#ED1C24' },
+      { id: 40, ticker: 'QCOM', name: 'Qualcomm Inc.', description: 'Wireless technology', sector: 'Tech', popularityScore: 57, iconColor: '#3253DC', tags: ['Dividend'] },
+      { id: 41, ticker: 'TXN', name: 'Texas Instruments', description: 'Semiconductors', sector: 'Tech', popularityScore: 56, iconColor: '#CC0000', tags: ['Dividend'] },
+      { id: 42, ticker: 'AVGO', name: 'Broadcom Inc.', description: 'Semiconductors', sector: 'Tech', popularityScore: 55, iconColor: '#CC092F', tags: ['Dividend'] },
+      { id: 43, ticker: 'SPY', name: 'SPDR S&P 500 ETF', description: 'S&P 500 index fund', sector: 'ETF', popularityScore: 99, iconColor: '#006747', isETF: true },
+      { id: 44, ticker: 'QQQ', name: 'Invesco QQQ Trust', description: 'Nasdaq-100 index fund', sector: 'ETF', popularityScore: 93, iconColor: '#00A3E0', isETF: true },
+      { id: 45, ticker: 'VTI', name: 'Vanguard Total Stock ETF', description: 'Total US market', sector: 'ETF', popularityScore: 91, iconColor: '#96151D', isETF: true },
+      { id: 46, ticker: 'VOO', name: 'Vanguard S&P 500 ETF', description: 'S&P 500 index fund', sector: 'ETF', popularityScore: 90, iconColor: '#96151D', isETF: true },
+      { id: 47, ticker: 'SCHD', name: 'Schwab US Dividend ETF', description: 'High dividend stocks', sector: 'ETF', popularityScore: 85, iconColor: '#00A0DF', isETF: true, tags: ['Dividend'] },
+      { id: 48, ticker: 'JPM', name: 'JPMorgan Chase & Co.', description: 'Banking & financial services', sector: 'Finance', popularityScore: 83, iconColor: '#117ACA', tags: ['Dividend'] },
+      { id: 49, ticker: 'BAC', name: 'Bank of America', description: 'Banking', sector: 'Finance', popularityScore: 75, iconColor: '#012169', tags: ['Dividend'] },
+      { id: 50, ticker: 'GS', name: 'Goldman Sachs Group', description: 'Investment banking', sector: 'Finance', popularityScore: 70, iconColor: '#7399C6', tags: ['Dividend'] }
+    ];
+
+    // ============================================
+    // STATE
+    // ============================================
+    const state = {
+      selectedInstrument: null,
+      recentlySearched: JSON.parse(localStorage.getItem('recentlySearched') || '[]'),
+      activeCollection: 'popular',
+      dropdownOpen: false,
+      highlightedIndex: -1,
+      filteredInstruments: [...instruments],
+      isLoading: true,
+      scheduleCreated: false,
+      scheduleDetails: null
+    };
+
+    // ============================================
+    // DOM ELEMENTS
+    // ============================================
+    const elements = {
+      searchInput: document.getElementById('search-input'),
+      clearButton: document.getElementById('clear-button'),
+      dropdown: document.getElementById('dropdown'),
+      dropdownList: document.getElementById('dropdown-list'),
+      collectionPanel: document.getElementById('collection-panel'),
+      collectionTabs: document.querySelectorAll('.collection-tab'),
+      warningBanner: document.getElementById('warning-banner'),
+      warningMessage: document.getElementById('warning-message'),
+      purchaseForm: document.getElementById('purchase-form'),
+      amountInput: document.getElementById('amount'),
+      freqWeekly: document.getElementById('freq-weekly'),
+      freqMonthly: document.getElementById('freq-monthly'),
+      weekdaySelect: document.getElementById('weekday'),
+      monthdaySelect: document.getElementById('monthday'),
+      daySelector: document.getElementById('day-selector'),
+      monthdaySelector: document.getElementById('monthday-selector'),
+      startDate: document.getElementById('start-date'),
+      submitBtn: document.getElementById('submit-btn'),
+      summaryPanel: document.getElementById('summary-panel'),
+      summaryText: document.getElementById('summary-text'),
+      toast: document.getElementById('toast'),
+      toastMessage: document.getElementById('toast-message')
+    };
+
+    // ============================================
+    // UTILITIES
+    // ============================================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function highlightMatch(text, query) {
+      if (!query) return escapeHtml(text);
+      const regex = new RegExp(`(${escapeHtml(query)})`, 'gi');
+      return escapeHtml(text).replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    function getInitials(ticker) {
+      return ticker.slice(0, 2).toUpperCase();
+    }
+
+    function generateInstrumentIcon(instrument) {
+      const initials = getInitials(instrument.ticker);
+      return `
+        <svg class="instrument-icon" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+          <rect width="40" height="40" rx="8" fill="${instrument.iconColor}"/>
+          <text x="20" y="20" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600" font-family="system-ui, sans-serif">${initials}</text>
+        </svg>
+      `;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function showToast(message) {
+      elements.toastMessage.textContent = message;
+      elements.toast.classList.add('visible');
+      setTimeout(() => {
+        elements.toast.classList.remove('visible');
+      }, 3000);
+    }
+
+    function saveRecentlySearched() {
+      localStorage.setItem('recentlySearched', JSON.stringify(state.recentlySearched));
+    }
+
+    function addToRecentlySearched(instrument) {
+      // Remove if already exists
+      state.recentlySearched = state.recentlySearched.filter(i => i.id !== instrument.id);
+      // Add to beginning
+      state.recentlySearched.unshift(instrument);
+      // Keep only 8 items
+      if (state.recentlySearched.length > 8) {
+        state.recentlySearched = state.recentlySearched.slice(0, 8);
+      }
+      saveRecentlySearched();
+    }
+
+    // ============================================
+    // UI RENDER
+    // ============================================
+    function renderDropdownItem(instrument, index, query = '') {
+      const isHighlighted = index === state.highlightedIndex;
+      const isSelected = state.selectedInstrument?.id === instrument.id;
+      
+      const tagsHtml = instrument.isETF 
+        ? '<span class="micro-tag etf">ETF</span>'
+        : instrument.popularityScore >= 90 
+          ? '<span class="micro-tag">Popular</span>'
+          : '';
+
+      return `
+        <li 
+          class="dropdown-item ${isHighlighted ? 'highlighted' : ''} ${isSelected ? 'selected' : ''}"
+          role="option"
+          id="option-${instrument.id}"
+          aria-selected="${isSelected}"
+          data-index="${index}"
+          data-id="${instrument.id}"
+          tabindex="-1"
+        >
+          ${generateInstrumentIcon(instrument)}
+          <div class="instrument-info">
+            <div class="instrument-header">
+              <span class="instrument-ticker">${highlightMatch(instrument.ticker, query)}</span>
+              <span class="instrument-name">${highlightMatch(instrument.name, query)}</span>
+              ${tagsHtml}
+            </div>
+            <div class="instrument-description">${escapeHtml(instrument.description)}</div>
+          </div>
+        </li>
+      `;
+    }
+
+    function renderDropdown() {
+      const query = elements.searchInput.value.trim();
+      
+      if (state.filteredInstruments.length === 0) {
+        elements.dropdownList.innerHTML = `
+          <li class="dropdown-empty">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <path d="M27.5 27.5L23.125 23.125M25.8333 17.9167C25.8333 22.289 22.289 25.8333 17.9167 25.8333C13.5444 25.8333 10 22.289 10 17.9167C10 13.5444 13.5444 10 17.9167 10C22.289 10 25.8333 13.5444 25.8333 17.9167Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>No instruments found</p>
+          </li>
+        `;
+      } else {
+        elements.dropdownList.innerHTML = state.filteredInstruments
+          .map((instrument, index) => renderDropdownItem(instrument, index, query))
+          .join('');
+      }
+    }
+
+    function renderCollectionSkeleton() {
+      return Array(8).fill(0).map(() => `
+        <div class="collection-item skeleton skeleton-item" aria-hidden="true"></div>
+      `).join('');
+    }
+
+    function renderCollectionItem(instrument) {
+      const isSelected = state.selectedInstrument?.id === instrument.id;
+      return `
+        <button 
+          class="collection-item ${isSelected ? 'selected' : ''}"
+          data-id="${instrument.id}"
+          aria-label="${instrument.ticker} - ${instrument.name}"
+        >
+          ${generateInstrumentIcon(instrument)}
+          <span class="collection-item-ticker">${escapeHtml(instrument.ticker)}</span>
+          <span class="collection-item-name">${escapeHtml(instrument.name)}</span>
+        </button>
+      `;
+    }
+
+    function renderCollection() {
+      if (state.isLoading) {
+        elements.collectionPanel.innerHTML = renderCollectionSkeleton();
+        return;
+      }
+
+      let collectionInstruments = [];
+      
+      switch (state.activeCollection) {
+        case 'popular':
+          collectionInstruments = [...instruments]
+            .sort((a, b) => b.popularityScore - a.popularityScore)
+            .slice(0, 8);
+          break;
+        case 'recent':
+          collectionInstruments = state.recentlySearched;
+          break;
+        case 'dividend':
+          collectionInstruments = instruments
+            .filter(i => i.tags?.includes('Dividend'))
+            .slice(0, 8);
+          break;
+        case 'tech':
+          collectionInstruments = instruments
+            .filter(i => i.sector === 'Tech')
+            .slice(0, 8);
+          break;
+        case 'healthcare':
+          collectionInstruments = instruments
+            .filter(i => i.sector === 'Healthcare')
+            .slice(0, 8);
+          break;
+      }
+
+      if (collectionInstruments.length === 0) {
+        elements.collectionPanel.innerHTML = `
+          <div class="collection-empty">
+            ${state.activeCollection === 'recent' 
+              ? 'No recently searched instruments. Start searching to build your list.'
+              : 'No instruments in this collection.'}
+          </div>
+        `;
+      } else {
+        elements.collectionPanel.innerHTML = collectionInstruments
+          .map(instrument => renderCollectionItem(instrument))
+          .join('');
+      }
+    }
+
+    function updateSelectedInstrumentDisplay() {
+      if (state.selectedInstrument) {
+        elements.searchInput.value = `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`;
+        elements.clearButton.classList.add('visible');
+      } else {
+        elements.searchInput.value = '';
+        elements.clearButton.classList.remove('visible');
+      }
+    }
+
+    function updateWarningBanner() {
+      const query = elements.searchInput.value.trim().toUpperCase();
+      if (query.includes('TSLA') || state.selectedInstrument?.ticker === 'TSLA') {
+        elements.warningMessage.textContent = 'This instrument is not eligible for auto-investing (mock rule).';
+        elements.warningBanner.classList.add('visible');
+      } else {
+        elements.warningBanner.classList.remove('visible');
+      }
+    }
+
+    function validateForm() {
+      const amount = parseFloat(elements.amountInput.value);
+      const hasValidAmount = !isNaN(amount) && amount > 0;
+      const hasInstrument = state.selectedInstrument !== null;
+      const hasStartDate = elements.startDate.value !== '';
+
+      elements.submitBtn.disabled = !(hasValidAmount && hasInstrument && hasStartDate);
+    }
+
+    // ============================================
+    // DROPDOWN LOGIC
+    // ============================================
+    function openDropdown() {
+      state.dropdownOpen = true;
+      state.highlightedIndex = -1;
+      elements.dropdown.classList.add('open');
+      elements.searchInput.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeDropdown() {
+      state.dropdownOpen = false;
+      state.highlightedIndex = -1;
+      elements.dropdown.classList.remove('open');
+      elements.searchInput.setAttribute('aria-expanded', 'false');
+    }
+
+    function filterInstruments(query) {
+      if (!query) {
+        state.filteredInstruments = [...instruments];
+      } else {
+        const lowerQuery = query.toLowerCase();
+        state.filteredInstruments = instruments.filter(
+          i => i.ticker.toLowerCase().includes(lowerQuery) || 
+               i.name.toLowerCase().includes(lowerQuery)
+        );
+      }
+      state.highlightedIndex = -1;
+      renderDropdown();
+    }
+
+    function selectInstrument(instrument) {
+      state.selectedInstrument = instrument;
+      addToRecentlySearched(instrument);
+      updateSelectedInstrumentDisplay();
+      updateWarningBanner();
+      closeDropdown();
+      renderCollection();
+      validateForm();
+    }
+
+    function clearSelection() {
+      state.selectedInstrument = null;
+      elements.searchInput.value = '';
+      elements.clearButton.classList.remove('visible');
+      state.filteredInstruments = [...instruments];
+      updateWarningBanner();
+      renderCollection();
+      validateForm();
+      elements.searchInput.focus();
+    }
+
+    function handleKeyDown(e) {
+      if (!state.dropdownOpen) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          openDropdown();
+          renderDropdown();
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          state.highlightedIndex = Math.min(
+            state.highlightedIndex + 1,
+            state.filteredInstruments.length - 1
+          );
+          renderDropdown();
+          scrollToHighlighted();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          state.highlightedIndex = Math.max(state.highlightedIndex - 1, 0);
+          renderDropdown();
+          scrollToHighlighted();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (state.highlightedIndex >= 0 && state.filteredInstruments[state.highlightedIndex]) {
+            selectInstrument(state.filteredInstruments[state.highlightedIndex]);
+          }
+          break;
+        case 'Escape':
+          closeDropdown();
+          updateSelectedInstrumentDisplay();
+          break;
+        case 'Tab':
+          closeDropdown();
+          break;
+      }
+    }
+
+    function scrollToHighlighted() {
+      const highlighted = elements.dropdownList.querySelector('.highlighted');
+      if (highlighted) {
+        highlighted.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
+    // ============================================
+    // COLLECTIONS LOGIC
+    // ============================================
+    function setActiveCollection(collection) {
+      state.activeCollection = collection;
+      
+      elements.collectionTabs.forEach(tab => {
+        const isActive = tab.dataset.collection === collection;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', isActive);
+      });
+
+      elements.collectionPanel.setAttribute('aria-labelledby', `tab-${collection}`);
+      renderCollection();
+    }
+
+    // ============================================
+    // FORM LOGIC
+    // ============================================
+    function initializeForm() {
+      // Populate month days
+      for (let i = 1; i <= 28; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        elements.monthdaySelect.appendChild(option);
+      }
+
+      // Set default start date to tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      elements.startDate.valueAsDate = tomorrow;
+      elements.startDate.min = tomorrow.toISOString().split('T')[0];
+    }
+
+    function handleFrequencyChange() {
+      const isWeekly = elements.freqWeekly.checked;
+      elements.daySelector.style.display = isWeekly ? 'block' : 'none';
+      elements.monthdaySelector.style.display = isWeekly ? 'none' : 'block';
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      if (!state.selectedInstrument) return;
+
+      const amount = parseFloat(elements.amountInput.value);
+      const isWeekly = elements.freqWeekly.checked;
+      const day = isWeekly 
+        ? elements.weekdaySelect.options[elements.weekdaySelect.selectedIndex].text
+        : `day ${elements.monthdaySelect.value}`;
+      const period = isWeekly ? `${day}` : `the ${day} of each month`;
+      const startDate = formatDate(elements.startDate.value);
+
+      state.scheduleDetails = {
+        amount,
+        ticker: state.selectedInstrument.ticker,
+        period,
+        startDate
+      };
+
+      // Show summary
+      elements.summaryText.innerHTML = `You will invest <strong>$${amount.toFixed(2)}</strong> in <strong>${state.selectedInstrument.ticker}</strong> every <strong>${period}</strong> starting <strong>${startDate}</strong>.`;
+      elements.summaryPanel.classList.add('visible');
+      
+      // Show toast
+      showToast('Schedule created successfully!');
+
+      state.scheduleCreated = true;
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+    function initEventListeners() {
+      // Search input
+      elements.searchInput.addEventListener('focus', () => {
+        if (!state.selectedInstrument) {
+          openDropdown();
+          renderDropdown();
+        }
+      });
+
+      elements.searchInput.addEventListener('input', (e) => {
+        const query = e.target.value;
+        
+        // If user had a selection and starts typing, clear it
+        if (state.selectedInstrument && query !== `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`) {
+          state.selectedInstrument = null;
+          elements.clearButton.classList.remove('visible');
+          validateForm();
+        }
+
+        filterInstruments(query);
+        updateWarningBanner();
+        
+        if (!state.dropdownOpen) {
+          openDropdown();
+        }
+      });
+
+      elements.searchInput.addEventListener('keydown', handleKeyDown);
+
+      // Clear button
+      elements.clearButton.addEventListener('click', clearSelection);
+
+      // Dropdown item click
+      elements.dropdownList.addEventListener('click', (e) => {
+        const item = e.target.closest('.dropdown-item');
+        if (item && !item.classList.contains('dropdown-empty')) {
+          const id = parseInt(item.dataset.id);
+          const instrument = instruments.find(i => i.id === id);
+          if (instrument) {
+            selectInstrument(instrument);
+          }
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!elements.searchInput.contains(e.target) && !elements.dropdown.contains(e.target)) {
+          closeDropdown();
+          updateSelectedInstrumentDisplay();
+        }
+      });
+
+      // Collection tabs
+      elements.collectionTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          setActiveCollection(tab.dataset.collection);
+        });
+      });
+
+      // Collection item click
+      elements.collectionPanel.addEventListener('click', (e) => {
+        const item = e.target.closest('.collection-item');
+        if (item && !item.classList.contains('skeleton')) {
+          const id = parseInt(item.dataset.id);
+          const instrument = instruments.find(i => i.id === id);
+          if (instrument) {
+            selectInstrument(instrument);
+          }
+        }
+      });
+
+      // Form events
+      elements.freqWeekly.addEventListener('change', handleFrequencyChange);
+      elements.freqMonthly.addEventListener('change', handleFrequencyChange);
+      elements.amountInput.addEventListener('input', validateForm);
+      elements.startDate.addEventListener('change', validateForm);
+      elements.purchaseForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    function init() {
+      initializeForm();
+      initEventListeners();
+      
+      // Simulate loading state
+      renderCollection();
+      
+      setTimeout(() => {
+        state.isLoading = false;
+        renderCollection();
+      }, 600);
+    }
+
+    // Start the app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
