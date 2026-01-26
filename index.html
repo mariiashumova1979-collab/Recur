@@ -130,35 +130,14 @@
       .subscription-option { padding: 16px; }
       .subscription-icon { width: 36px; height: 36px; border-radius: 8px; }
     }
-
-    /* Tabs: wrap, no horizontal scroll */
-    @media (max-width: 640px) {
-      .collection-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 12px;
-        overflow-x: hidden; /* ensure no horizontal scroll */
-      }
-
-      .collection-tab {
+.collection-tab {
         white-space: normal;
         flex: 0 0 auto;
         padding: 8px 12px;
         font-size: 0.813rem;
       }
     }
-
-    /* Collections: single column list on mobile, no horizontal scroll */
-    @media (max-width: 640px) {
-      .collection-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 8px;
-        overflow: visible;
-      }
-
-      .collection-item {
+.collection-item {
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
@@ -170,7 +149,50 @@
       .collection-item .instrument-icon { width: 40px; height: 40px; }
       .collection-item-name { text-align: left; }
     }
+    @media (max-width: 640px) {
+      /* Подборки: строго одна строка */
+      .collection-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 в ряд */
+        gap: 8px;
+        overflow: hidden; /* гарантированно без скроллов */
+      }
 
+      /* Оставляем только первые 4 инструмента */
+      .collection-item:nth-child(n+5) {
+        display: none;
+      }
+
+  /* Ужимаем карточки, чтобы точно влезли */
+      .collection-item {
+        padding: 8px;
+        gap: 6px;
+      }
+
+  /* Скрываем вторичный текст, если есть */
+      .instrument-description,
+      .collection-item-meta {
+        display: none;
+      }
+    }
+  
+    /* Selected instrument details */
+    .instrument-details { margin-top: 18px; }
+    .details-card { background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 14px 16px; }
+    .details-card-title { font-size: 0.813rem; font-weight: 600; color: var(--color-gray-700); margin-bottom: 10px; }
+    .stats-grid, .div-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+    .stat-label { font-size: 0.688rem; color: var(--color-gray-500); }
+    .stat-value { font-size: 0.875rem; font-weight: 600; color: var(--color-gray-900); }
+    .stat-note { font-weight: 500; color: var(--color-gray-600); }
+
+    @media (max-width: 640px) {
+      /* keep details compact */
+      .details-card { padding: 12px; }
+      .stats-grid, .div-grid { grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+    }
+
+  
+    @media (min-width: 641px) { .instrument-description { display: block; } }
   </style>
 </head>
 <body>
@@ -224,6 +246,58 @@
           </div>
           <div id="collection-panel" class="collection-grid"></div>
         </div>
+        <!-- Selected instrument details (mock) -->
+        <div id="instrument-details" class="instrument-details" hidden>
+          <div class="uk-grid-small uk-child-width-1-2@s uk-margin-top" uk-grid>
+            <div>
+              <div class="details-card">
+                <div class="details-card-title">Statistics</div>
+                <div class="stats-grid">
+                  <div class="stat">
+                    <div class="stat-label">Sector</div>
+                    <div class="stat-value" id="stat-sector">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Popularity</div>
+                    <div class="stat-value" id="stat-popularity">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Risk</div>
+                    <div class="stat-value" id="stat-risk">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Type</div>
+                    <div class="stat-value" id="stat-type">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="details-card">
+                <div class="details-card-title">Dividends</div>
+                <div class="div-grid">
+                  <div class="stat">
+                    <div class="stat-label">Dividend tag</div>
+                    <div class="stat-value" id="div-tag">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Est. yield (mock)</div>
+                    <div class="stat-value" id="div-yield">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Next payout (mock)</div>
+                    <div class="stat-value" id="div-next">—</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Note</div>
+                    <div class="stat-value stat-note">Indicative only</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
     <section class="custom-card uk-margin-top">
@@ -374,7 +448,15 @@
       summaryText: document.getElementById('summary-text'),
       toast: document.getElementById('toast'),
       toastMessage: document.getElementById('toast-message'),
-      frequencyHint: document.getElementById('frequency-hint')
+      frequencyHint: document.getElementById('frequency-hint'),
+      instrumentDetails: document.getElementById('instrument-details'),
+      statSector: document.getElementById('stat-sector'),
+      statPopularity: document.getElementById('stat-popularity'),
+      statRisk: document.getElementById('stat-risk'),
+      statType: document.getElementById('stat-type'),
+      divTag: document.getElementById('div-tag'),
+      divYield: document.getElementById('div-yield'),
+      divNext: document.getElementById('div-next')
     };
 
     // UTILITIES
@@ -386,6 +468,23 @@
     function showToast(m) { el.toastMessage.textContent = m; el.toast.classList.add('visible'); setTimeout(() => el.toast.classList.remove('visible'), 3000); }
     function saveRecent() { localStorage.setItem('recentlySearched', JSON.stringify(state.recentlySearched)); }
     function addToRecent(i) { state.recentlySearched = state.recentlySearched.filter(x => x.id !== i.id); state.recentlySearched.unshift(i); if (state.recentlySearched.length > 8) state.recentlySearched = state.recentlySearched.slice(0, 8); saveRecent(); }
+    function mockRisk(i) {
+      if (i.isETF) return 'Low';
+      if (i.sector === 'Tech') return 'Medium';
+      if (i.sector === 'Industrial') return 'Medium';
+      return 'Low';
+    }
+    function mockDividendYield(i) {
+      if (i.tags?.includes('Dividend')) return (2.2 + (100 - i.popularityScore) * 0.03).toFixed(1) + '%';
+      return '—';
+    }
+    function mockNextPayout(i) {
+      if (!i.tags?.includes('Dividend') && !i.isETF) return '—';
+      const d = new Date();
+      d.setDate(d.getDate() + 21);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
 
     // UI RENDER
     function renderDropdownItem(i, idx, q = '') {
@@ -478,6 +577,17 @@
       updateWarning();
       closeDropdown();
       renderCollection();
+      // Show details
+      if (el.instrumentDetails) {
+        el.instrumentDetails.hidden = false;
+        el.statSector.textContent = i.sector || '—';
+        el.statPopularity.textContent = `${i.popularityScore}/100`;
+        el.statRisk.textContent = mockRisk(i);
+        el.statType.textContent = i.isETF ? 'ETF' : 'Stock';
+        el.divTag.textContent = (i.tags?.includes('Dividend') || i.isETF) ? 'Yes' : 'No';
+        el.divYield.textContent = mockDividendYield(i);
+        el.divNext.textContent = mockNextPayout(i);
+      }
       validateForm();
     }
 
@@ -486,6 +596,7 @@
       el.searchInput.value = '';
       el.clearButton.classList.remove('visible');
       state.filteredInstruments = [...instruments];
+      if (el.instrumentDetails) el.instrumentDetails.hidden = true;
       updateWarning();
       renderCollection();
       validateForm();
@@ -553,7 +664,7 @@
       el.searchInput.addEventListener('focus', () => { if (!state.selectedInstrument) { openDropdown(); renderDropdown(); } });
       el.searchInput.addEventListener('input', e => {
         const q = e.target.value;
-        if (state.selectedInstrument && q !== `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`) { state.selectedInstrument = null; el.clearButton.classList.remove('visible'); validateForm(); }
+        if (state.selectedInstrument && q !== `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`) { state.selectedInstrument = null; el.clearButton.classList.remove('visible'); if (el.instrumentDetails) el.instrumentDetails.hidden = true; validateForm(); }
         filterInstruments(q); updateWarning(); if (!state.dropdownOpen) openDropdown();
       });
       el.searchInput.addEventListener('keydown', handleKeyDown);
