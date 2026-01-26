@@ -130,26 +130,7 @@
       .subscription-option { padding: 16px; }
       .subscription-icon { width: 36px; height: 36px; border-radius: 8px; }
     }
-.collection-tab {
-        white-space: normal;
-        flex: 0 0 auto;
-        padding: 8px 12px;
-        font-size: 0.813rem;
-      }
-    }
-.collection-item {
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        text-align: left;
-        padding: 12px;
-        gap: 12px;
-      }
-
-      .collection-item .instrument-icon { width: 40px; height: 40px; }
-      .collection-item-name { text-align: left; }
-    }
-    @media (max-width: 640px) {
+@media (max-width: 640px) {
       /* Подборки: строго одна строка */
       .collection-grid {
         display: grid;
@@ -193,7 +174,35 @@
 
   
     @media (min-width: 641px) { .instrument-description { display: block; } }
-  </style>
+
+
+/* Mobile compact demo: exactly 4 collection cards in one row, no scroll */
+@media (max-width: 640px) {
+  #collection-panel {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  #collection-panel > .collection-item:nth-child(n+5) {
+    display: none !important;
+  }
+
+  .collection-item {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  /* Hide secondary text to keep cards compact */
+  .collection-item-name,
+  .instrument-description,
+  .collection-item-meta {
+    display: none !important;
+  }
+}
+
+</style>
 </head>
 <body>
   <div class="uk-container uk-container-small uk-margin-top uk-margin-bottom">
