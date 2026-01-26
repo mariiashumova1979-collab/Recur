@@ -313,42 +313,7 @@
       <div class="card-body">
         <form id="purchase-form" novalidate>
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Type of invest</label>
-              <select id="invest-type" class="form-input"><option value="amount">Amount</option><option value="shares">Shares</option></select>
-              <p class="helper-text" id="invest-type-hint">Exact investment amount</p>
-            </div>
-            <div class="form-group">
-              <label for="amount" class="form-label" id="value-label">Amount</label>
-              <div class="input-with-prefix">
-                <span class="input-prefix" id="value-prefix">USD</span>
-                <input type="number" id="amount" class="form-input" placeholder="0.00" min="0.01" step="0.01">
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">How often to repeat</label>
-            <div class="frequency-pills">
-              <div class="frequency-pill"><input type="radio" id="freq-weekly" name="frequency" value="weekly"><label for="freq-weekly">Once a week</label></div>
-              <div class="frequency-pill"><input type="radio" id="freq-monthly" name="frequency" value="monthly" checked><label for="freq-monthly">Once a month</label></div>
-            </div>
-            <p class="helper-text" id="frequency-hint">On the selected day each month</p>
-          </div>
-          <div class="form-row">
-            <div class="form-group" id="day-selector" style="display: none;">
-              <label for="weekday" class="form-label">Day of week</label>
-              <select id="weekday" class="form-input"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option></select>
-            </div>
-            <div class="form-group" id="monthday-selector">
-              <label for="monthday" class="form-label">Day of month</label>
-              <select id="monthday" class="form-input"></select>
-            </div>
-            <div class="form-group">
-              <label for="start-date" class="form-label">Start date</label>
-              <input type="date" id="start-date" class="form-input">
-            </div>
-          </div>
-          <button type="submit" id="submit-btn" class="submit-btn" disabled>
+<button type="submit" id="submit-btn" class="submit-btn" disabled>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Create schedule
           </button>
@@ -447,17 +412,12 @@
       valuePrefix: document.getElementById('value-prefix'),
       freqWeekly: document.getElementById('freq-weekly'),
       freqMonthly: document.getElementById('freq-monthly'),
-      weekdaySelect: document.getElementById('weekday'),
-      monthdaySelect: document.getElementById('monthday'),
-      daySelector: document.getElementById('day-selector'),
-      monthdaySelector: document.getElementById('monthday-selector'),
-      startDate: document.getElementById('start-date'),
       submitBtn: document.getElementById('submit-btn'),
       summaryPanel: document.getElementById('summary-panel'),
       summaryText: document.getElementById('summary-text'),
       toast: document.getElementById('toast'),
       toastMessage: document.getElementById('toast-message'),
-      frequencyHint: document.getElementById('frequency-hint'),
+      scheduleDisclaimer: document.getElementById('schedule-disclaimer'),
       instrumentDetails: document.getElementById('instrument-details'),
       statSector: document.getElementById('stat-sector'),
       statPopularity: document.getElementById('stat-popularity'),
@@ -632,17 +592,19 @@
 
     // FORM LOGIC
     function initForm() {
-      for (let i = 1; i <= 28; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; el.monthdaySelect.appendChild(o); }
-      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-      el.startDate.valueAsDate = tomorrow;
-      el.startDate.min = tomorrow.toISOString().split('T')[0];
+      // No date or day selection in this demo.
+      updateScheduleDisclaimer();
+    }
+
+    function updateScheduleDisclaimer() {
+      const isW = el.freqWeekly.checked;
+      el.scheduleDisclaimer.textContent = isW
+        ? 'Recurring purchase will be executed on Monday.'
+        : 'Recurring purchase will be executed on the first day of each month.';
     }
 
     function handleFreqChange() {
-      const isW = el.freqWeekly.checked;
-      el.daySelector.style.display = isW ? 'block' : 'none';
-      el.monthdaySelector.style.display = isW ? 'none' : 'block';
-      el.frequencyHint.textContent = isW ? 'On the selected day each week' : 'On the selected day each month';
+      updateScheduleDisclaimer();
     }
 
     function handleSubmit(e) {
@@ -660,7 +622,8 @@
         investText = `<strong>USD ${val.toFixed(2)}</strong> in`;
       }
       
-      el.summaryText.innerHTML = `You will invest ${investText} <strong>${state.selectedInstrument.ticker}</strong> ${period} starting <strong>${formatDate(el.startDate.value)}</strong>.`;
+      const cadenceText = el.freqWeekly.checked ? 'every Monday' : 'on the first day of each month';
+      el.summaryText.innerHTML = `You will invest ${investText} <strong>${state.selectedInstrument.ticker}</strong> ${cadenceText}.`;
       el.summaryPanel.classList.add('visible');
       showToast('Schedule created successfully!');
     }
