@@ -202,7 +202,40 @@
   }
 }
 
-</style>
+
+    /* FIX: restore icons and active states (tabs, selected instruments, frequency) */
+    .collection-item svg,
+    .collection-item .instrument-icon {
+      display: inline-flex !important;
+      flex-shrink: 0;
+      width: auto;
+      height: auto;
+    }
+
+    .collection-item.selected {
+      background: var(--pl) !important;
+      border-color: var(--p) !important;
+    }
+
+    .collection-tab.active {
+      background: var(--pl) !important;
+      color: var(--p) !important;
+      border-color: var(--p) !important;
+    }
+
+    .frequency-pill input:checked + label {
+      background: var(--pl) !important;
+      border-color: var(--p) !important;
+      color: var(--p) !important;
+    }
+
+    /* Mobile: keep compact but do not hide icons */
+    @media (max-width: 640px) {
+      .collection-item-name { display: none !important; }
+      .instrument-description, .collection-item-meta { display: none !important; }
+    }
+
+  </style>
 </head>
 <body>
   <div class="uk-container uk-container-small uk-margin-top uk-margin-bottom">
