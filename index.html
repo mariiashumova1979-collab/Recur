@@ -235,6 +235,31 @@
       .instrument-description, .collection-item-meta { display: none !important; }
     }
 
+  
+    /* FORCE SHOW purchase form (fix) */
+    #purchase-form,
+    #purchase-form .form-row,
+    #purchase-form .form-group,
+    #purchase-form .frequency-pills {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* pills layout */
+    #purchase-form .frequency-pills {
+      display: flex !important;
+      gap: 8px;
+    }
+
+    #purchase-form .frequency-pill {
+      display: inline-flex !important;
+    }
+
+    section.custom-card {
+      display: block !important;
+    }
+
   </style>
 </head>
 <body>
