@@ -14,6 +14,8 @@
       --color-success-light: rgba(0, 176, 80, 0.1);
       --color-warning: #f59e0b;
       --color-warning-light: #fef3c7;
+      --color-error: #ef4444;
+      --color-error-light: #fef2f2;
       --color-gray-50: #f9fafb;
       --color-gray-100: #f3f4f6;
       --color-gray-200: #e5e7eb;
@@ -60,7 +62,7 @@
     .clear-button:hover { background: var(--color-gray-200); }
     .clear-button.visible { display: flex; }
     .helper-text { font-size: 0.75rem; color: var(--color-gray-500); margin-top: 8px; }
-    .dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 360px; overflow-y: auto; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 100; display: none; }
+    .dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 300px; overflow-y: auto; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 100; display: none; }
     .dropdown.open { display: block; }
     .dropdown-list { list-style: none; padding: 6px; margin: 0; }
     .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; cursor: pointer; }
@@ -68,15 +70,41 @@
     .dropdown-item.selected { background: var(--color-primary-light); }
     .instrument-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; }
     .instrument-info { flex: 1; min-width: 0; }
-    .instrument-header { display: flex; align-items: center; gap: 8px; }
+    .instrument-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .instrument-ticker { font-weight: 600; font-size: 0.938rem; }
-    .instrument-name { font-size: 0.875rem; color: var(--color-gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .instrument-description { font-size: 0.75rem; color: var(--color-gray-400); margin-top: 2px; }
-    .micro-tag { display: inline-flex; padding: 2px 8px; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; border-radius: 50px; background: var(--color-primary-light); color: var(--color-primary); }
+    .instrument-name { font-size: 0.875rem; color: var(--color-gray-500); }
+    .instrument-meta { font-size: 0.7rem; color: var(--color-gray-400); margin-top: 2px; }
+    .micro-tag { display: inline-flex; padding: 2px 6px; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; border-radius: 50px; background: var(--color-primary-light); color: var(--color-primary); margin-left: 4px; }
     .micro-tag.etf { background: var(--color-success-light); color: var(--color-success); }
+    .micro-tag.sector { background: var(--color-gray-100); color: var(--color-gray-500); }
     .highlight { background: var(--color-warning-light); border-radius: 2px; }
     .dropdown-empty { padding: 24px 16px; text-align: center; }
     .dropdown-empty p { font-size: 0.875rem; color: var(--color-gray-500); margin: 0; }
+    
+    /* Selected Instrument Card */
+    .selected-card { display: none; margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%); border: 1px solid var(--color-gray-200); border-radius: 10px; }
+    .selected-card.visible { display: block; animation: slideIn 0.25s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .selected-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .selected-icon { width: 48px; height: 48px; border-radius: 10px; }
+    .selected-main { flex: 1; }
+    .selected-title { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .selected-title h3 { font-size: 1rem; font-weight: 700; margin: 0; }
+    .selected-title span { font-size: 0.8rem; color: var(--color-gray-500); }
+    .selected-price-row { display: flex; align-items: baseline; gap: 8px; }
+    .selected-price { font-size: 1.1rem; font-weight: 700; }
+    .selected-change { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+    .selected-change.positive { background: var(--color-success-light); color: var(--color-success); }
+    .selected-change.negative { background: var(--color-error-light); color: var(--color-error); }
+    .mini-chart { width: 70px; height: 30px; }
+    .selected-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-gray-200); margin-top: 12px; }
+    .stat-item { text-align: center; }
+    .stat-label { font-size: 0.6rem; color: var(--color-gray-500); text-transform: uppercase; }
+    .stat-value { font-size: 0.8rem; font-weight: 600; }
+    .why-stock { margin-top: 12px; padding: 10px; background: var(--color-primary-light); border-radius: 6px; }
+    .why-stock h4 { font-size: 0.7rem; font-weight: 600; color: var(--color-primary); margin: 0 0 4px; }
+    .why-stock p { font-size: 0.75rem; color: var(--color-gray-700); margin: 0; line-height: 1.4; }
+    
     .collections { margin-top: 24px; }
     .collection-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .collection-tab { padding: 8px 16px; font-size: 0.875rem; font-weight: 500; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 50px; color: var(--color-gray-600); cursor: pointer; }
@@ -85,15 +113,17 @@
     .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
     @media (min-width: 640px) { .collection-grid { grid-template-columns: repeat(4, 1fr); } }
     .collection-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; cursor: pointer; transition: all 0.15s ease; }
-    .collection-item:hover { border-color: var(--color-gray-300); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transform: translateY(-1px); }
+    .collection-item:hover { border-color: var(--color-gray-300); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .collection-item.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
     .collection-item .instrument-icon { width: 48px; height: 48px; }
     .collection-item-ticker { font-weight: 600; font-size: 0.875rem; }
-    .collection-item-name { font-size: 0.75rem; color: var(--color-gray-500); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .collection-item-name { font-size: 0.75rem; color: var(--color-gray-500); text-align: center; }
     .collection-empty { grid-column: 1 / -1; padding: 32px 16px; text-align: center; color: var(--color-gray-500); font-size: 0.875rem; }
     .skeleton { background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 8px; }
     .skeleton-item { height: 100px; }
     @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    /* Form */
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 20px; }
@@ -104,676 +134,531 @@
     .input-with-prefix:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-light); }
     .input-prefix { padding: 12px 14px; background: var(--color-gray-50); border-right: 1px solid var(--color-gray-300); font-size: 0.875rem; color: var(--color-gray-700); min-width: 60px; display: flex; align-items: center; justify-content: center; }
     .input-with-prefix .form-input { border: none; box-shadow: none; }
-    .input-with-prefix .form-input:focus { box-shadow: none; }
     .frequency-pills { display: flex; gap: 8px; }
     .frequency-pill { flex: 1; text-align: center; }
     .frequency-pill input { display: none; }
     .frequency-pill label { display: block; padding: 12px 16px; font-size: 0.875rem; font-weight: 500; background: var(--color-white); border: 1px solid var(--color-gray-300); border-radius: 8px; color: var(--color-gray-600); cursor: pointer; }
-    .frequency-pill label:hover { border-color: var(--color-gray-400); background: var(--color-gray-50); }
+    .frequency-pill label:hover { border-color: var(--color-gray-400); }
     .frequency-pill input:checked + label { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
-    .submit-btn { width: 100%; padding: 14px 24px; font-size: 0.938rem; font-weight: 600; background: var(--color-primary); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    
+    /* Smart suggestion */
+    .smart-suggestion { display: none; margin-top: 8px; padding: 10px 12px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd; border-radius: 8px; font-size: 0.75rem; color: #0369a1; }
+    .smart-suggestion.visible { display: flex; align-items: center; gap: 6px; }
+    
+    /* Annual projection */
+    .annual-projection { display: none; margin-top: 12px; padding: 12px; background: var(--color-primary-light); border-radius: 8px; text-align: center; }
+    .annual-projection.visible { display: block; }
+    .annual-label { font-size: 0.7rem; color: var(--color-gray-600); }
+    .annual-value { font-size: 1.25rem; font-weight: 700; color: var(--color-primary); }
+    
+    /* Progress steps */
+    .progress-steps { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+    .progress-step { width: 40px; height: 4px; border-radius: 2px; background: var(--color-gray-200); transition: 0.3s; }
+    .progress-step.active, .progress-step.completed { background: var(--color-primary); }
+    
+    /* Submit button */
+    .submit-btn { width: 100%; padding: 14px 24px; font-size: 0.938rem; font-weight: 600; background: var(--color-primary); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; transition: 0.2s; }
     .submit-btn:hover:not(:disabled) { background: var(--color-primary-hover); }
     .submit-btn:disabled { background: var(--color-gray-300); color: var(--color-gray-500); cursor: not-allowed; }
+    .submit-btn.loading .btn-text { opacity: 0; }
+    .submit-btn .spinner { display: none; position: absolute; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .submit-btn.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
     .summary-panel { display: none; margin-top: 20px; padding: 16px 20px; background: var(--color-success-light); border: 1px solid var(--color-success); border-radius: 8px; }
     .summary-panel.visible { display: flex; align-items: flex-start; gap: 12px; }
     .summary-panel svg { flex-shrink: 0; color: var(--color-success); }
     .summary-panel p { font-size: 0.875rem; color: var(--color-gray-800); margin: 0; }
     .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
-    .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--color-gray-900); border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); color: var(--color-white); font-size: 0.875rem; transform: translateY(100px); opacity: 0; transition: all 300ms ease; }
+    .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--color-gray-900); border-radius: 8px; color: var(--color-white); font-size: 0.875rem; transform: translateY(100px); opacity: 0; transition: 0.3s; }
     .toast.visible { transform: translateY(0); opacity: 1; }
-    .toast svg { color: var(--color-success); }
-    
-    @media (max-width: 640px) {
-      .page-header { flex-direction: column; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
-      .uk-container { padding-left: 12px; padding-right: 12px; }
-      .card-body { padding: 16px; }
-      .subscription-option { padding: 16px; }
-      .subscription-icon { width: 36px; height: 36px; border-radius: 8px; }
-    }
-@media (max-width: 640px) {
-      /* Подборки: строго одна строка */
-      .collection-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 4 в ряд */
-        gap: 8px;
-        overflow: hidden; /* гарантированно без скроллов */
-      }
-
-      /* Оставляем только первые 4 инструмента */
-      .collection-item:nth-child(n+5) {
-        display: none;
-      }
-
-  /* Ужимаем карточки, чтобы точно влезли */
-      .collection-item {
-        padding: 8px;
-        gap: 6px;
-      }
-
-  /* Скрываем вторичный текст, если есть */
-      .instrument-description,
-      .collection-item-meta {
-        display: none;
-      }
-    }
-  
-    /* Selected instrument details */
-    .instrument-details { margin-top: 18px; }
-    .details-card { background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 14px 16px; }
-    .details-card-title { font-size: 0.813rem; font-weight: 600; color: var(--color-gray-700); margin-bottom: 10px; }
-    .stats-grid, .div-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
-    .stat-label { font-size: 0.688rem; color: var(--color-gray-500); }
-    .stat-value { font-size: 0.875rem; font-weight: 600; color: var(--color-gray-900); }
-    .stat-note { font-weight: 500; color: var(--color-gray-600); }
-
-    @media (max-width: 640px) {
-      /* keep details compact */
-      .details-card { padding: 12px; }
-      .stats-grid, .div-grid { grid-template-columns: 1fr 1fr; gap: 8px 10px; }
-    }
-
-  
-    @media (min-width: 641px) { .instrument-description { display: block; } }
-
-
-/* Mobile compact demo: exactly 4 collection cards in one row, no scroll */
-@media (max-width: 640px) {
-  #collection-panel {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    overflow: hidden;
-  }
-
-  #collection-panel > .collection-item:nth-child(n+5) {
-    display: none !important;
-  }
-
-  .collection-item {
-    padding: 8px;
-    gap: 6px;
-  }
-
-  /* Hide secondary text to keep cards compact */
-  .collection-item-name,
-  .instrument-description,
-  .collection-item-meta {
-    display: none !important;
-  }
-}
-
-
-    /* FIX: restore icons and active states (tabs, selected instruments, frequency) */
-    .collection-item svg,
-    .collection-item .instrument-icon {
-      display: inline-flex !important;
-      flex-shrink: 0;
-      width: auto;
-      height: auto;
-    }
-
-    .collection-item.selected {
-      background: var(--pl) !important;
-      border-color: var(--p) !important;
-    }
-
-    .collection-tab.active {
-      background: var(--pl) !important;
-      color: var(--p) !important;
-      border-color: var(--p) !important;
-    }
-
-    .frequency-pill input:checked + label {
-      background: var(--pl) !important;
-      border-color: var(--p) !important;
-      color: var(--p) !important;
-    }
-
-    /* Mobile: keep compact but do not hide icons */
-    @media (max-width: 640px) {
-      .collection-item-name { display: none !important; }
-      .instrument-description, .collection-item-meta { display: none !important; }
-    }
-
-  
-    /* FORCE SHOW purchase form (fix) */
-    #purchase-form,
-    #purchase-form .form-row,
-    #purchase-form .form-group,
-    #purchase-form .frequency-pills {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-
-    /* pills layout */
-    #purchase-form .frequency-pills {
-      display: flex !important;
-      gap: 8px;
-    }
-
-    #purchase-form .frequency-pill {
-      display: inline-flex !important;
-    }
-
-    section.custom-card {
-      display: block !important;
-    }
-
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
   </style>
 </head>
 <body>
-  <div class="uk-container uk-container-small uk-margin-top uk-margin-bottom">
-    <header class="page-header">
-      <div><h1>Auto-invest</h1><p class="subtitle">Schedule recurring purchases</p></div>
-      <div class="mock-badge"><span class="mock-badge-dot"></span>Mock data</div>
-    </header>
-    <div class="section-label">Select the type of subscription</div>
-    <div class="subscription-selector">
-      <label class="subscription-option" id="option-payments">
-        <input type="radio" name="subscription-type" value="payments">
-        <div class="subscription-icon">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2V18M6 6H12.5C13.163 6 13.7989 6.26339 14.2678 6.73223C14.7366 7.20107 15 7.83696 15 8.5C15 9.16304 14.7366 9.79893 14.2678 10.2678C13.7989 10.7366 13.163 11 12.5 11H6V6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 11H13C13.7956 11 14.5587 11.3161 15.1213 11.8787C15.6839 12.4413 16 13.2044 16 14C16 14.7956 15.6839 15.5587 15.1213 16.1213C14.5587 16.6839 13.7956 17 13 17H6V11Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="subscription-content"><h3>Recurring payments</h3><p>Choose the amount and frequency yourself to always have funds available for trades</p></div>
-      </label>
-      <label class="subscription-option selected" id="option-investments">
-        <input type="radio" name="subscription-type" value="investments" checked>
-        <div class="subscription-icon">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.83333 12.5L9.16667 8.33333L12.5 10.8333L17.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.1667 5H17.5V8.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="subscription-content"><h3>Recurring investments</h3><p>Set up regular purchases, and the system will automatically invest for you</p></div>
-      </label>
-    </div>
-    <section class="custom-card">
-      <div class="card-body">
-        <div id="warning-banner" class="warning-banner" role="alert">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 6V10M10 14H10.01M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <p id="warning-message"></p>
-        </div>
-        <div class="section-label">Select an asset to purchase</div>
-        <div class="instrument-selector">
-          <div class="search-input-wrapper">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <input type="text" id="search-input" class="search-input" placeholder="Enter ticker" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="dropdown">
-            <button type="button" id="clear-button" class="clear-button" aria-label="Clear selection">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <p class="helper-text">Only instruments eligible for recurring purchases are shown (mock).</p>
-          <div id="dropdown" class="dropdown" role="listbox"><ul id="dropdown-list" class="dropdown-list"></ul></div>
-        </div>
-        <div class="collections">
-          <div class="collection-tabs" role="tablist">
-            <button class="collection-tab active" data-collection="popular">Popular</button>
-            <button class="collection-tab" data-collection="recent">Recently searched</button>
-            <button class="collection-tab" data-collection="dividend">Dividend</button>
-            <button class="collection-tab" data-collection="tech">Tech</button>
-            <button class="collection-tab" data-collection="healthcare">Healthcare</button>
-          </div>
-          <div id="collection-panel" class="collection-grid"></div>
-        </div>
-        <!-- Selected instrument details (mock) -->
-        <div id="instrument-details" class="instrument-details" hidden>
-          <div class="uk-grid-small uk-child-width-1-2@s uk-margin-top" uk-grid>
-            <div>
-              <div class="details-card">
-                <div class="details-card-title">Statistics</div>
-                <div class="stats-grid">
-                  <div class="stat">
-                    <div class="stat-label">Sector</div>
-                    <div class="stat-value" id="stat-sector">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Popularity</div>
-                    <div class="stat-value" id="stat-popularity">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Risk</div>
-                    <div class="stat-value" id="stat-risk">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Type</div>
-                    <div class="stat-value" id="stat-type">—</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="details-card">
-                <div class="details-card-title">Dividends</div>
-                <div class="div-grid">
-                  <div class="stat">
-                    <div class="stat-label">Dividend tag</div>
-                    <div class="stat-value" id="div-tag">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Est. yield (mock)</div>
-                    <div class="stat-value" id="div-yield">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Next payout (mock)</div>
-                    <div class="stat-value" id="div-next">—</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-label">Note</div>
-                    <div class="stat-value stat-note">Indicative only</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-    <section class="custom-card uk-margin-top">
-      <div class="card-body">
-        <form id="purchase-form" novalidate>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Type of invest</label>
-              <select id="invest-type" class="form-input">
-                <option value="amount">Amount</option>
-                <option value="shares">Shares</option>
-              </select>
-              <p class="helper-text" id="invest-type-hint">Exact investment amount</p>
-            </div>
-            <div class="form-group">
-              <label for="amount" class="form-label" id="value-label">Amount</label>
-              <div class="input-with-prefix">
-                <span class="input-prefix" id="value-prefix">USD</span>
-                <input type="number" id="amount" class="form-input" placeholder="0.00" min="0.01" step="0.01">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">How often to repeat</label>
-            <div class="frequency-pills">
-              <div class="frequency-pill">
-                <input type="radio" id="freq-weekly" name="frequency" value="weekly">
-                <label for="freq-weekly">Once a week</label>
-              </div>
-              <div class="frequency-pill">
-                <input type="radio" id="freq-monthly" name="frequency" value="monthly" checked>
-                <label for="freq-monthly">Once a month</label>
-              </div>
-            </div>
-            <p class="helper-text" id="schedule-disclaimer">Recurring purchase will be executed on the first day of each month.</p>
-          </div>
-
-<button type="submit" id="submit-btn" class="submit-btn" disabled>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Create schedule
-          </button>
-        </form>
-        <div id="summary-panel" class="summary-panel">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <p id="summary-text"></p>
-        </div>
-      </div>
-    </section>
+<canvas id="confetti-canvas"></canvas>
+<div class="uk-container uk-container-small uk-margin-top uk-margin-bottom">
+  <header class="page-header">
+    <div><h1>Auto-invest</h1><p class="subtitle">Schedule recurring purchases</p></div>
+    <div class="mock-badge"><span class="mock-badge-dot"></span>Mock data</div>
+  </header>
+  <div class="section-label">Select the type of subscription</div>
+  <div class="subscription-selector">
+    <label class="subscription-option"><input type="radio" name="subscription-type" value="payments"><div class="subscription-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2V18M6 6H12.5C13.163 6 13.7989 6.26339 14.2678 6.73223C14.7366 7.20107 15 7.83696 15 8.5C15 9.16304 14.7366 9.79893 14.2678 10.2678C13.7989 10.7366 13.163 11 12.5 11H6V6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 11H13C13.7956 11 14.5587 11.3161 15.1213 11.8787C15.6839 12.4413 16 13.2044 16 14C16 14.7956 15.6839 15.5587 15.1213 16.1213C14.5587 16.6839 13.7956 17 13 17H6V11Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="subscription-content"><h3>Recurring payments</h3><p>Choose the amount and frequency yourself</p></div></label>
+    <label class="subscription-option selected"><input type="radio" name="subscription-type" value="investments" checked><div class="subscription-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.83333 12.5L9.16667 8.33333L12.5 10.8333L17.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.1667 5H17.5V8.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="subscription-content"><h3>Recurring investments</h3><p>Set up regular purchases automatically</p></div></label>
   </div>
-  <div class="toast-container"><div id="toast" class="toast"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toast-message"></span></div></div>
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.18.0/dist/js/uikit.min.js"></script>
-  <script>
-    // DATA
-    const instruments = [
-      { id: 1, ticker: 'AAPL', name: 'Apple Inc.', description: 'Consumer electronics', sector: 'Tech', popularityScore: 98, iconColor: '#A2AAAD' },
-      { id: 2, ticker: 'MSFT', name: 'Microsoft Corporation', description: 'Software & cloud', sector: 'Tech', popularityScore: 97, iconColor: '#00A4EF' },
-      { id: 3, ticker: 'GOOGL', name: 'Alphabet Inc.', description: 'Search & advertising', sector: 'Tech', popularityScore: 95, iconColor: '#4285F4' },
-      { id: 4, ticker: 'AMZN', name: 'Amazon.com Inc.', description: 'E-commerce & cloud', sector: 'Tech', popularityScore: 96, iconColor: '#FF9900' },
-      { id: 5, ticker: 'NVDA', name: 'NVIDIA Corporation', description: 'Graphics & AI chips', sector: 'Tech', popularityScore: 94, iconColor: '#76B900' },
-      { id: 6, ticker: 'META', name: 'Meta Platforms Inc.', description: 'Social media & VR', sector: 'Tech', popularityScore: 89, iconColor: '#0668E1' },
-      { id: 7, ticker: 'TSLA', name: 'Tesla Inc.', description: 'Electric vehicles', sector: 'Tech', popularityScore: 92, iconColor: '#CC0000' },
-      { id: 8, ticker: 'BRK.B', name: 'Berkshire Hathaway', description: 'Diversified holdings', sector: 'Finance', popularityScore: 88, iconColor: '#2E3192' },
-      { id: 9, ticker: 'JNJ', name: 'Johnson & Johnson', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 85, iconColor: '#D51900', tags: ['Dividend'] },
-      { id: 10, ticker: 'V', name: 'Visa Inc.', description: 'Payment processing', sector: 'Finance', popularityScore: 86, iconColor: '#1A1F71' },
-      { id: 11, ticker: 'PG', name: 'Procter & Gamble', description: 'Consumer goods', sector: 'Consumer', popularityScore: 82, iconColor: '#003DA5', tags: ['Dividend'] },
-      { id: 12, ticker: 'UNH', name: 'UnitedHealth Group', description: 'Health insurance', sector: 'Healthcare', popularityScore: 84, iconColor: '#002677' },
-      { id: 13, ticker: 'HD', name: 'Home Depot Inc.', description: 'Home improvement', sector: 'Consumer', popularityScore: 80, iconColor: '#F96302', tags: ['Dividend'] },
-      { id: 14, ticker: 'MA', name: 'Mastercard Inc.', description: 'Payment technology', sector: 'Finance', popularityScore: 83, iconColor: '#EB001B' },
-      { id: 15, ticker: 'DIS', name: 'Walt Disney Company', description: 'Entertainment', sector: 'Consumer', popularityScore: 81, iconColor: '#113CCF' },
-      { id: 16, ticker: 'PYPL', name: 'PayPal Holdings', description: 'Digital payments', sector: 'Finance', popularityScore: 75, iconColor: '#003087' },
-      { id: 17, ticker: 'NFLX', name: 'Netflix Inc.', description: 'Streaming', sector: 'Tech', popularityScore: 79, iconColor: '#E50914' },
-      { id: 18, ticker: 'ADBE', name: 'Adobe Inc.', description: 'Creative software', sector: 'Tech', popularityScore: 78, iconColor: '#FF0000' },
-      { id: 19, ticker: 'CRM', name: 'Salesforce Inc.', description: 'Cloud CRM', sector: 'Tech', popularityScore: 76, iconColor: '#00A1E0' },
-      { id: 20, ticker: 'INTC', name: 'Intel Corporation', description: 'Semiconductors', sector: 'Tech', popularityScore: 72, iconColor: '#0071C5', tags: ['Dividend'] },
-      { id: 21, ticker: 'CSCO', name: 'Cisco Systems', description: 'Networking', sector: 'Tech', popularityScore: 70, iconColor: '#1BA0D7', tags: ['Dividend'] },
-      { id: 22, ticker: 'PFE', name: 'Pfizer Inc.', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 77, iconColor: '#0093D0', tags: ['Dividend'] },
-      { id: 23, ticker: 'MRK', name: 'Merck & Co.', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 74, iconColor: '#00857C', tags: ['Dividend'] },
-      { id: 24, ticker: 'ABBV', name: 'AbbVie Inc.', description: 'Biopharmaceuticals', sector: 'Healthcare', popularityScore: 73, iconColor: '#071D49', tags: ['Dividend'] },
-      { id: 25, ticker: 'TMO', name: 'Thermo Fisher Scientific', description: 'Lab equipment', sector: 'Healthcare', popularityScore: 71, iconColor: '#003B71' },
-      { id: 26, ticker: 'ABT', name: 'Abbott Laboratories', description: 'Medical devices', sector: 'Healthcare', popularityScore: 69, iconColor: '#005CAB', tags: ['Dividend'] },
-      { id: 27, ticker: 'LLY', name: 'Eli Lilly and Company', description: 'Pharmaceuticals', sector: 'Healthcare', popularityScore: 87, iconColor: '#D52B1E' },
-      { id: 28, ticker: 'KO', name: 'Coca-Cola Company', description: 'Beverages', sector: 'Consumer', popularityScore: 68, iconColor: '#F40009', tags: ['Dividend'] },
-      { id: 29, ticker: 'PEP', name: 'PepsiCo Inc.', description: 'Beverages & snacks', sector: 'Consumer', popularityScore: 67, iconColor: '#004B93', tags: ['Dividend'] },
-      { id: 30, ticker: 'COST', name: 'Costco Wholesale', description: 'Warehouse retail', sector: 'Consumer', popularityScore: 66, iconColor: '#E31837' },
-      { id: 31, ticker: 'WMT', name: 'Walmart Inc.', description: 'Retail', sector: 'Consumer', popularityScore: 65, iconColor: '#0071CE', tags: ['Dividend'] },
-      { id: 32, ticker: 'NKE', name: 'Nike Inc.', description: 'Athletic apparel', sector: 'Consumer', popularityScore: 64, iconColor: '#111111' },
-      { id: 33, ticker: 'MCD', name: "McDonald's Corporation", description: 'Fast food', sector: 'Consumer', popularityScore: 63, iconColor: '#FFC72C', tags: ['Dividend'] },
-      { id: 34, ticker: 'BA', name: 'Boeing Company', description: 'Aerospace', sector: 'Industrial', popularityScore: 62, iconColor: '#0033A0' },
-      { id: 35, ticker: 'CAT', name: 'Caterpillar Inc.', description: 'Construction', sector: 'Industrial', popularityScore: 61, iconColor: '#FFCD11', tags: ['Dividend'] },
-      { id: 36, ticker: 'GE', name: 'General Electric', description: 'Industrial', sector: 'Industrial', popularityScore: 60, iconColor: '#3253DC' },
-      { id: 37, ticker: 'IBM', name: 'IBM Corporation', description: 'Enterprise tech', sector: 'Tech', popularityScore: 59, iconColor: '#054ADA', tags: ['Dividend'] },
-      { id: 38, ticker: 'ORCL', name: 'Oracle Corporation', description: 'Database & cloud', sector: 'Tech', popularityScore: 58, iconColor: '#F80000' },
-      { id: 39, ticker: 'AMD', name: 'Advanced Micro Devices', description: 'Semiconductors', sector: 'Tech', popularityScore: 90, iconColor: '#ED1C24' },
-      { id: 40, ticker: 'QCOM', name: 'Qualcomm Inc.', description: 'Wireless tech', sector: 'Tech', popularityScore: 57, iconColor: '#3253DC', tags: ['Dividend'] },
-      { id: 41, ticker: 'TXN', name: 'Texas Instruments', description: 'Semiconductors', sector: 'Tech', popularityScore: 56, iconColor: '#CC0000', tags: ['Dividend'] },
-      { id: 42, ticker: 'AVGO', name: 'Broadcom Inc.', description: 'Semiconductors', sector: 'Tech', popularityScore: 55, iconColor: '#CC092F', tags: ['Dividend'] },
-      { id: 43, ticker: 'SPY', name: 'SPDR S&P 500 ETF', description: 'S&P 500 index', sector: 'ETF', popularityScore: 99, iconColor: '#006747', isETF: true },
-      { id: 44, ticker: 'QQQ', name: 'Invesco QQQ Trust', description: 'Nasdaq-100 index', sector: 'ETF', popularityScore: 93, iconColor: '#00A3E0', isETF: true },
-      { id: 45, ticker: 'VTI', name: 'Vanguard Total Stock ETF', description: 'Total US market', sector: 'ETF', popularityScore: 91, iconColor: '#96151D', isETF: true },
-      { id: 46, ticker: 'VOO', name: 'Vanguard S&P 500 ETF', description: 'S&P 500 index', sector: 'ETF', popularityScore: 90, iconColor: '#96151D', isETF: true },
-      { id: 47, ticker: 'SCHD', name: 'Schwab US Dividend ETF', description: 'High dividend', sector: 'ETF', popularityScore: 85, iconColor: '#00A0DF', isETF: true, tags: ['Dividend'] },
-      { id: 48, ticker: 'JPM', name: 'JPMorgan Chase & Co.', description: 'Banking', sector: 'Finance', popularityScore: 83, iconColor: '#117ACA', tags: ['Dividend'] },
-      { id: 49, ticker: 'BAC', name: 'Bank of America', description: 'Banking', sector: 'Finance', popularityScore: 75, iconColor: '#012169', tags: ['Dividend'] },
-      { id: 50, ticker: 'GS', name: 'Goldman Sachs Group', description: 'Investment banking', sector: 'Finance', popularityScore: 70, iconColor: '#7399C6', tags: ['Dividend'] }
-    ];
+  <section class="custom-card">
+    <div class="card-body">
+      <div class="progress-steps"><div class="progress-step" id="step1"></div><div class="progress-step" id="step2"></div><div class="progress-step" id="step3"></div></div>
+      <div id="warning-banner" class="warning-banner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 6V10M10 14H10.01M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p id="warning-message"></p></div>
+      <div class="section-label">Select an asset to purchase</div>
+      <div class="instrument-selector">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Ticker, sector, list..." autocomplete="off">
+          <button type="button" id="clear-button" class="clear-button"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <p class="helper-text">Search by ticker, name, sector or list (popular, dividend, tech...)</p>
+        <div id="dropdown" class="dropdown"><ul id="dropdown-list" class="dropdown-list"></ul></div>
+      </div>
+      <div id="selected-card" class="selected-card">
+        <div class="selected-header">
+          <div id="sel-icon" class="selected-icon"></div>
+          <div class="selected-main"><div class="selected-title"><h3 id="sel-ticker"></h3><span id="sel-name"></span></div><div class="selected-price-row"><span id="sel-price" class="selected-price"></span><span id="sel-change" class="selected-change"></span></div></div>
+          <svg id="mini-chart" class="mini-chart" viewBox="0 0 100 40"></svg>
+        </div>
+        <div class="selected-stats"><div class="stat-item"><div class="stat-label">MCap</div><div class="stat-value" id="stat-mcap"></div></div><div class="stat-item"><div class="stat-label">P/E</div><div class="stat-value" id="stat-pe"></div></div><div class="stat-item"><div class="stat-label">Div</div><div class="stat-value" id="stat-div"></div></div><div class="stat-item"><div class="stat-label">52H</div><div class="stat-value" id="stat-high"></div></div></div>
+        <div class="why-stock"><h4>💡 Why this stock?</h4><p id="why-text"></p></div>
+      </div>
+      <div class="collections">
+        <div class="collection-tabs"><button class="collection-tab active" data-collection="popular">Popular</button><button class="collection-tab" data-collection="recent">Recently searched</button><button class="collection-tab" data-collection="dividend">Dividend</button><button class="collection-tab" data-collection="tech">Tech</button><button class="collection-tab" data-collection="healthcare">Healthcare</button></div>
+        <div id="collection-panel" class="collection-grid"></div>
+      </div>
+    </div>
+  </section>
+  <section class="custom-card uk-margin-top">
+    <div class="card-body">
+      <form id="purchase-form" novalidate>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Type of invest</label><select id="invest-type" class="form-input"><option value="amount">Amount</option><option value="shares">Shares</option></select><p class="helper-text" id="invest-type-hint">Exact investment amount</p></div>
+          <div class="form-group"><label class="form-label" id="value-label">Amount</label><div class="input-with-prefix"><span class="input-prefix" id="value-prefix">USD</span><input type="number" id="amount" class="form-input" placeholder="0.00" min="0.01" step="0.01"></div><div id="smart-suggestion" class="smart-suggestion"><svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 11a1 1 0 110-2 1 1 0 010 2zm1-3H7V5h2v4z"/></svg><span id="suggestion-text"></span></div></div>
+        </div>
+        <div class="form-group"><label class="form-label">How often to repeat</label><div class="frequency-pills"><div class="frequency-pill"><input type="radio" id="freq-weekly" name="frequency" value="weekly"><label for="freq-weekly">Once a week</label></div><div class="frequency-pill"><input type="radio" id="freq-monthly" name="frequency" value="monthly" checked><label for="freq-monthly">Once a month</label></div></div><p class="helper-text" id="freq-hint">On the selected day each month</p></div>
+        <div class="form-row">
+          <div class="form-group" id="day-selector" style="display:none"><label class="form-label">Day of week</label><select id="weekday" class="form-input"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
+          <div class="form-group" id="monthday-selector"><label class="form-label">Day of month</label><select id="monthday" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">Start date</label><input type="date" id="start-date" class="form-input"></div>
+        </div>
+        <div id="annual-projection" class="annual-projection"><div class="annual-label">Estimated annual investment</div><div class="annual-value" id="annual-value">$0</div></div>
+        <button type="submit" id="submit-btn" class="submit-btn" disabled><span class="btn-text"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Create schedule</span><div class="spinner"></div></button>
+      </form>
+      <div id="summary-panel" class="summary-panel"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p id="summary-text"></p></div>
+    </div>
+  </section>
+</div>
+<div class="toast-container"><div id="toast" class="toast"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toast-message"></span></div></div>
+<script>
+// 20 INSTRUMENTS with extended data
+var instruments = [
+  {id:1,ticker:'AAPL',name:'Apple Inc.',sector:'Tech',lists:['popular','tech'],color:'#A2AAAD',price:178.52,change:1.33,mcap:'2.8T',pe:28,div:'0.5%',high:198,chart:[30,25,35,28,32,38,35,40,36,38],why:'Strong ecosystem with loyal customers. Consistent dividend growth.'},
+  {id:2,ticker:'MSFT',name:'Microsoft',sector:'Tech',lists:['popular','tech'],color:'#00A4EF',price:378.91,change:1.22,mcap:'2.8T',pe:35,div:'0.7%',high:384,chart:[20,25,22,30,28,35,32,38,40,42],why:'Cloud leader with Azure. AI integration across products.'},
+  {id:3,ticker:'GOOGL',name:'Alphabet',sector:'Tech',lists:['popular','tech'],color:'#4285F4',price:141.23,change:-1.31,mcap:'1.8T',pe:25,div:'0%',high:153,chart:[35,38,32,30,28,25,30,28,26,28],why:'Dominates digital advertising. YouTube diversification.'},
+  {id:4,ticker:'AMZN',name:'Amazon',sector:'Tech',lists:['popular','tech'],color:'#FF9900',price:178.25,change:1.97,mcap:'1.9T',pe:62,div:'0%',high:189,chart:[25,28,30,32,28,35,38,40,42,45],why:'AWS cloud leader. E-commerce showing momentum.'},
+  {id:5,ticker:'NVDA',name:'NVIDIA',sector:'Tech',lists:['popular','tech'],color:'#76B900',price:875.28,change:3.02,mcap:'2.2T',pe:65,div:'0%',high:974,chart:[15,20,25,35,40,50,55,60,58,65],why:'AI revolution runs on NVIDIA chips.'},
+  {id:6,ticker:'META',name:'Meta',sector:'Tech',lists:['popular','tech'],color:'#0668E1',price:505.95,change:1.65,mcap:'1.3T',pe:29,div:'0.4%',high:542,chart:[30,28,35,40,38,45,42,48,50,52],why:'Reels competing well. Margins improved.'},
+  {id:7,ticker:'TSLA',name:'Tesla',sector:'Tech',lists:['popular','tech'],color:'#CC0000',price:175.34,change:-3.13,mcap:'558B',pe:42,div:'0%',high:299,chart:[50,45,40,38,42,35,30,32,28,25],why:'EV market leader with strong brand.'},
+  {id:8,ticker:'JNJ',name:'J&J',sector:'Healthcare',lists:['dividend','healthcare'],color:'#D51900',price:156.78,change:0.57,mcap:'378B',pe:15,div:'3.0%',high:175,chart:[40,38,42,40,38,36,38,37,39,38],why:'62 consecutive years of dividend increases.'},
+  {id:9,ticker:'UNH',name:'UnitedHealth',sector:'Healthcare',lists:['healthcare'],color:'#002677',price:527.89,change:-0.65,mcap:'486B',pe:21,div:'1.4%',high:554,chart:[45,48,46,50,48,45,47,44,46,43],why:'Largest US health insurer. Optum diversification.'},
+  {id:10,ticker:'LLY',name:'Eli Lilly',sector:'Healthcare',lists:['popular','healthcare'],color:'#D52B1E',price:782.45,change:2.04,mcap:'742B',pe:118,div:'0.7%',high:804,chart:[20,25,30,38,45,52,58,62,68,75],why:'Weight loss drugs are blockbusters.'},
+  {id:11,ticker:'PFE',name:'Pfizer',sector:'Healthcare',lists:['dividend','healthcare'],color:'#0093D0',price:27.89,change:0.83,mcap:'158B',pe:13,div:'5.8%',high:37,chart:[45,40,38,35,32,30,28,30,27,28],why:'High dividend yield. Strong pipeline.'},
+  {id:12,ticker:'V',name:'Visa',sector:'Finance',lists:['popular','finance'],color:'#1A1F71',price:279.45,change:0.76,mcap:'575B',pe:30,div:'0.8%',high:290,chart:[32,35,33,38,40,42,40,44,43,45],why:'Payments duopoly. Benefits from digital shift.'},
+  {id:13,ticker:'JPM',name:'JPMorgan',sector:'Finance',lists:['dividend','finance'],color:'#117ACA',price:198.67,change:1.19,mcap:'571B',pe:12,div:'2.3%',high:205,chart:[35,38,42,45,48,50,52,55,58,60],why:'Best-in-class bank. Well-managed.'},
+  {id:14,ticker:'MA',name:'Mastercard',sector:'Finance',lists:['popular','finance'],color:'#EB001B',price:458.23,change:1.25,mcap:'428B',pe:36,div:'0.6%',high:490,chart:[30,33,35,38,40,43,45,48,47,50],why:'Global payments network with high margins.'},
+  {id:15,ticker:'KO',name:'Coca-Cola',sector:'Consumer',lists:['dividend','consumer'],color:'#F40009',price:60.23,change:0.57,mcap:'260B',pe:23,div:'3.1%',high:64,chart:[40,42,41,44,43,45,44,46,45,47],why:'62 years of dividend increases. Global moat.'},
+  {id:16,ticker:'PG',name:'P&G',sector:'Consumer',lists:['dividend','consumer'],color:'#003DA5',price:162.34,change:0.28,mcap:'383B',pe:26,div:'2.4%',high:168,chart:[38,40,39,42,41,43,42,44,43,45],why:'68 years of dividend increases. Essential brands.'},
+  {id:17,ticker:'SPY',name:'S&P 500 ETF',sector:'ETF',lists:['popular','etf'],color:'#006747',price:502.34,change:0.69,mcap:'480B',pe:23,div:'1.4%',high:524,chart:[35,38,40,42,45,48,50,52,54,56],why:'Instant diversification. Low fees.',isETF:true},
+  {id:18,ticker:'QQQ',name:'Nasdaq ETF',sector:'ETF',lists:['popular','etf'],color:'#00A3E0',price:438.67,change:1.31,mcap:'245B',pe:33,div:'0.5%',high:468,chart:[30,35,38,42,45,50,52,55,58,62],why:'Tech-heavy exposure for growth.',isETF:true},
+  {id:19,ticker:'SCHD',name:'Dividend ETF',sector:'ETF',lists:['dividend','etf'],color:'#00A0DF',price:78.45,change:0.72,mcap:'54B',pe:16,div:'3.4%',high:82,chart:[38,40,42,41,44,43,45,44,46,45],why:'Quality dividend stocks. Income focus.',isETF:true},
+  {id:20,ticker:'AMD',name:'AMD',sector:'Tech',lists:['popular','tech'],color:'#ED1C24',price:178.56,change:3.95,mcap:'289B',pe:246,div:'0%',high:227,chart:[25,30,35,40,38,45,50,48,55,60],why:'Taking server share from Intel. AI chips.'}
+];
 
-    // STATE
-    const state = {
-      selectedInstrument: null,
-      recentlySearched: JSON.parse(localStorage.getItem('recentlySearched') || '[]'),
-      activeCollection: 'popular',
-      dropdownOpen: false,
-      highlightedIndex: -1,
-      filteredInstruments: [...instruments],
-      isLoading: true,
-      investType: 'amount'
-    };
+var state = {
+  selected: null,
+  recent: JSON.parse(localStorage.getItem('recent') || '[]'),
+  activeCol: 'popular',
+  ddOpen: false,
+  hlIdx: -1,
+  filtered: instruments.slice(),
+  loading: true,
+  invType: 'amount',
+  firstSchedule: !localStorage.getItem('hasSchedule')
+};
 
-    // DOM ELEMENTS
-    const el = {
-      searchInput: document.getElementById('search-input'),
-      clearButton: document.getElementById('clear-button'),
-      dropdown: document.getElementById('dropdown'),
-      dropdownList: document.getElementById('dropdown-list'),
-      collectionPanel: document.getElementById('collection-panel'),
-      collectionTabs: document.querySelectorAll('.collection-tab'),
-      warningBanner: document.getElementById('warning-banner'),
-      warningMessage: document.getElementById('warning-message'),
-      purchaseForm: document.getElementById('purchase-form'),
-      amountInput: document.getElementById('amount'),
-      investType: document.getElementById('invest-type'),
-      investTypeHint: document.getElementById('invest-type-hint'),
-      valueLabel: document.getElementById('value-label'),
-      valuePrefix: document.getElementById('value-prefix'),
-      freqWeekly: document.getElementById('freq-weekly'),
-      freqMonthly: document.getElementById('freq-monthly'),
-      submitBtn: document.getElementById('submit-btn'),
-      summaryPanel: document.getElementById('summary-panel'),
-      summaryText: document.getElementById('summary-text'),
-      toast: document.getElementById('toast'),
-      toastMessage: document.getElementById('toast-message'),
-      scheduleDisclaimer: document.getElementById('schedule-disclaimer'),
-      instrumentDetails: document.getElementById('instrument-details'),
-      statSector: document.getElementById('stat-sector'),
-      statPopularity: document.getElementById('stat-popularity'),
-      statRisk: document.getElementById('stat-risk'),
-      statType: document.getElementById('stat-type'),
-      divTag: document.getElementById('div-tag'),
-      divYield: document.getElementById('div-yield'),
-      divNext: document.getElementById('div-next')
-    };
+var $ = function(id) { return document.getElementById(id); };
 
-    // UTILITIES
-    function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-    function highlightMatch(t, q) { if (!q) return escapeHtml(t); return escapeHtml(t).replace(new RegExp(`(${escapeHtml(q)})`, 'gi'), '<span class="highlight">$1</span>'); }
-    function getInitials(ticker) { return ticker.slice(0, 2).toUpperCase(); }
-    function genIcon(i) { return `<svg class="instrument-icon" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="${i.iconColor}"/><text x="20" y="20" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">${getInitials(i.ticker)}</text></svg>`; }
-    function formatDate(d) { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-    function showToast(m) { el.toastMessage.textContent = m; el.toast.classList.add('visible'); setTimeout(() => el.toast.classList.remove('visible'), 3000); }
-    function saveRecent() { localStorage.setItem('recentlySearched', JSON.stringify(state.recentlySearched)); }
-    function addToRecent(i) { state.recentlySearched = state.recentlySearched.filter(x => x.id !== i.id); state.recentlySearched.unshift(i); if (state.recentlySearched.length > 8) state.recentlySearched = state.recentlySearched.slice(0, 8); saveRecent(); }
-    function mockRisk(i) {
-      if (i.isETF) return 'Low';
-      if (i.sector === 'Tech') return 'Medium';
-      if (i.sector === 'Industrial') return 'Medium';
-      return 'Low';
-    }
-    function mockDividendYield(i) {
-      if (i.tags?.includes('Dividend')) return (2.2 + (100 - i.popularityScore) * 0.03).toFixed(1) + '%';
-      return '—';
-    }
-    function mockNextPayout(i) {
-      if (!i.tags?.includes('Dividend') && !i.isETF) return '—';
-      const d = new Date();
-      d.setDate(d.getDate() + 21);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
+function init() {
+  // Init monthday select
+  for (var i = 1; i <= 28; i++) {
+    var o = document.createElement('option');
+    o.value = i; o.textContent = i;
+    $('monthday').appendChild(o);
+  }
+  // Init start date
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  $('start-date').valueAsDate = tomorrow;
+  $('start-date').min = tomorrow.toISOString().split('T')[0];
+  
+  bindEvents();
+  renderCollection();
+  updateProgress();
+  setTimeout(function() { state.loading = false; renderCollection(); }, 600);
+}
 
+function icon(inst, size) {
+  size = size || 40;
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><rect width="'+size+'" height="'+size+'" rx="'+(size/5)+'" fill="'+inst.color+'"/><text x="'+(size/2)+'" y="'+(size/2)+'" text-anchor="middle" dominant-baseline="central" fill="white" font-size="'+(size*0.35)+'" font-weight="600">'+inst.ticker.slice(0,2)+'</text></svg>';
+}
 
-    // UI RENDER
-    function renderDropdownItem(i, idx, q = '') {
-      const isH = idx === state.highlightedIndex, isS = state.selectedInstrument?.id === i.id;
-      const tag = i.isETF ? '<span class="micro-tag etf">ETF</span>' : i.popularityScore >= 90 ? '<span class="micro-tag">Popular</span>' : '';
-      return `<li class="dropdown-item ${isH ? 'highlighted' : ''} ${isS ? 'selected' : ''}" role="option" data-index="${idx}" data-id="${i.id}">${genIcon(i)}<div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">${highlightMatch(i.ticker, q)}</span><span class="instrument-name">${highlightMatch(i.name, q)}</span>${tag}</div><div class="instrument-description">${escapeHtml(i.description)}</div></div></li>`;
-    }
+function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-    function renderDropdown() {
-      const q = el.searchInput.value.trim();
-      if (state.filteredInstruments.length === 0) {
-        el.dropdownList.innerHTML = `<li class="dropdown-empty"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M27.5 27.5L23.125 23.125M25.8333 17.9167C25.8333 22.289 22.289 25.8333 17.9167 25.8333C13.5444 25.8333 10 22.289 10 17.9167C10 13.5444 13.5444 10 17.9167 10C22.289 10 25.8333 13.5444 25.8333 17.9167Z" stroke="#d1d5db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p>No instruments found</p></li>`;
-      } else {
-        el.dropdownList.innerHTML = state.filteredInstruments.map((i, idx) => renderDropdownItem(i, idx, q)).join('');
-      }
-    }
+function hl(t, q) {
+  if (!q) return esc(t);
+  return esc(t).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<span class="highlight">$1</span>');
+}
 
-    function renderCollectionSkeleton() { return Array(8).fill(0).map(() => `<div class="collection-item skeleton skeleton-item"></div>`).join(''); }
+function toast(m) {
+  $('toast-message').textContent = m;
+  $('toast').classList.add('visible');
+  setTimeout(function() { $('toast').classList.remove('visible'); }, 3000);
+}
 
-    function renderCollectionItem(i) {
-      const isS = state.selectedInstrument?.id === i.id;
-      return `<button class="collection-item ${isS ? 'selected' : ''}" data-id="${i.id}">${genIcon(i)}<span class="collection-item-ticker">${escapeHtml(i.ticker)}</span><span class="collection-item-name">${escapeHtml(i.name)}</span></button>`;
-    }
+function confetti() {
+  var c = $('confetti-canvas'), ctx = c.getContext('2d');
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  var p = [], cols = ['#00B050','#FFD700','#FF6B6B','#4ECDC4','#45B7D1'];
+  for (var i = 0; i < 100; i++) {
+    p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8});
+  }
+  var f = 0;
+  function anim() {
+    ctx.clearRect(0,0,c.width,c.height);
+    p.forEach(function(o){
+      o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs;
+      ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);
+      ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);
+      ctx.restore();
+    });
+    if(++f<100)requestAnimationFrame(anim);
+    else ctx.clearRect(0,0,c.width,c.height);
+  }
+  anim();
+}
 
-    function renderCollection() {
-      if (state.isLoading) { el.collectionPanel.innerHTML = renderCollectionSkeleton(); return; }
-      let items = [];
-      switch (state.activeCollection) {
-        case 'popular': items = [...instruments].sort((a, b) => b.popularityScore - a.popularityScore).slice(0, 8); break;
-        case 'recent': items = state.recentlySearched; break;
-        case 'dividend': items = instruments.filter(i => i.tags?.includes('Dividend')).slice(0, 8); break;
-        case 'tech': items = instruments.filter(i => i.sector === 'Tech').slice(0, 8); break;
-        case 'healthcare': items = instruments.filter(i => i.sector === 'Healthcare').slice(0, 8); break;
-      }
-      el.collectionPanel.innerHTML = items.length === 0 ? `<div class="collection-empty">${state.activeCollection === 'recent' ? 'No recently searched instruments.' : 'No instruments.'}</div>` : items.map(i => renderCollectionItem(i)).join('');
-    }
+function drawChart(data, positive) {
+  var svg = $('mini-chart'), col = positive ? '#00B050' : '#ef4444';
+  var pts = data.map(function(v,i){return (i*11)+','+(40-v*.6);}).join(' ');
+  svg.innerHTML = '<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="2"/><linearGradient id="cg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:'+col+';stop-opacity:.3"/><stop offset="100%" style="stop-color:'+col+';stop-opacity:0"/></linearGradient><polygon points="0,40 '+pts+' 99,40" fill="url(#cg)"/>';
+}
 
-    function updateSelectedDisplay() {
-      if (state.selectedInstrument) { el.searchInput.value = `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`; el.clearButton.classList.add('visible'); }
-      else { el.searchInput.value = ''; el.clearButton.classList.remove('visible'); }
-    }
+function updateProgress() {
+  var hasInst = state.selected !== null;
+  var hasAmt = parseFloat($('amount').value) > 0;
+  var hasDate = $('start-date').value !== '';
+  $('step1').className = 'progress-step' + (hasInst ? ' completed' : '');
+  $('step2').className = 'progress-step' + (hasAmt ? ' completed' : (hasInst ? ' active' : ''));
+  $('step3').className = 'progress-step' + ((hasDate && hasAmt) ? ' completed' : (hasAmt ? ' active' : ''));
+}
 
-    function updateWarning() {
-      const q = el.searchInput.value.trim().toUpperCase();
-      if (q.includes('TSLA') || state.selectedInstrument?.ticker === 'TSLA') { el.warningMessage.textContent = 'This instrument is not eligible for auto-investing (mock rule).'; el.warningBanner.classList.add('visible'); }
-      else { el.warningBanner.classList.remove('visible'); }
-    }
+function showSelectedCard(inst) {
+  $('sel-icon').innerHTML = icon(inst, 48);
+  $('sel-ticker').textContent = inst.ticker;
+  $('sel-name').textContent = inst.name;
+  $('sel-price').textContent = '$' + inst.price.toFixed(2);
+  var changeEl = $('sel-change');
+  var pos = inst.change >= 0;
+  changeEl.className = 'selected-change ' + (pos ? 'positive' : 'negative');
+  changeEl.textContent = (pos ? '↑' : '↓') + Math.abs(inst.change).toFixed(1) + '%';
+  $('stat-mcap').textContent = inst.mcap;
+  $('stat-pe').textContent = inst.pe;
+  $('stat-div').textContent = inst.div;
+  $('stat-high').textContent = '$' + inst.high;
+  $('why-text').textContent = inst.why;
+  drawChart(inst.chart, pos);
+  $('selected-card').classList.add('visible');
+}
 
-    function validateForm() {
-      const hasInstrument = !!state.selectedInstrument;
-      const val = parseFloat(el.amountInput.value || '0');
-      const isShares = el.investType.value === 'shares';
-      const validValue = isShares ? (val > 0) : (val >= 0.01);
-      el.submitBtn.disabled = !(hasInstrument && validValue);
-    }
+function hideSelectedCard() { $('selected-card').classList.remove('visible'); }
 
+function updateSmartSuggestion() {
+  var isW = $('freq-weekly').checked;
+  $('suggestion-text').textContent = isW ? 'Most users invest $50-200 weekly' : 'Most users invest $200-500 monthly';
+  $('smart-suggestion').classList.add('visible');
+}
+
+function updateAnnualProjection() {
+  var v = parseFloat($('amount').value);
+  if (!v || v <= 0) { $('annual-projection').classList.remove('visible'); return; }
+  var annual = $('freq-weekly').checked ? v * 52 : v * 12;
+  if (state.invType === 'shares' && state.selected) annual *= state.selected.price;
+  $('annual-value').textContent = '$' + annual.toLocaleString('en-US', {maximumFractionDigits: 0});
+  $('annual-projection').classList.add('visible');
+}
+
+function renderDropdownItem(inst, idx, q) {
+  var isH = idx === state.hlIdx, isS = state.selected && state.selected.id === inst.id;
+  var tags = inst.isETF ? '<span class="micro-tag etf">ETF</span>' : '';
+  tags += '<span class="micro-tag sector">' + inst.sector + '</span>';
+  var lists = inst.lists.join(', ');
+  return '<li class="dropdown-item' + (isH ? ' highlighted' : '') + (isS ? ' selected' : '') + '" data-id="' + inst.id + '">' + icon(inst) + '<div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">' + hl(inst.ticker, q) + '</span><span class="instrument-name">' + hl(inst.name, q) + '</span>' + tags + '</div><div class="instrument-meta">' + lists + '</div></div></li>';
+}
+
+function renderDropdown() {
+  var q = $('search-input').value.trim();
+  if (state.filtered.length === 0) {
+    $('dropdown-list').innerHTML = '<li class="dropdown-empty"><p>No instruments found</p></li>';
+  } else {
+    $('dropdown-list').innerHTML = state.filtered.map(function(inst, idx) { return renderDropdownItem(inst, idx, q); }).join('');
+  }
+}
+
+function renderCollectionItem(inst) {
+  var isS = state.selected && state.selected.id === inst.id;
+  return '<button class="collection-item' + (isS ? ' selected' : '') + '" data-id="' + inst.id + '">' + icon(inst, 48) + '<span class="collection-item-ticker">' + esc(inst.ticker) + '</span><span class="collection-item-name">' + esc(inst.name) + '</span></button>';
+}
+
+function renderCollection() {
+  if (state.loading) {
+    $('collection-panel').innerHTML = Array(8).fill('<div class="collection-item skeleton skeleton-item"></div>').join('');
+    return;
+  }
+  var items = [];
+  switch (state.activeCol) {
+    case 'popular': items = instruments.filter(function(i){return i.lists.indexOf('popular')>=0;}).slice(0,8); break;
+    case 'recent': items = state.recent; break;
+    case 'dividend': items = instruments.filter(function(i){return i.lists.indexOf('dividend')>=0;}).slice(0,8); break;
+    case 'tech': items = instruments.filter(function(i){return i.sector==='Tech';}).slice(0,8); break;
+    case 'healthcare': items = instruments.filter(function(i){return i.sector==='Healthcare';}).slice(0,8); break;
+  }
+  $('collection-panel').innerHTML = items.length === 0 
+    ? '<div class="collection-empty">' + (state.activeCol === 'recent' ? 'No recent searches.' : 'No items.') + '</div>'
+    : items.map(renderCollectionItem).join('');
+}
+
+function updateDisplay() {
+  if (state.selected) {
+    $('search-input').value = state.selected.ticker + ' · ' + state.selected.name;
+    $('clear-button').classList.add('visible');
+  } else {
+    $('search-input').value = '';
+    $('clear-button').classList.remove('visible');
+  }
+}
+
+function updateWarning() {
+  var q = $('search-input').value.toUpperCase();
+  if (q.indexOf('TSLA') >= 0 || (state.selected && state.selected.ticker === 'TSLA')) {
+    $('warning-message').textContent = 'TSLA not eligible for auto-investing (mock).';
+    $('warning-banner').classList.add('visible');
+  } else {
+    $('warning-banner').classList.remove('visible');
+  }
+}
+
+function validate() {
+  var v = parseFloat($('amount').value);
+  $('submit-btn').disabled = !(v > 0 && state.selected && $('start-date').value);
+  updateProgress();
+  updateAnnualProjection();
+}
+
+function filter(q) {
+  var lq = q.toLowerCase();
+  state.filtered = q ? instruments.filter(function(i) {
+    return i.ticker.toLowerCase().indexOf(lq) >= 0 ||
+           i.name.toLowerCase().indexOf(lq) >= 0 ||
+           i.sector.toLowerCase().indexOf(lq) >= 0 ||
+           i.lists.some(function(l) { return l.indexOf(lq) >= 0; });
+  }) : instruments.slice();
+  state.hlIdx = -1;
+  renderDropdown();
+}
+
+function select(inst) {
+  state.selected = inst;
+  // Add to recent
+  state.recent = state.recent.filter(function(x){return x.id!==inst.id;});
+  state.recent.unshift(inst);
+  if (state.recent.length > 8) state.recent = state.recent.slice(0, 8);
+  localStorage.setItem('recent', JSON.stringify(state.recent));
+  
+  updateDisplay();
+  updateWarning();
+  closeDD();
+  renderCollection();
+  showSelectedCard(inst);
+  validate();
+  updateSmartSuggestion();
+}
+
+function clearSelection() {
+  state.selected = null;
+  $('search-input').value = '';
+  $('clear-button').classList.remove('visible');
+  state.filtered = instruments.slice();
+  updateWarning();
+  renderCollection();
+  hideSelectedCard();
+  validate();
+  $('search-input').focus();
+}
+
+function openDD() { state.ddOpen = true; $('dropdown').classList.add('open'); }
+function closeDD() { state.ddOpen = false; state.hlIdx = -1; $('dropdown').classList.remove('open'); }
+
+function handleKey(e) {
+  if (!state.ddOpen) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { openDD(); renderDropdown(); }
+    return;
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    state.hlIdx = Math.min(state.hlIdx + 1, state.filtered.length - 1);
+    renderDropdown();
+    var h = $('dropdown-list').querySelector('.highlighted');
+    if (h) h.scrollIntoView({block: 'nearest'});
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    state.hlIdx = Math.max(state.hlIdx - 1, 0);
+    renderDropdown();
+    var h = $('dropdown-list').querySelector('.highlighted');
+    if (h) h.scrollIntoView({block: 'nearest'});
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (state.hlIdx >= 0 && state.filtered[state.hlIdx]) select(state.filtered[state.hlIdx]);
+  } else if (e.key === 'Escape') {
+    closeDD(); updateDisplay();
+  }
+}
+
+function setActiveCol(c) {
+  state.activeCol = c;
+  document.querySelectorAll('.collection-tab').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.collection === c);
+  });
+  renderCollection();
+}
+
+function handleFreqChange() {
+  var isW = $('freq-weekly').checked;
+  $('day-selector').style.display = isW ? 'block' : 'none';
+  $('monthday-selector').style.display = isW ? 'none' : 'block';
+  $('freq-hint').textContent = isW ? 'On the selected day each week' : 'On the selected day each month';
+  updateSmartSuggestion();
+  updateAnnualProjection();
+}
+
+function handleInvestTypeChange() {
+  state.invType = $('invest-type').value;
+  if (state.invType === 'shares') {
+    $('value-label').textContent = 'Quantity';
+    $('value-prefix').textContent = 'QTY';
+    $('amount').placeholder = '0';
+    $('amount').step = '1';
+    $('invest-type-hint').textContent = 'Number of shares to purchase';
+  } else {
+    $('value-label').textContent = 'Amount';
+    $('value-prefix').textContent = 'USD';
+    $('amount').placeholder = '0.00';
+    $('amount').step = '0.01';
+    $('invest-type-hint').textContent = 'Exact investment amount';
+  }
+  $('amount').value = '';
+  validate();
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  if (!state.selected) return;
+  
+  $('submit-btn').classList.add('loading');
+  
+  setTimeout(function() {
+    $('submit-btn').classList.remove('loading');
     
-    // INVEST TYPE SWITCHING
-    function handleInvestTypeChange() {
-      state.investType = el.investType.value;
-      if (state.investType === 'shares') {
-        el.valueLabel.textContent = 'Quantity';
-        el.valuePrefix.textContent = 'QTY';
-        el.amountInput.placeholder = '0';
-        el.amountInput.step = '1';
-        el.amountInput.min = '1';
-        el.investTypeHint.textContent = 'Number of shares to purchase';
-      } else {
-        el.valueLabel.textContent = 'Amount';
-        el.valuePrefix.textContent = 'USD';
-        el.amountInput.placeholder = '0.00';
-        el.amountInput.step = '0.01';
-        el.amountInput.min = '0.01';
-        el.investTypeHint.textContent = 'Exact investment amount';
-      }
-      el.amountInput.value = '';
-      validateForm();
-    }
-
-    // DROPDOWN LOGIC
-    function openDropdown() { state.dropdownOpen = true; state.highlightedIndex = -1; el.dropdown.classList.add('open'); el.searchInput.setAttribute('aria-expanded', 'true'); }
-    function closeDropdown() { state.dropdownOpen = false; state.highlightedIndex = -1; el.dropdown.classList.remove('open'); el.searchInput.setAttribute('aria-expanded', 'false'); }
-
-    function filterInstruments(q) {
-      state.filteredInstruments = q ? instruments.filter(i => i.ticker.toLowerCase().includes(q.toLowerCase()) || i.name.toLowerCase().includes(q.toLowerCase())) : [...instruments];
-      state.highlightedIndex = -1;
-      renderDropdown();
-    }
-
-    function selectInstrument(i) {
-      state.selectedInstrument = i;
-      addToRecent(i);
-      updateSelectedDisplay();
-      updateWarning();
-      closeDropdown();
-      renderCollection();
-      // Show details
-      if (el.instrumentDetails) {
-        el.instrumentDetails.hidden = false;
-        el.statSector.textContent = i.sector || '—';
-        el.statPopularity.textContent = `${i.popularityScore}/100`;
-        el.statRisk.textContent = mockRisk(i);
-        el.statType.textContent = i.isETF ? 'ETF' : 'Stock';
-        el.divTag.textContent = (i.tags?.includes('Dividend') || i.isETF) ? 'Yes' : 'No';
-        el.divYield.textContent = mockDividendYield(i);
-        el.divNext.textContent = mockNextPayout(i);
-      }
-      validateForm();
-    }
-
-    function clearSelection() {
-      state.selectedInstrument = null;
-      el.searchInput.value = '';
-      el.clearButton.classList.remove('visible');
-      state.filteredInstruments = [...instruments];
-      if (el.instrumentDetails) el.instrumentDetails.hidden = true;
-      updateWarning();
-      renderCollection();
-      validateForm();
-      el.searchInput.focus();
-    }
-
-    function handleKeyDown(e) {
-      if (!state.dropdownOpen) { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { openDropdown(); renderDropdown(); } return; }
-      switch (e.key) {
-        case 'ArrowDown': e.preventDefault(); state.highlightedIndex = Math.min(state.highlightedIndex + 1, state.filteredInstruments.length - 1); renderDropdown(); el.dropdownList.querySelector('.highlighted')?.scrollIntoView({ block: 'nearest' }); break;
-        case 'ArrowUp': e.preventDefault(); state.highlightedIndex = Math.max(state.highlightedIndex - 1, 0); renderDropdown(); el.dropdownList.querySelector('.highlighted')?.scrollIntoView({ block: 'nearest' }); break;
-        case 'Enter': e.preventDefault(); if (state.highlightedIndex >= 0 && state.filteredInstruments[state.highlightedIndex]) selectInstrument(state.filteredInstruments[state.highlightedIndex]); break;
-        case 'Escape': closeDropdown(); updateSelectedDisplay(); break;
-        case 'Tab': closeDropdown(); break;
-      }
-    }
-
-    // COLLECTIONS LOGIC
-    function setActiveCollection(c) {
-      state.activeCollection = c;
-      el.collectionTabs.forEach(t => { t.classList.toggle('active', t.dataset.collection === c); });
-      renderCollection();
-    }
-
-    // FORM LOGIC
-    function initForm() {
-      // Default disclaimer based on selected frequency
-      updateScheduleDisclaimer();
-
-      // Invest type toggle (Amount vs Shares)
-      el.investType.addEventListener('change', () => {
-        const isShares = el.investType.value === 'shares';
-        el.valueLabel.textContent = isShares ? 'Shares' : 'Amount';
-        el.valuePrefix.textContent = isShares ? '' : 'USD';
-        el.investTypeHint.textContent = isShares ? 'Exact number of shares' : 'Exact investment amount';
-        validateForm();
-      });
-
-      el.amountInput.addEventListener('input', validateForm);
-      el.freqWeekly.addEventListener('change', () => { updateScheduleDisclaimer(); });
-      el.freqMonthly.addEventListener('change', () => { updateScheduleDisclaimer(); });
-    }
-
+    var val = parseFloat($('amount').value);
+    var isW = $('freq-weekly').checked;
+    var day = isW ? $('weekday').value : 'day ' + $('monthday').value;
+    var period = isW ? 'every ' + day : 'on ' + day + ' of each month';
+    var txt = state.invType === 'shares' 
+      ? '<strong>' + Math.floor(val) + ' shares</strong> of'
+      : '<strong>$' + val.toFixed(2) + '</strong> in';
     
-    function updateScheduleDisclaimer() {
-      const isW = el.freqWeekly.checked;
-      el.scheduleDisclaimer.textContent = isW
-        ? 'Recurring purchase will be executed on Monday.'
-        : 'Recurring purchase will be executed on the first day of each month.';
+    $('summary-text').innerHTML = 'You will invest ' + txt + ' <strong>' + state.selected.ticker + '</strong> ' + period + ' starting <strong>' + new Date($('start-date').value).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + '</strong>.';
+    $('summary-panel').classList.add('visible');
+    
+    if (state.firstSchedule) {
+      confetti();
+      localStorage.setItem('hasSchedule', '1');
+      state.firstSchedule = false;
+      toast('🎉 Congratulations on your first schedule!');
+    } else {
+      toast('Schedule created successfully!');
     }
+  }, 1200);
+}
 
-    function handleFreqChange() {
-      updateScheduleDisclaimer();
-    }
-
-    function handleSubmit(e) {
-      e.preventDefault();
-      if (!state.selectedInstrument) return;
-      const val = parseFloat(el.amountInput.value);
-      const isW = el.freqWeekly.checked;
-      const day = isW ? el.weekdaySelect.options[el.weekdaySelect.selectedIndex].text : `day ${el.monthdaySelect.value}`;
-      const period = isW ? `every ${day}` : `on the ${day} of each month`;
-      
-      let investText;
-      if (state.investType === 'shares') {
-        investText = `<strong>${Math.floor(val)} shares</strong> of`;
-      } else {
-        investText = `<strong>USD ${val.toFixed(2)}</strong> in`;
-      }
-      
-      const cadenceText = el.freqWeekly.checked ? 'every Monday' : 'on the first day of each month';
-      const val = parseFloat(el.amountInput.value || '0');
-      const investText = (el.investType.value === 'shares')
-        ? `<strong>${val}</strong> shares of`
-        : `<strong>$${val.toFixed(2)}</strong> in`;
-      el.summaryText.innerHTML = `You will invest ${investText} <strong>${state.selectedInstrument.ticker}</strong> ${cadenceText}.`;
-      el.summaryPanel.classList.add('visible');
-      showToast('Schedule created successfully!');
-    }
-
-    // EVENT LISTENERS
-    function initEvents() {
-      document.querySelectorAll('.subscription-option').forEach(o => {
-        o.addEventListener('click', () => { const inp = o.querySelector('input'); inp.checked = true; document.querySelectorAll('.subscription-option').forEach(x => x.classList.toggle('selected', x.querySelector('input').value === inp.value)); });
+function bindEvents() {
+  // Subscription type toggle
+  document.querySelectorAll('.subscription-option').forEach(function(o) {
+    o.addEventListener('click', function() {
+      o.querySelector('input').checked = true;
+      document.querySelectorAll('.subscription-option').forEach(function(x) {
+        x.classList.toggle('selected', x.querySelector('input').checked);
       });
-      el.searchInput.addEventListener('focus', () => { if (!state.selectedInstrument) { openDropdown(); renderDropdown(); } });
-      el.searchInput.addEventListener('input', e => {
-        const q = e.target.value;
-        if (state.selectedInstrument && q !== `${state.selectedInstrument.ticker} · ${state.selectedInstrument.name}`) { state.selectedInstrument = null; el.clearButton.classList.remove('visible'); if (el.instrumentDetails) el.instrumentDetails.hidden = true; validateForm(); }
-        filterInstruments(q); updateWarning(); if (!state.dropdownOpen) openDropdown();
-      });
-      el.searchInput.addEventListener('keydown', handleKeyDown);
-      el.clearButton.addEventListener('click', clearSelection);
-      el.dropdownList.addEventListener('click', e => { const item = e.target.closest('.dropdown-item'); if (item && !item.classList.contains('dropdown-empty')) { const i = instruments.find(x => x.id === parseInt(item.dataset.id)); if (i) selectInstrument(i); } });
-      document.addEventListener('click', e => { if (!el.searchInput.contains(e.target) && !el.dropdown.contains(e.target)) { closeDropdown(); updateSelectedDisplay(); } });
-      el.collectionTabs.forEach(t => t.addEventListener('click', () => setActiveCollection(t.dataset.collection)));
-      el.collectionPanel.addEventListener('click', e => { const item = e.target.closest('.collection-item'); if (item && !item.classList.contains('skeleton')) { const i = instruments.find(x => x.id === parseInt(item.dataset.id)); if (i) selectInstrument(i); } });
-      el.freqWeekly.addEventListener('change', handleFreqChange);
-      el.freqMonthly.addEventListener('change', handleFreqChange);
-      el.amountInput.addEventListener('input', validateForm);
-      el.startDate.addEventListener('change', validateForm);
-      el.purchaseForm.addEventListener('submit', handleSubmit);
-      el.investType.addEventListener('change', handleInvestTypeChange);
+    });
+  });
+  
+  // Search input
+  $('search-input').addEventListener('focus', function() {
+    openDD(); renderDropdown();
+  });
+  $('search-input').addEventListener('input', function(e) {
+    var q = e.target.value;
+    if (state.selected && q !== state.selected.ticker + ' · ' + state.selected.name) {
+      state.selected = null;
+      $('clear-button').classList.remove('visible');
+      hideSelectedCard();
+      validate();
     }
+    filter(q);
+    updateWarning();
+    if (!state.ddOpen) openDD();
+  });
+  $('search-input').addEventListener('keydown', handleKey);
+  $('clear-button').addEventListener('click', clearSelection);
+  
+  // Dropdown clicks
+  $('dropdown-list').addEventListener('click', function(e) {
+    var item = e.target.closest('.dropdown-item');
+    if (item) {
+      var inst = instruments.find(function(x) { return x.id === parseInt(item.dataset.id); });
+      if (inst) select(inst);
+    }
+  });
+  
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!$('search-input').contains(e.target) && !$('dropdown').contains(e.target)) {
+      closeDD();
+      updateDisplay();
+    }
+  });
+  
+  // Collection tabs
+  document.querySelectorAll('.collection-tab').forEach(function(t) {
+    t.addEventListener('click', function() { setActiveCol(t.dataset.collection); });
+  });
+  
+  // Collection item clicks
+  $('collection-panel').addEventListener('click', function(e) {
+    var item = e.target.closest('.collection-item');
+    if (item && !item.classList.contains('skeleton')) {
+      var inst = instruments.find(function(x) { return x.id === parseInt(item.dataset.id); });
+      if (inst) select(inst);
+    }
+  });
+  
+  // Form events
+  $('freq-weekly').addEventListener('change', handleFreqChange);
+  $('freq-monthly').addEventListener('change', handleFreqChange);
+  $('invest-type').addEventListener('change', handleInvestTypeChange);
+  $('amount').addEventListener('input', validate);
+  $('start-date').addEventListener('change', validate);
+  $('purchase-form').addEventListener('submit', handleSubmit);
+}
 
-    // INIT
-    function init() {
-      initForm();
-      initEvents();
-      renderCollection();
-      setTimeout(() => { state.isLoading = false; renderCollection(); }, 600);
-    }
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
