@@ -35,9 +35,7 @@
     .mock-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--color-gray-100); border: 1px solid var(--color-gray-200); border-radius: 50px; font-size: 0.75rem; font-weight: 500; color: var(--color-gray-600); }
     .mock-badge-dot { width: 6px; height: 6px; background: var(--color-success); border-radius: 50%; }
     .subscription-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
-    @media (max-width: 640px) {
-      .collection-item .instrument-icon { width: 36px; height: 36px; }
-      .dropdown-item .instrument-icon { width: 32px; height: 32px; } .subscription-selector { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .subscription-selector { grid-template-columns: 1fr; } }
     .subscription-option { display: flex; align-items: flex-start; gap: 12px; padding: 20px; background: var(--color-white); border: 2px solid var(--color-gray-200); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
     .subscription-option:hover { border-color: var(--color-gray-300); }
     .subscription-option.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
@@ -70,7 +68,7 @@
     .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; cursor: pointer; }
     .dropdown-item:hover, .dropdown-item.highlighted { background: var(--color-gray-50); }
     .dropdown-item.selected { background: var(--color-primary-light); }
-    .instrument-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; }
+    .instrument-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: var(--color-gray-100); }
     .instrument-info { flex: 1; min-width: 0; }
     .instrument-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .instrument-ticker { font-weight: 600; font-size: 0.938rem; }
@@ -83,12 +81,11 @@
     .dropdown-empty { padding: 24px 16px; text-align: center; }
     .dropdown-empty p { font-size: 0.875rem; color: var(--color-gray-500); margin: 0; }
     
-    /* Selected Instrument Card */
     .selected-card { display: none; margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%); border: 1px solid var(--color-gray-200); border-radius: 10px; }
     .selected-card.visible { display: block; animation: slideIn 0.25s ease; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     .selected-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .selected-icon { width: 48px; height: 48px; border-radius: 10px; }
+    .selected-icon { width: 48px; height: 48px; border-radius: 10px; object-fit: contain; background: var(--color-gray-100); }
     .selected-main { flex: 1; }
     .selected-title { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
     .selected-title h3 { font-size: 1rem; font-weight: 700; margin: 0; }
@@ -124,17 +121,15 @@
     .skeleton-item { height: 100px; }
     @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     
-    /* Mobile: show only 3 cards */
     @media (max-width: 640px) {
-      .collection-item .instrument-icon { width: 36px; height: 36px; }
-      .dropdown-item .instrument-icon { width: 32px; height: 32px; }
       .collection-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .collection-item:nth-child(n+4) { display: none; }
       .collection-item { padding: 12px 8px; }
       .collection-item-name { display: none; }
+      .collection-item .instrument-icon { width: 36px; height: 36px; }
+      .dropdown-item .instrument-icon { width: 32px; height: 32px; }
     }
     
-    /* Form */
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 20px; }
@@ -152,22 +147,18 @@
     .frequency-pill label:hover { border-color: var(--color-gray-400); }
     .frequency-pill input:checked + label { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
     
-    /* Smart suggestion */
     .smart-suggestion { display: none; margin-top: 8px; padding: 10px 12px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd; border-radius: 8px; font-size: 0.75rem; color: #0369a1; }
     .smart-suggestion.visible { display: flex; align-items: center; gap: 6px; }
     
-    /* Annual projection */
     .annual-projection { display: none; margin-top: 12px; padding: 12px; background: var(--color-primary-light); border-radius: 8px; text-align: center; }
     .annual-projection.visible { display: block; }
     .annual-label { font-size: 0.7rem; color: var(--color-gray-600); }
     .annual-value { font-size: 1.25rem; font-weight: 700; color: var(--color-primary); }
     
-    /* Progress steps */
     .progress-steps { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
     .progress-step { width: 40px; height: 4px; border-radius: 2px; background: var(--color-gray-200); transition: 0.3s; }
     .progress-step.active, .progress-step.completed { background: var(--color-primary); }
     
-    /* Submit button */
     .submit-btn { width: 100%; padding: 14px 24px; font-size: 0.938rem; font-weight: 600; background: var(--color-primary); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; transition: 0.2s; }
     .submit-btn:hover:not(:disabled) { background: var(--color-primary-hover); }
     .submit-btn:disabled { background: var(--color-gray-300); color: var(--color-gray-500); cursor: not-allowed; }
@@ -214,7 +205,7 @@
       </div>
       <div id="selected-card" class="selected-card">
         <div class="selected-header">
-          <div id="sel-icon" class="selected-icon"></div>
+          <img id="sel-icon" class="selected-icon" src="" alt="">
           <div class="selected-main"><div class="selected-title"><h3 id="sel-ticker"></h3><span id="sel-name"></span></div><div class="selected-price-row"><span id="sel-price" class="selected-price"></span><span id="sel-change" class="selected-change"></span></div></div>
           <svg id="mini-chart" class="mini-chart" viewBox="0 0 100 40"></svg>
         </div>
@@ -244,6 +235,11 @@
 </div>
 <div class="toast-container"><div id="toast" class="toast"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toast-message"></span></div></div>
 <script>
+// Logo URL generator
+function getLogoUrl(ticker) {
+  return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + ticker.toLowerCase() + '.us';
+}
+
 // Russian to English keyboard mapping
 var ruToEn = {'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.','ё':'`'};
 
@@ -273,26 +269,26 @@ var ruAliases = {
 
 // 20 INSTRUMENTS with extended data
 var instruments = [
-  {id:1,ticker:'AAPL',name:'Apple Inc.',sector:'Tech',lists:['popular','tech'],color:'#A2AAAD',price:178.52,change:1.33,mcap:'2.8T',pe:28,div:'0.5%',high:198,chart:[30,25,35,28,32,38,35,40,36,38],why:'Strong ecosystem with loyal customers. Consistent dividend growth.'},
-  {id:2,ticker:'MSFT',name:'Microsoft',sector:'Tech',lists:['popular','tech'],color:'#00A4EF',price:378.91,change:1.22,mcap:'2.8T',pe:35,div:'0.7%',high:384,chart:[20,25,22,30,28,35,32,38,40,42],why:'Cloud leader with Azure. AI integration across products.'},
-  {id:3,ticker:'GOOGL',name:'Alphabet',sector:'Tech',lists:['popular','tech'],color:'#4285F4',price:141.23,change:-1.31,mcap:'1.8T',pe:25,div:'0%',high:153,chart:[35,38,32,30,28,25,30,28,26,28],why:'Dominates digital advertising. YouTube diversification.'},
-  {id:4,ticker:'AMZN',name:'Amazon',sector:'Tech',lists:['popular','tech'],color:'#FF9900',price:178.25,change:1.97,mcap:'1.9T',pe:62,div:'0%',high:189,chart:[25,28,30,32,28,35,38,40,42,45],why:'AWS cloud leader. E-commerce showing momentum.'},
-  {id:5,ticker:'NVDA',name:'NVIDIA',sector:'Tech',lists:['popular','tech'],color:'#76B900',price:875.28,change:3.02,mcap:'2.2T',pe:65,div:'0%',high:974,chart:[15,20,25,35,40,50,55,60,58,65],why:'AI revolution runs on NVIDIA chips.'},
-  {id:6,ticker:'META',name:'Meta',sector:'Tech',lists:['popular','tech'],color:'#0668E1',price:505.95,change:1.65,mcap:'1.3T',pe:29,div:'0.4%',high:542,chart:[30,28,35,40,38,45,42,48,50,52],why:'Reels competing well. Margins improved.'},
-  {id:7,ticker:'TSLA',name:'Tesla',sector:'Tech',lists:['popular','tech'],color:'#CC0000',price:175.34,change:-3.13,mcap:'558B',pe:42,div:'0%',high:299,chart:[50,45,40,38,42,35,30,32,28,25],why:'EV market leader with strong brand.'},
-  {id:8,ticker:'JNJ',name:'J&J',sector:'Healthcare',lists:['dividend','healthcare'],color:'#D51900',price:156.78,change:0.57,mcap:'378B',pe:15,div:'3.0%',high:175,chart:[40,38,42,40,38,36,38,37,39,38],why:'62 consecutive years of dividend increases.'},
-  {id:9,ticker:'UNH',name:'UnitedHealth',sector:'Healthcare',lists:['healthcare'],color:'#002677',price:527.89,change:-0.65,mcap:'486B',pe:21,div:'1.4%',high:554,chart:[45,48,46,50,48,45,47,44,46,43],why:'Largest US health insurer. Optum diversification.'},
-  {id:10,ticker:'LLY',name:'Eli Lilly',sector:'Healthcare',lists:['popular','healthcare'],color:'#D52B1E',price:782.45,change:2.04,mcap:'742B',pe:118,div:'0.7%',high:804,chart:[20,25,30,38,45,52,58,62,68,75],why:'Weight loss drugs are blockbusters.'},
-  {id:11,ticker:'PFE',name:'Pfizer',sector:'Healthcare',lists:['dividend','healthcare'],color:'#0093D0',price:27.89,change:0.83,mcap:'158B',pe:13,div:'5.8%',high:37,chart:[45,40,38,35,32,30,28,30,27,28],why:'High dividend yield. Strong pipeline.'},
-  {id:12,ticker:'V',name:'Visa',sector:'Finance',lists:['popular','finance'],color:'#1A1F71',price:279.45,change:0.76,mcap:'575B',pe:30,div:'0.8%',high:290,chart:[32,35,33,38,40,42,40,44,43,45],why:'Payments duopoly. Benefits from digital shift.'},
-  {id:13,ticker:'JPM',name:'JPMorgan',sector:'Finance',lists:['dividend','finance'],color:'#117ACA',price:198.67,change:1.19,mcap:'571B',pe:12,div:'2.3%',high:205,chart:[35,38,42,45,48,50,52,55,58,60],why:'Best-in-class bank. Well-managed.'},
-  {id:14,ticker:'MA',name:'Mastercard',sector:'Finance',lists:['popular','finance'],color:'#EB001B',price:458.23,change:1.25,mcap:'428B',pe:36,div:'0.6%',high:490,chart:[30,33,35,38,40,43,45,48,47,50],why:'Global payments network with high margins.'},
-  {id:15,ticker:'KO',name:'Coca-Cola',sector:'Consumer',lists:['dividend','consumer'],color:'#F40009',price:60.23,change:0.57,mcap:'260B',pe:23,div:'3.1%',high:64,chart:[40,42,41,44,43,45,44,46,45,47],why:'62 years of dividend increases. Global moat.'},
-  {id:16,ticker:'PG',name:'P&G',sector:'Consumer',lists:['dividend','consumer'],color:'#003DA5',price:162.34,change:0.28,mcap:'383B',pe:26,div:'2.4%',high:168,chart:[38,40,39,42,41,43,42,44,43,45],why:'68 years of dividend increases. Essential brands.'},
-  {id:17,ticker:'SPY',name:'S&P 500 ETF',sector:'ETF',lists:['popular','etf'],color:'#006747',price:502.34,change:0.69,mcap:'480B',pe:23,div:'1.4%',high:524,chart:[35,38,40,42,45,48,50,52,54,56],why:'Instant diversification. Low fees.',isETF:true},
-  {id:18,ticker:'QQQ',name:'Nasdaq ETF',sector:'ETF',lists:['popular','etf'],color:'#00A3E0',price:438.67,change:1.31,mcap:'245B',pe:33,div:'0.5%',high:468,chart:[30,35,38,42,45,50,52,55,58,62],why:'Tech-heavy exposure for growth.',isETF:true},
-  {id:19,ticker:'SCHD',name:'Dividend ETF',sector:'ETF',lists:['dividend','etf'],color:'#00A0DF',price:78.45,change:0.72,mcap:'54B',pe:16,div:'3.4%',high:82,chart:[38,40,42,41,44,43,45,44,46,45],why:'Quality dividend stocks. Income focus.',isETF:true},
-  {id:20,ticker:'AMD',name:'AMD',sector:'Tech',lists:['popular','tech'],color:'#ED1C24',price:178.56,change:3.95,mcap:'289B',pe:246,div:'0%',high:227,chart:[25,30,35,40,38,45,50,48,55,60],why:'Taking server share from Intel. AI chips.'}
+  {id:1,ticker:'AAPL',name:'Apple Inc.',sector:'Tech',lists:['popular','tech'],price:178.52,change:1.33,mcap:'2.8T',pe:28,div:'0.5%',high:198,chart:[30,25,35,28,32,38,35,40,36,38],why:'Strong ecosystem with loyal customers. Consistent dividend growth.'},
+  {id:2,ticker:'MSFT',name:'Microsoft',sector:'Tech',lists:['popular','tech'],price:378.91,change:1.22,mcap:'2.8T',pe:35,div:'0.7%',high:384,chart:[20,25,22,30,28,35,32,38,40,42],why:'Cloud leader with Azure. AI integration across products.'},
+  {id:3,ticker:'GOOGL',name:'Alphabet',sector:'Tech',lists:['popular','tech'],price:141.23,change:-1.31,mcap:'1.8T',pe:25,div:'0%',high:153,chart:[35,38,32,30,28,25,30,28,26,28],why:'Dominates digital advertising. YouTube diversification.'},
+  {id:4,ticker:'AMZN',name:'Amazon',sector:'Tech',lists:['popular','tech'],price:178.25,change:1.97,mcap:'1.9T',pe:62,div:'0%',high:189,chart:[25,28,30,32,28,35,38,40,42,45],why:'AWS cloud leader. E-commerce showing momentum.'},
+  {id:5,ticker:'NVDA',name:'NVIDIA',sector:'Tech',lists:['popular','tech'],price:875.28,change:3.02,mcap:'2.2T',pe:65,div:'0%',high:974,chart:[15,20,25,35,40,50,55,60,58,65],why:'AI revolution runs on NVIDIA chips.'},
+  {id:6,ticker:'META',name:'Meta',sector:'Tech',lists:['popular','tech'],price:505.95,change:1.65,mcap:'1.3T',pe:29,div:'0.4%',high:542,chart:[30,28,35,40,38,45,42,48,50,52],why:'Reels competing well. Margins improved.'},
+  {id:7,ticker:'TSLA',name:'Tesla',sector:'Tech',lists:['popular','tech'],price:175.34,change:-3.13,mcap:'558B',pe:42,div:'0%',high:299,chart:[50,45,40,38,42,35,30,32,28,25],why:'EV market leader with strong brand.'},
+  {id:8,ticker:'JNJ',name:'J&J',sector:'Healthcare',lists:['dividend','healthcare'],price:156.78,change:0.57,mcap:'378B',pe:15,div:'3.0%',high:175,chart:[40,38,42,40,38,36,38,37,39,38],why:'62 consecutive years of dividend increases.'},
+  {id:9,ticker:'UNH',name:'UnitedHealth',sector:'Healthcare',lists:['healthcare'],price:527.89,change:-0.65,mcap:'486B',pe:21,div:'1.4%',high:554,chart:[45,48,46,50,48,45,47,44,46,43],why:'Largest US health insurer. Optum diversification.'},
+  {id:10,ticker:'LLY',name:'Eli Lilly',sector:'Healthcare',lists:['popular','healthcare'],price:782.45,change:2.04,mcap:'742B',pe:118,div:'0.7%',high:804,chart:[20,25,30,38,45,52,58,62,68,75],why:'Weight loss drugs are blockbusters.'},
+  {id:11,ticker:'PFE',name:'Pfizer',sector:'Healthcare',lists:['dividend','healthcare'],price:27.89,change:0.83,mcap:'158B',pe:13,div:'5.8%',high:37,chart:[45,40,38,35,32,30,28,30,27,28],why:'High dividend yield. Strong pipeline.'},
+  {id:12,ticker:'V',name:'Visa',sector:'Finance',lists:['popular','finance'],price:279.45,change:0.76,mcap:'575B',pe:30,div:'0.8%',high:290,chart:[32,35,33,38,40,42,40,44,43,45],why:'Payments duopoly. Benefits from digital shift.'},
+  {id:13,ticker:'JPM',name:'JPMorgan',sector:'Finance',lists:['dividend','finance'],price:198.67,change:1.19,mcap:'571B',pe:12,div:'2.3%',high:205,chart:[35,38,42,45,48,50,52,55,58,60],why:'Best-in-class bank. Well-managed.'},
+  {id:14,ticker:'MA',name:'Mastercard',sector:'Finance',lists:['popular','finance'],price:458.23,change:1.25,mcap:'428B',pe:36,div:'0.6%',high:490,chart:[30,33,35,38,40,43,45,48,47,50],why:'Global payments network with high margins.'},
+  {id:15,ticker:'KO',name:'Coca-Cola',sector:'Consumer',lists:['dividend','consumer'],price:60.23,change:0.57,mcap:'260B',pe:23,div:'3.1%',high:64,chart:[40,42,41,44,43,45,44,46,45,47],why:'62 years of dividend increases. Global moat.'},
+  {id:16,ticker:'PG',name:'P&G',sector:'Consumer',lists:['dividend','consumer'],price:162.34,change:0.28,mcap:'383B',pe:26,div:'2.4%',high:168,chart:[38,40,39,42,41,43,42,44,43,45],why:'68 years of dividend increases. Essential brands.'},
+  {id:17,ticker:'SPY',name:'S&P 500 ETF',sector:'ETF',lists:['popular','etf'],price:502.34,change:0.69,mcap:'480B',pe:23,div:'1.4%',high:524,chart:[35,38,40,42,45,48,50,52,54,56],why:'Instant diversification. Low fees.',isETF:true},
+  {id:18,ticker:'QQQ',name:'Nasdaq ETF',sector:'ETF',lists:['popular','etf'],price:438.67,change:1.31,mcap:'245B',pe:33,div:'0.5%',high:468,chart:[30,35,38,42,45,50,52,55,58,62],why:'Tech-heavy exposure for growth.',isETF:true},
+  {id:19,ticker:'SCHD',name:'Dividend ETF',sector:'ETF',lists:['dividend','etf'],price:78.45,change:0.72,mcap:'54B',pe:16,div:'3.4%',high:82,chart:[38,40,42,41,44,43,45,44,46,45],why:'Quality dividend stocks. Income focus.',isETF:true},
+  {id:20,ticker:'AMD',name:'AMD',sector:'Tech',lists:['popular','tech'],price:178.56,change:3.95,mcap:'289B',pe:246,div:'0%',high:227,chart:[25,30,35,40,38,45,50,48,55,60],why:'Taking server share from Intel. AI chips.'}
 ];
 
 var state = {
@@ -309,12 +305,10 @@ var state = {
 
 var $ = function(id) { return document.getElementById(id); };
 
-// Convert Russian text to English keyboard equivalent
 function ruToEnText(text) {
   return text.split('').map(function(c) { return ruToEn[c] || c; }).join('');
 }
 
-// Check if query matches Russian aliases
 function matchesRuAlias(ticker, query) {
   var aliases = ruAliases[ticker];
   if (!aliases) return false;
@@ -327,11 +321,6 @@ function init() {
   renderCollection();
   updateProgress();
   setTimeout(function() { state.loading = false; renderCollection(); }, 600);
-}
-
-function icon(inst, size) {
-  size = size || 40;
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><rect width="'+size+'" height="'+size+'" rx="'+(size/5)+'" fill="'+inst.color+'"/><text x="'+(size/2)+'" y="'+(size/2)+'" text-anchor="middle" dominant-baseline="central" fill="white" font-size="'+(size*0.35)+'" font-weight="600">'+inst.ticker.slice(0,2)+'</text></svg>';
 }
 
 function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
@@ -384,7 +373,9 @@ function updateProgress() {
 }
 
 function showSelectedCard(inst) {
-  $('sel-icon').innerHTML = icon(inst, 48);
+  $('sel-icon').src = getLogoUrl(inst.ticker);
+  $('sel-icon').onerror = function() { this.style.display = 'none'; };
+  $('sel-icon').onload = function() { this.style.display = 'block'; };
   $('sel-ticker').textContent = inst.ticker;
   $('sel-name').textContent = inst.name;
   $('sel-price').textContent = '$' + inst.price.toFixed(2);
@@ -423,7 +414,7 @@ function renderDropdownItem(inst, idx, q) {
   var tags = inst.isETF ? '<span class="micro-tag etf">ETF</span>' : '';
   tags += '<span class="micro-tag sector">' + inst.sector + '</span>';
   var lists = inst.lists.join(', ');
-  return '<li class="dropdown-item' + (isH ? ' highlighted' : '') + (isS ? ' selected' : '') + '" data-id="' + inst.id + '">' + icon(inst) + '<div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">' + hl(inst.ticker, q) + '</span><span class="instrument-name">' + hl(inst.name, q) + '</span>' + tags + '</div><div class="instrument-meta">' + lists + '</div></div></li>';
+  return '<li class="dropdown-item' + (isH ? ' highlighted' : '') + (isS ? ' selected' : '') + '" data-id="' + inst.id + '"><img class="instrument-icon" src="' + getLogoUrl(inst.ticker) + '" onerror="this.style.opacity=0" alt=""><div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">' + hl(inst.ticker, q) + '</span><span class="instrument-name">' + hl(inst.name, q) + '</span>' + tags + '</div><div class="instrument-meta">' + lists + '</div></div></li>';
 }
 
 function renderDropdown() {
@@ -437,7 +428,7 @@ function renderDropdown() {
 
 function renderCollectionItem(inst) {
   var isS = state.selected && state.selected.id === inst.id;
-  return '<button class="collection-item' + (isS ? ' selected' : '') + '" data-id="' + inst.id + '">' + icon(inst, 48) + '<span class="collection-item-ticker">' + esc(inst.ticker) + '</span><span class="collection-item-name">' + esc(inst.name) + '</span></button>';
+  return '<button class="collection-item' + (isS ? ' selected' : '') + '" data-id="' + inst.id + '"><img class="instrument-icon" src="' + getLogoUrl(inst.ticker) + '" onerror="this.style.opacity=0" alt=""><span class="collection-item-ticker">' + esc(inst.ticker) + '</span><span class="collection-item-name">' + esc(inst.name) + '</span></button>';
 }
 
 function renderCollection() {
@@ -487,20 +478,15 @@ function validate() {
 
 function filter(q) {
   var lq = q.toLowerCase();
-  var enQ = ruToEnText(lq); // Convert Russian keyboard to English
+  var enQ = ruToEnText(lq);
   
   state.filtered = q ? instruments.filter(function(i) {
-    // Match by ticker (direct or converted from Russian keyboard)
     if (i.ticker.toLowerCase().indexOf(lq) >= 0) return true;
     if (i.ticker.toLowerCase().indexOf(enQ) >= 0) return true;
-    // Match by name
     if (i.name.toLowerCase().indexOf(lq) >= 0) return true;
     if (i.name.toLowerCase().indexOf(enQ) >= 0) return true;
-    // Match by sector
     if (i.sector.toLowerCase().indexOf(lq) >= 0) return true;
-    // Match by lists
     if (i.lists.some(function(l) { return l.indexOf(lq) >= 0; })) return true;
-    // Match by Russian aliases
     if (matchesRuAlias(i.ticker, lq)) return true;
     return false;
   }) : instruments.slice();
@@ -511,7 +497,6 @@ function filter(q) {
 
 function select(inst) {
   state.selected = inst;
-  // Add to recent
   state.recent = state.recent.filter(function(x){return x.id!==inst.id;});
   state.recent.unshift(inst);
   if (state.recent.length > 8) state.recent = state.recent.slice(0, 8);
@@ -631,7 +616,6 @@ function handleSubmit(e) {
 }
 
 function bindEvents() {
-  // Subscription type toggle
   document.querySelectorAll('.subscription-option').forEach(function(o) {
     o.addEventListener('click', function() {
       o.querySelector('input').checked = true;
@@ -641,7 +625,6 @@ function bindEvents() {
     });
   });
   
-  // Search input
   $('search-input').addEventListener('focus', function() {
     openDD(); renderDropdown();
   });
@@ -660,7 +643,6 @@ function bindEvents() {
   $('search-input').addEventListener('keydown', handleKey);
   $('clear-button').addEventListener('click', clearSelection);
   
-  // Dropdown clicks
   $('dropdown-list').addEventListener('click', function(e) {
     var item = e.target.closest('.dropdown-item');
     if (item) {
@@ -669,7 +651,6 @@ function bindEvents() {
     }
   });
   
-  // Close dropdown on outside click
   document.addEventListener('click', function(e) {
     if (!$('search-input').contains(e.target) && !$('dropdown').contains(e.target)) {
       closeDD();
@@ -677,12 +658,10 @@ function bindEvents() {
     }
   });
   
-  // Collection tabs
   document.querySelectorAll('.collection-tab').forEach(function(t) {
     t.addEventListener('click', function() { setActiveCol(t.dataset.collection); });
   });
   
-  // Collection item clicks
   $('collection-panel').addEventListener('click', function(e) {
     var item = e.target.closest('.collection-item');
     if (item && !item.classList.contains('skeleton')) {
@@ -691,7 +670,6 @@ function bindEvents() {
     }
   });
   
-  // Form events
   $('freq-weekly').addEventListener('change', handleFreqChange);
   $('freq-monthly').addEventListener('change', handleFreqChange);
   $('invest-type').addEventListener('change', handleInvestTypeChange);
