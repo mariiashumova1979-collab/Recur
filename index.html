@@ -345,7 +345,40 @@
     <section class="custom-card uk-margin-top">
       <div class="card-body">
         <form id="purchase-form" novalidate>
+          
           <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Type of invest</label>
+              <select id="invest-type" class="form-input">
+                <option value="amount">Amount</option>
+                <option value="shares">Shares</option>
+              </select>
+              <p class="helper-text" id="invest-type-hint">Exact investment amount</p>
+            </div>
+            <div class="form-group">
+              <label for="amount" class="form-label" id="value-label">Amount</label>
+              <div class="input-with-prefix">
+                <span class="input-prefix" id="value-prefix">USD</span>
+                <input type="number" id="amount" class="form-input" placeholder="0.00" min="0.01" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">How often to repeat</label>
+            <div class="frequency-pills">
+              <div class="frequency-pill">
+                <input type="radio" id="freq-weekly" name="frequency" value="weekly">
+                <label for="freq-weekly">Once a week</label>
+              </div>
+              <div class="frequency-pill">
+                <input type="radio" id="freq-monthly" name="frequency" value="monthly" checked>
+                <label for="freq-monthly">Once a month</label>
+              </div>
+            </div>
+            <p class="helper-text" id="schedule-disclaimer">Recurring purchase will be executed on the first day of each month.</p>
+          </div>
+
 <button type="submit" id="submit-btn" class="submit-btn" disabled>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Create schedule
@@ -536,10 +569,14 @@
     }
 
     function validateForm() {
-      const a = parseFloat(el.amountInput.value);
-      el.submitBtn.disabled = !(a > 0 && state.selectedInstrument && el.startDate.value);
+      const hasInstrument = !!state.selectedInstrument;
+      const val = parseFloat(el.amountInput.value || '0');
+      const isShares = el.investType.value === 'shares';
+      const validValue = isShares ? (val > 0) : (val >= 0.01);
+      el.submitBtn.disabled = !(hasInstrument && validValue);
     }
 
+    
     // INVEST TYPE SWITCHING
     function handleInvestTypeChange() {
       state.investType = el.investType.value;
@@ -625,10 +662,24 @@
 
     // FORM LOGIC
     function initForm() {
-      // No date or day selection in this demo.
+      // Default disclaimer based on selected frequency
       updateScheduleDisclaimer();
+
+      // Invest type toggle (Amount vs Shares)
+      el.investType.addEventListener('change', () => {
+        const isShares = el.investType.value === 'shares';
+        el.valueLabel.textContent = isShares ? 'Shares' : 'Amount';
+        el.valuePrefix.textContent = isShares ? '' : 'USD';
+        el.investTypeHint.textContent = isShares ? 'Exact number of shares' : 'Exact investment amount';
+        validateForm();
+      });
+
+      el.amountInput.addEventListener('input', validateForm);
+      el.freqWeekly.addEventListener('change', () => { updateScheduleDisclaimer(); });
+      el.freqMonthly.addEventListener('change', () => { updateScheduleDisclaimer(); });
     }
 
+    
     function updateScheduleDisclaimer() {
       const isW = el.freqWeekly.checked;
       el.scheduleDisclaimer.textContent = isW
@@ -656,6 +707,10 @@
       }
       
       const cadenceText = el.freqWeekly.checked ? 'every Monday' : 'on the first day of each month';
+      const val = parseFloat(el.amountInput.value || '0');
+      const investText = (el.investType.value === 'shares')
+        ? `<strong>${val}</strong> shares of`
+        : `<strong>$${val.toFixed(2)}</strong> in`;
       el.summaryText.innerHTML = `You will invest ${investText} <strong>${state.selectedInstrument.ticker}</strong> ${cadenceText}.`;
       el.summaryPanel.classList.add('visible');
       showToast('Schedule created successfully!');
