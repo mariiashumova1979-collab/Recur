@@ -175,7 +175,32 @@
     .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--color-gray-900); border-radius: 8px; color: var(--color-white); font-size: 0.875rem; transform: translateY(100px); opacity: 0; transition: 0.3s; }
     .toast.visible { transform: translateY(0); opacity: 1; }
     #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
-  </style>
+  
+    /* Mobile declutter: keep core flow, hide secondary info (single markup, CSS only) */
+    @media (max-width: 640px) {
+      /* Remove progress dots */
+      .progress-steps { display: none !important; }
+
+      /* Subscription selector: hide descriptions, tighten spacing */
+      .subscription-selector { margin-bottom: 16px !important; }
+      .subscription-option { padding: 12px !important; }
+      .subscription-content p { display: none !important; }
+
+      /* Selected instrument card: hide mini chart, stats, and "why" block */
+      .mini-chart { display: none !important; }
+      .selected-stats { display: none !important; }
+      .why-stock { display: none !important; }
+
+      /* Hide helper blocks that expand vertical height */
+      .smart-suggestion { display: none !important; }
+      .annual-projection { display: none !important; }
+
+      /* Collections: keep compact spacing */
+      .collections { margin-top: 16px !important; }
+      .collection-tabs { margin-bottom: 10px !important; }
+    }
+
+</style>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
