@@ -110,8 +110,7 @@
     .collection-tab { padding: 8px 16px; font-size: 0.875rem; font-weight: 500; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 50px; color: var(--color-gray-600); cursor: pointer; }
     .collection-tab:hover { border-color: var(--color-gray-300); background: var(--color-gray-50); }
     .collection-tab.active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
-    .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-    @media (min-width: 640px) { .collection-grid { grid-template-columns: repeat(4, 1fr); } }
+    .collection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .collection-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; cursor: pointer; transition: all 0.15s ease; }
     .collection-item:hover { border-color: var(--color-gray-300); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .collection-item.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
@@ -122,6 +121,14 @@
     .skeleton { background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 8px; }
     .skeleton-item { height: 100px; }
     @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    /* Mobile: show only 3 cards */
+    @media (max-width: 640px) {
+      .collection-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .collection-item:nth-child(n+4) { display: none; }
+      .collection-item { padding: 12px 8px; }
+      .collection-item-name { display: none; }
+    }
     
     /* Form */
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -195,10 +202,10 @@
       <div class="instrument-selector">
         <div class="search-input-wrapper">
           <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <input type="text" id="search-input" class="search-input" placeholder="Ticker, sector, list..." autocomplete="off">
+          <input type="text" id="search-input" class="search-input" placeholder="Ticker, sector, list... (апл, яблоко)" autocomplete="off">
           <button type="button" id="clear-button" class="clear-button"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
-        <p class="helper-text">Search by ticker, name, sector or list (popular, dividend, tech...)</p>
+        <p class="helper-text">Search by ticker, name, sector or list (RU/EN supported)</p>
         <div id="dropdown" class="dropdown"><ul id="dropdown-list" class="dropdown-list"></ul></div>
       </div>
       <div id="selected-card" class="selected-card">
@@ -223,12 +230,7 @@
           <div class="form-group"><label class="form-label">Type of invest</label><select id="invest-type" class="form-input"><option value="amount">Amount</option><option value="shares">Shares</option></select><p class="helper-text" id="invest-type-hint">Exact investment amount</p></div>
           <div class="form-group"><label class="form-label" id="value-label">Amount</label><div class="input-with-prefix"><span class="input-prefix" id="value-prefix">USD</span><input type="number" id="amount" class="form-input" placeholder="0.00" min="0.01" step="0.01"></div><div id="smart-suggestion" class="smart-suggestion"><svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 11a1 1 0 110-2 1 1 0 010 2zm1-3H7V5h2v4z"/></svg><span id="suggestion-text"></span></div></div>
         </div>
-        <div class="form-group"><label class="form-label">How often to repeat</label><div class="frequency-pills"><div class="frequency-pill"><input type="radio" id="freq-weekly" name="frequency" value="weekly"><label for="freq-weekly">Once a week</label></div><div class="frequency-pill"><input type="radio" id="freq-monthly" name="frequency" value="monthly" checked><label for="freq-monthly">Once a month</label></div></div><p class="helper-text" id="freq-hint">On the selected day each month</p></div>
-        <div class="form-row">
-          <div class="form-group" id="day-selector" style="display:none"><label class="form-label">Day of week</label><select id="weekday" class="form-input"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-          <div class="form-group" id="monthday-selector"><label class="form-label">Day of month</label><select id="monthday" class="form-input"></select></div>
-          <div class="form-group"><label class="form-label">Start date</label><input type="date" id="start-date" class="form-input"></div>
-        </div>
+        <div class="form-group"><label class="form-label">How often to repeat</label><div class="frequency-pills"><div class="frequency-pill"><input type="radio" id="freq-weekly" name="frequency" value="weekly"><label for="freq-weekly">Once a week</label></div><div class="frequency-pill"><input type="radio" id="freq-monthly" name="frequency" value="monthly" checked><label for="freq-monthly">Once a month</label></div></div><p class="helper-text" id="freq-hint">Purchases on the 1st of each month</p></div>
         <div id="annual-projection" class="annual-projection"><div class="annual-label">Estimated annual investment</div><div class="annual-value" id="annual-value">$0</div></div>
         <button type="submit" id="submit-btn" class="submit-btn" disabled><span class="btn-text"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Create schedule</span><div class="spinner"></div></button>
       </form>
@@ -238,6 +240,33 @@
 </div>
 <div class="toast-container"><div id="toast" class="toast"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 10L9.16667 11.6667L12.5 8.33333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toast-message"></span></div></div>
 <script>
+// Russian to English keyboard mapping
+var ruToEn = {'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.','ё':'`'};
+
+// Russian aliases for instruments
+var ruAliases = {
+  'AAPL': ['апл', 'эпл', 'яблоко', 'эпол', 'айфон'],
+  'MSFT': ['майкрософт', 'микрософт', 'мсфт', 'виндовс'],
+  'GOOGL': ['гугл', 'гугол', 'алфабет', 'алфавит'],
+  'AMZN': ['амазон', 'амзн', 'безос'],
+  'NVDA': ['нвидиа', 'нвидия', 'видеокарта', 'видюха'],
+  'META': ['мета', 'фейсбук', 'инстаграм', 'цукерберг'],
+  'TSLA': ['тесла', 'теслa', 'маск', 'илон'],
+  'JNJ': ['джонсон', 'жнж'],
+  'UNH': ['юнайтед', 'унх'],
+  'LLY': ['лилли', 'эли'],
+  'PFE': ['пфайзер', 'файзер', 'пфе'],
+  'V': ['виза', 'віза'],
+  'JPM': ['джпморган', 'морган', 'жпм'],
+  'MA': ['мастеркард', 'мастер'],
+  'KO': ['кока', 'кола', 'кокакола'],
+  'PG': ['проктер', 'пиджи', 'пг'],
+  'SPY': ['спай', 'сипи', 'снп'],
+  'QQQ': ['куку', 'кукук', 'наздак', 'насдак'],
+  'SCHD': ['швд', 'дивиденд'],
+  'AMD': ['амд', 'радеон', 'райзен']
+};
+
 // 20 INSTRUMENTS with extended data
 var instruments = [
   {id:1,ticker:'AAPL',name:'Apple Inc.',sector:'Tech',lists:['popular','tech'],color:'#A2AAAD',price:178.52,change:1.33,mcap:'2.8T',pe:28,div:'0.5%',high:198,chart:[30,25,35,28,32,38,35,40,36,38],why:'Strong ecosystem with loyal customers. Consistent dividend growth.'},
@@ -276,19 +305,20 @@ var state = {
 
 var $ = function(id) { return document.getElementById(id); };
 
+// Convert Russian text to English keyboard equivalent
+function ruToEnText(text) {
+  return text.split('').map(function(c) { return ruToEn[c] || c; }).join('');
+}
+
+// Check if query matches Russian aliases
+function matchesRuAlias(ticker, query) {
+  var aliases = ruAliases[ticker];
+  if (!aliases) return false;
+  var lq = query.toLowerCase();
+  return aliases.some(function(alias) { return alias.indexOf(lq) >= 0 || lq.indexOf(alias) >= 0; });
+}
+
 function init() {
-  // Init monthday select
-  for (var i = 1; i <= 28; i++) {
-    var o = document.createElement('option');
-    o.value = i; o.textContent = i;
-    $('monthday').appendChild(o);
-  }
-  // Init start date
-  var tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  $('start-date').valueAsDate = tomorrow;
-  $('start-date').min = tomorrow.toISOString().split('T')[0];
-  
   bindEvents();
   renderCollection();
   updateProgress();
@@ -344,10 +374,9 @@ function drawChart(data, positive) {
 function updateProgress() {
   var hasInst = state.selected !== null;
   var hasAmt = parseFloat($('amount').value) > 0;
-  var hasDate = $('start-date').value !== '';
   $('step1').className = 'progress-step' + (hasInst ? ' completed' : '');
   $('step2').className = 'progress-step' + (hasAmt ? ' completed' : (hasInst ? ' active' : ''));
-  $('step3').className = 'progress-step' + ((hasDate && hasAmt) ? ' completed' : (hasAmt ? ' active' : ''));
+  $('step3').className = 'progress-step' + (hasAmt ? ' completed' : '');
 }
 
 function showSelectedCard(inst) {
@@ -409,16 +438,16 @@ function renderCollectionItem(inst) {
 
 function renderCollection() {
   if (state.loading) {
-    $('collection-panel').innerHTML = Array(8).fill('<div class="collection-item skeleton skeleton-item"></div>').join('');
+    $('collection-panel').innerHTML = Array(4).fill('<div class="collection-item skeleton skeleton-item"></div>').join('');
     return;
   }
   var items = [];
   switch (state.activeCol) {
-    case 'popular': items = instruments.filter(function(i){return i.lists.indexOf('popular')>=0;}).slice(0,8); break;
-    case 'recent': items = state.recent; break;
-    case 'dividend': items = instruments.filter(function(i){return i.lists.indexOf('dividend')>=0;}).slice(0,8); break;
-    case 'tech': items = instruments.filter(function(i){return i.sector==='Tech';}).slice(0,8); break;
-    case 'healthcare': items = instruments.filter(function(i){return i.sector==='Healthcare';}).slice(0,8); break;
+    case 'popular': items = instruments.filter(function(i){return i.lists.indexOf('popular')>=0;}).slice(0,4); break;
+    case 'recent': items = state.recent.slice(0,4); break;
+    case 'dividend': items = instruments.filter(function(i){return i.lists.indexOf('dividend')>=0;}).slice(0,4); break;
+    case 'tech': items = instruments.filter(function(i){return i.sector==='Tech';}).slice(0,4); break;
+    case 'healthcare': items = instruments.filter(function(i){return i.sector==='Healthcare';}).slice(0,4); break;
   }
   $('collection-panel').innerHTML = items.length === 0 
     ? '<div class="collection-empty">' + (state.activeCol === 'recent' ? 'No recent searches.' : 'No items.') + '</div>'
@@ -447,19 +476,31 @@ function updateWarning() {
 
 function validate() {
   var v = parseFloat($('amount').value);
-  $('submit-btn').disabled = !(v > 0 && state.selected && $('start-date').value);
+  $('submit-btn').disabled = !(v > 0 && state.selected);
   updateProgress();
   updateAnnualProjection();
 }
 
 function filter(q) {
   var lq = q.toLowerCase();
+  var enQ = ruToEnText(lq); // Convert Russian keyboard to English
+  
   state.filtered = q ? instruments.filter(function(i) {
-    return i.ticker.toLowerCase().indexOf(lq) >= 0 ||
-           i.name.toLowerCase().indexOf(lq) >= 0 ||
-           i.sector.toLowerCase().indexOf(lq) >= 0 ||
-           i.lists.some(function(l) { return l.indexOf(lq) >= 0; });
+    // Match by ticker (direct or converted from Russian keyboard)
+    if (i.ticker.toLowerCase().indexOf(lq) >= 0) return true;
+    if (i.ticker.toLowerCase().indexOf(enQ) >= 0) return true;
+    // Match by name
+    if (i.name.toLowerCase().indexOf(lq) >= 0) return true;
+    if (i.name.toLowerCase().indexOf(enQ) >= 0) return true;
+    // Match by sector
+    if (i.sector.toLowerCase().indexOf(lq) >= 0) return true;
+    // Match by lists
+    if (i.lists.some(function(l) { return l.indexOf(lq) >= 0; })) return true;
+    // Match by Russian aliases
+    if (matchesRuAlias(i.ticker, lq)) return true;
+    return false;
   }) : instruments.slice();
+  
   state.hlIdx = -1;
   renderDropdown();
 }
@@ -531,9 +572,7 @@ function setActiveCol(c) {
 
 function handleFreqChange() {
   var isW = $('freq-weekly').checked;
-  $('day-selector').style.display = isW ? 'block' : 'none';
-  $('monthday-selector').style.display = isW ? 'none' : 'block';
-  $('freq-hint').textContent = isW ? 'On the selected day each week' : 'On the selected day each month';
+  $('freq-hint').textContent = isW ? 'Purchases every Monday' : 'Purchases on the 1st of each month';
   updateSmartSuggestion();
   updateAnnualProjection();
 }
@@ -568,13 +607,12 @@ function handleSubmit(e) {
     
     var val = parseFloat($('amount').value);
     var isW = $('freq-weekly').checked;
-    var day = isW ? $('weekday').value : 'day ' + $('monthday').value;
-    var period = isW ? 'every ' + day : 'on ' + day + ' of each month';
+    var period = isW ? 'every Monday' : 'on the 1st of each month';
     var txt = state.invType === 'shares' 
       ? '<strong>' + Math.floor(val) + ' shares</strong> of'
       : '<strong>$' + val.toFixed(2) + '</strong> in';
     
-    $('summary-text').innerHTML = 'You will invest ' + txt + ' <strong>' + state.selected.ticker + '</strong> ' + period + ' starting <strong>' + new Date($('start-date').value).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + '</strong>.';
+    $('summary-text').innerHTML = 'You will invest ' + txt + ' <strong>' + state.selected.ticker + '</strong> ' + period + '.';
     $('summary-panel').classList.add('visible');
     
     if (state.firstSchedule) {
@@ -654,7 +692,6 @@ function bindEvents() {
   $('freq-monthly').addEventListener('change', handleFreqChange);
   $('invest-type').addEventListener('change', handleInvestTypeChange);
   $('amount').addEventListener('input', validate);
-  $('start-date').addEventListener('change', validate);
   $('purchase-form').addEventListener('submit', handleSubmit);
 }
 
