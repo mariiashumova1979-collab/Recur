@@ -36,15 +36,7 @@
     .page-header .subtitle { font-size: 0.938rem; color: var(--color-gray-500); margin-top: 4px; }
     .mock-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--color-gray-100); border: 1px solid var(--color-gray-200); border-radius: 50px; font-size: 0.75rem; font-weight: 500; color: var(--color-gray-600); }
     .mock-badge-dot { width: 6px; height: 6px; background: var(--color-success); border-radius: 50%; }
-    
-    /* Account Info Bar */
-    .account-info-bar { display: flex; gap: 24px; padding: 12px 16px; background: var(--color-gray-100); border-radius: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-    .account-info-item { display: flex; align-items: center; gap: 8px; }
-    .account-info-label { font-size: 0.75rem; color: var(--color-gray-500); }
-    .account-info-value { font-size: 0.875rem; font-weight: 600; color: var(--color-gray-800); }
-    .currency-flag { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; }
-    
-    .subscription-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+.subscription-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
     @media (max-width: 640px) { .subscription-selector { grid-template-columns: 1fr; } }
     .subscription-option { display: flex; align-items: flex-start; gap: 12px; padding: 20px; background: var(--color-white); border: 2px solid var(--color-gray-200); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
     .subscription-option:hover { border-color: var(--color-gray-300); }
@@ -215,22 +207,7 @@
       .currency-arrow { transform: rotate(90deg); }
       .account-info-bar { flex-direction: column; gap: 8px; }
     }
-  
-
-    /* Collections list (no instrument cards) */
-    .collection-list {
-      list-style: none;
-      padding: 6px;
-      margin: 0;
-      background: var(--color-white);
-      border: 1px solid var(--color-gray-200);
-      border-radius: 8px;
-    }
-    .collection-list .dropdown-item { margin: 0; }
-    .collections.hide-tabs .collection-tabs { display: none; }
-
-
-    /* Dropdown: collections tabs + cards */
+/* Dropdown: collections tabs + cards */
     .dd-collections { padding: 10px 10px 6px; }
     .dd-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
     .dd-tabs .collection-tab { padding: 6px 12px; font-size: 0.813rem; }
@@ -282,24 +259,7 @@
     <div><h1>Auto-invest</h1><p class="subtitle">Schedule recurring purchases</p></div>
     <div class="mock-badge"><span class="mock-badge-dot"></span>Mock data</div>
   </header>
-  
-  <!-- Account Info Bar -->
-  <div class="account-info-bar">
-    <div class="account-info-item">
-      <span class="account-info-label">Account currency:</span>
-      <span class="account-info-value">🇺🇸 USD</span>
-    </div>
-    <div class="account-info-item">
-      <span class="account-info-label">Funding from:</span>
-      <span class="account-info-value">🇪🇺 EUR</span>
-    </div>
-    <div class="account-info-item">
-      <span class="account-info-label">Purchase in:</span>
-      <span class="account-info-value">🇺🇸 USD</span>
-    </div>
-  </div>
-  
-  <div class="section-label">Select the type of subscription</div>
+<div class="section-label">Select the type of subscription</div>
   <div class="subscription-selector">
     <label class="subscription-option"><input type="radio" name="subscription-type" value="payments"><div class="subscription-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2V18M6 6H12.5C13.163 6 13.7989 6.26339 14.2678 6.73223C14.7366 7.20107 15 7.83696 15 8.5C15 9.16304 14.7366 9.79893 14.2678 10.2678C13.7989 10.7366 13.163 11 12.5 11H6V6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 11H13C13.7956 11 14.5587 11.3161 15.1213 11.8787C15.6839 12.4413 16 13.2044 16 14C16 14.7956 15.6839 15.5587 15.1213 16.1213C14.5587 16.6839 13.7956 17 13 17H6V11Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="subscription-content"><h3>Recurring payments</h3><p>Choose the amount and frequency yourself</p></div></label>
     <label class="subscription-option selected"><input type="radio" name="subscription-type" value="investments" checked><div class="subscription-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.83333 12.5L9.16667 8.33333L12.5 10.8333L17.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.1667 5H17.5V8.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="subscription-content"><h3>Recurring investments</h3><p>Set up regular purchases automatically</p></div></label>
@@ -335,8 +295,7 @@
         </div>
 
       </div>
-<ul id="collection-panel" class="collection-list"></ul>
-      </div>
+</div>
     </div>
   </section>
   <section class="custom-card uk-margin-top">
@@ -926,14 +885,6 @@ function bindEvents() {
   
   document.querySelectorAll('.collection-tab').forEach(function(t) {
     t.addEventListener('click', function() { setActiveCol(t.dataset.collection); });
-  });
-  
-  $('collection-panel').addEventListener('click', function(e) {
-    var item = e.target.closest('.dropdown-item');
-    if (item) {
-      var inst = instruments.find(function(x) { return x.id === parseInt(item.dataset.id); });
-      if (inst) select(inst);
-    }
   });
   
   $('freq-weekly').addEventListener('change', handleFreqChange);
