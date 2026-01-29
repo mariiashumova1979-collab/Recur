@@ -215,6 +215,9 @@
       .collection-tabs { margin-bottom: 10px !important; }
     }
 
+
+    .hidden { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -242,20 +245,18 @@
         </div>
         <p class="helper-text">Search by ticker, name, sector or list (RU/EN supported)</p>
         <div id="dropdown" class="dropdown"><ul id="dropdown-list" class="dropdown-list"></ul></div>
+      <div class="collections" id="collections">
+              <div class="collection-tabs" id="collection-tabs"><button class="collection-tab active" data-collection="popular">Popular</button><button class="collection-tab" data-collection="recent">Recently searched</button><button class="collection-tab" data-collection="dividend">Dividend</button><button class="collection-tab" data-collection="tech">Tech</button><button class="collection-tab" data-collection="healthcare">Healthcare</button></div>
+              <div id="collection-panel" class="collection-grid"></div>
+            </div>
       </div>
-      <div id="selected-card" class="selected-card">
-        <div class="selected-header">
-          <img id="sel-icon" class="selected-icon" src="" alt="">
-          <div class="selected-main"><div class="selected-title"><h3 id="sel-ticker"></h3><span id="sel-name"></span></div><div class="selected-price-row"><span id="sel-price" class="selected-price"></span><span id="sel-change" class="selected-change"></span></div></div>
+<div class="selected-price-row"><span id="sel-price" class="selected-price"></span><span id="sel-change" class="selected-change"></span></div></div>
           <svg id="mini-chart" class="mini-chart" viewBox="0 0 100 40"></svg>
         </div>
         <div class="selected-stats"><div class="stat-item"><div class="stat-label">MCap</div><div class="stat-value" id="stat-mcap"></div></div><div class="stat-item"><div class="stat-label">P/E</div><div class="stat-value" id="stat-pe"></div></div><div class="stat-item"><div class="stat-label">Div</div><div class="stat-value" id="stat-div"></div></div><div class="stat-item"><div class="stat-label">52H</div><div class="stat-value" id="stat-high"></div></div></div>
         <div class="why-stock"><h4>💡 Why this stock?</h4><p id="why-text"></p></div>
       </div>
-      <div class="collections">
-        <div class="collection-tabs"><button class="collection-tab active" data-collection="popular">Popular</button><button class="collection-tab" data-collection="recent">Recently searched</button><button class="collection-tab" data-collection="dividend">Dividend</button><button class="collection-tab" data-collection="tech">Tech</button><button class="collection-tab" data-collection="healthcare">Healthcare</button></div>
-        <div id="collection-panel" class="collection-grid"></div>
-      </div>
+      
     </div>
   </section>
   <section class="custom-card uk-margin-top">
@@ -345,6 +346,14 @@ var state = {
 
 var $ = function(id) { return document.getElementById(id); };
 
+
+function toggleCollectionsVisibility() {
+  var q = $(\'search-input\').value.trim();
+  var el = $(\'collections\');
+  if (!el) return;
+  el.classList.toggle(\'hidden\', q.length > 0);
+}
+
 function ruToEnText(text) {
   return text.split('').map(function(c) { return ruToEn[c] || c; }).join('');
 }
@@ -359,6 +368,7 @@ function matchesRuAlias(ticker, query) {
 function init() {
   bindEvents();
   renderCollection();
+  toggleCollectionsVisibility();
   updateProgress();
   setTimeout(function() { state.loading = false; renderCollection(); }, 600);
 }
@@ -412,33 +422,7 @@ function updateProgress() {
   $('step3').className = 'progress-step' + (hasAmt ? ' completed' : '');
 }
 
-function showSelectedCard(inst) {
-  $('sel-icon').src = getLogoUrl(inst.ticker);
-  $('sel-icon').onerror = function() { this.style.display = 'none'; };
-  $('sel-icon').onload = function() { this.style.display = 'block'; };
-  $('sel-ticker').textContent = inst.ticker;
-  $('sel-name').textContent = inst.name;
-  $('sel-price').textContent = '$' + inst.price.toFixed(2);
-  var changeEl = $('sel-change');
-  var pos = inst.change >= 0;
-  changeEl.className = 'selected-change ' + (pos ? 'positive' : 'negative');
-  changeEl.textContent = (pos ? '↑' : '↓') + Math.abs(inst.change).toFixed(1) + '%';
-  $('stat-mcap').textContent = inst.mcap;
-  $('stat-pe').textContent = inst.pe;
-  $('stat-div').textContent = inst.div;
-  $('stat-high').textContent = '$' + inst.high;
-  $('why-text').textContent = inst.why;
-  drawChart(inst.chart, pos);
-  $('selected-card').classList.add('visible');
-}
 
-function hideSelectedCard() { $('selected-card').classList.remove('visible'); }
-
-function updateSmartSuggestion() {
-  var isW = $('freq-weekly').checked;
-  $('suggestion-text').textContent = isW ? 'Most users invest $50-200 weekly' : 'Most users invest $200-500 monthly';
-  $('smart-suggestion').classList.add('visible');
-}
 
 function updateAnnualProjection() {
   var v = parseFloat($('amount').value);
@@ -497,6 +481,7 @@ function updateDisplay() {
     $('search-input').value = '';
     $('clear-button').classList.remove('visible');
   }
+  toggleCollectionsVisibility();
 }
 
 function updateWarning() {
@@ -546,8 +531,7 @@ function select(inst) {
   updateWarning();
   closeDD();
   renderCollection();
-  showSelectedCard(inst);
-  validate();
+validate();
   updateSmartSuggestion();
 }
 
@@ -558,9 +542,9 @@ function clearSelection() {
   state.filtered = instruments.slice();
   updateWarning();
   renderCollection();
-  hideSelectedCard();
-  validate();
+validate();
   $('search-input').focus();
+  toggleCollectionsVisibility();
 }
 
 function openDD() { state.ddOpen = true; $('dropdown').classList.add('open'); }
@@ -673,10 +657,10 @@ function bindEvents() {
     if (state.selected && q !== state.selected.ticker + ' · ' + state.selected.name) {
       state.selected = null;
       $('clear-button').classList.remove('visible');
-      hideSelectedCard();
-      validate();
+validate();
     }
     filter(q);
+    toggleCollectionsVisibility();
     updateWarning();
     if (!state.ddOpen) openDD();
   });
