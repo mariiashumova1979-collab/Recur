@@ -91,46 +91,11 @@
     .dropdown-empty { padding: 24px 16px; text-align: center; }
     .dropdown-empty p { font-size: 0.875rem; color: var(--color-gray-500); margin: 0; }
     
-    .selected-card { display: none; margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%); border: 1px solid var(--color-gray-200); border-radius: 10px; }
-    .selected-card.visible { display: block; animation: slideIn 0.25s ease; }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-    .selected-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .selected-icon { width: 48px; height: 48px; border-radius: 10px; object-fit: contain; background: var(--color-gray-100); }
-    .selected-main { flex: 1; }
-    .selected-title { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-    .selected-title h3 { font-size: 1rem; font-weight: 700; margin: 0; }
-    .selected-title span { font-size: 0.8rem; color: var(--color-gray-500); }
-    .selected-price-row { display: flex; align-items: baseline; gap: 8px; }
-    .selected-price { font-size: 1.1rem; font-weight: 700; }
-    .selected-change { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
-    .selected-change.positive { background: var(--color-success-light); color: var(--color-success); }
-    .selected-change.negative { background: var(--color-error-light); color: var(--color-error); }
-    .mini-chart { width: 70px; height: 30px; }
-    .selected-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-gray-200); margin-top: 12px; }
-    .stat-item { text-align: center; }
-    .stat-label { font-size: 0.6rem; color: var(--color-gray-500); text-transform: uppercase; }
-    .stat-value { font-size: 0.8rem; font-weight: 600; }
-    .why-stock { margin-top: 12px; padding: 10px; background: var(--color-primary-light); border-radius: 6px; }
-    .why-stock h4 { font-size: 0.7rem; font-weight: 600; color: var(--color-primary); margin: 0 0 4px; }
-    .why-stock p { font-size: 0.75rem; color: var(--color-gray-700); margin: 0; line-height: 1.4; }
-    
     .collections { margin-top: 24px; }
     .collection-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .collection-tab { padding: 8px 16px; font-size: 0.875rem; font-weight: 500; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 50px; color: var(--color-gray-600); cursor: pointer; }
     .collection-tab:hover { border-color: var(--color-gray-300); background: var(--color-gray-50); }
     .collection-tab.active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
-    .collection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .collection-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: 8px; cursor: pointer; transition: all 0.15s ease; }
-    .collection-item:hover { border-color: var(--color-gray-300); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .collection-item.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
-    .collection-item .instrument-icon { width: 48px; height: 48px; }
-    .collection-item-ticker { font-weight: 600; font-size: 0.875rem; }
-    .collection-item-name { font-size: 0.75rem; color: var(--color-gray-500); text-align: center; }
-    .collection-empty { grid-column: 1 / -1; padding: 32px 16px; text-align: center; color: var(--color-gray-500); font-size: 0.875rem; }
-    .skeleton { background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 8px; }
-    .skeleton-item { height: 100px; }
-    @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 20px; }
@@ -250,7 +215,21 @@
       .currency-arrow { transform: rotate(90deg); }
       .account-info-bar { flex-direction: column; gap: 8px; }
     }
-  </style>
+  
+
+    /* Collections list (no instrument cards) */
+    .collection-list {
+      list-style: none;
+      padding: 6px;
+      margin: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 8px;
+    }
+    .collection-list .dropdown-item { margin: 0; }
+    .collections.hide-tabs .collection-tabs { display: none; }
+
+</style>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
@@ -295,18 +274,9 @@
         <p class="helper-text">Search by ticker, name, sector or list (RU/EN supported)</p>
         <div id="dropdown" class="dropdown"><ul id="dropdown-list" class="dropdown-list"></ul></div>
       </div>
-      <div id="selected-card" class="selected-card">
-        <div class="selected-header">
-          <img id="sel-icon" class="selected-icon" src="" alt="">
-          <div class="selected-main"><div class="selected-title"><h3 id="sel-ticker"></h3><span id="sel-name"></span></div><div class="selected-price-row"><span id="sel-price" class="selected-price"></span><span id="sel-change" class="selected-change"></span></div></div>
-          <svg id="mini-chart" class="mini-chart" viewBox="0 0 100 40"></svg>
-        </div>
-        <div class="selected-stats"><div class="stat-item"><div class="stat-label">MCap</div><div class="stat-value" id="stat-mcap"></div></div><div class="stat-item"><div class="stat-label">P/E</div><div class="stat-value" id="stat-pe"></div></div><div class="stat-item"><div class="stat-label">Div</div><div class="stat-value" id="stat-div"></div></div><div class="stat-item"><div class="stat-label">52H</div><div class="stat-value" id="stat-high"></div></div></div>
-        <div class="why-stock"><h4>💡 Why this stock?</h4><p id="why-text"></p></div>
-      </div>
-      <div class="collections">
+            <div class="collections">
         <div class="collection-tabs"><button class="collection-tab active" data-collection="popular">Popular</button><button class="collection-tab" data-collection="recent">Recently searched</button><button class="collection-tab" data-collection="dividend">Dividend</button><button class="collection-tab" data-collection="tech">Tech</button><button class="collection-tab" data-collection="healthcare">Healthcare</button></div>
-        <div id="collection-panel" class="collection-grid"></div>
+        <ul id="collection-panel" class="collection-list"></ul>
       </div>
     </div>
   </section>
@@ -481,6 +451,7 @@ function matchesRuAlias(ticker, query) {
 function init() {
   bindEvents();
   renderCollection();
+  updateCollectionsVisibility();
   updateProgress();
   setTimeout(function() { state.loading = false; renderCollection(); }, 600);
 }
@@ -534,26 +505,7 @@ function updateProgress() {
   $('step3').className = 'progress-step' + (hasAmt ? ' completed' : '');
 }
 
-function showSelectedCard(inst) {
-  $('sel-icon').src = getLogoUrl(inst.ticker);
-  $('sel-icon').onerror = function() { this.style.opacity = 0; };
-  $('sel-ticker').textContent = inst.ticker;
-  $('sel-name').textContent = inst.name;
-  $('sel-price').textContent = '$' + inst.price.toFixed(2);
-  var changeEl = $('sel-change');
-  var pos = inst.change >= 0;
-  changeEl.className = 'selected-change ' + (pos ? 'positive' : 'negative');
-  changeEl.textContent = (pos ? '↑' : '↓') + Math.abs(inst.change).toFixed(1) + '%';
-  $('stat-mcap').textContent = inst.mcap;
-  $('stat-pe').textContent = inst.pe;
-  $('stat-div').textContent = inst.div;
-  $('stat-high').textContent = '$' + inst.high;
-  $('why-text').textContent = inst.why;
-  drawChart(inst.chart, pos);
-  $('selected-card').classList.add('visible');
-}
 
-function hideSelectedCard() { $('selected-card').classList.remove('visible'); }
 
 function updateSmartSuggestion() {
   var isW = $('freq-weekly').checked;
@@ -612,12 +564,24 @@ function renderDropdown() {
 
 function renderCollectionItem(inst) {
   var isS = state.selected && state.selected.id === inst.id;
-  return '<button class="collection-item' + (isS ? ' selected' : '') + '" data-id="' + inst.id + '"><img class="instrument-icon" src="' + getLogoUrl(inst.ticker) + '" onerror="this.style.opacity=0" alt=""><span class="collection-item-ticker">' + esc(inst.ticker) + '</span><span class="collection-item-name">' + esc(inst.name) + '</span></button>';
+  var tags = inst.isETF ? '<span class="micro-tag etf">ETF</span>' : '';
+  tags += '<span class="micro-tag sector">' + inst.sector + '</span>';
+  return '<li class="dropdown-item' + (isS ? ' selected' : '') + '" data-id="' + inst.id + '">' +
+    '<img class="instrument-icon" src="' + getLogoUrl(inst.ticker) + '" onerror="this.style.opacity=0" alt="">' +
+    '<div class="instrument-info">' +
+      '<div class="instrument-header">' +
+        '<span class="instrument-ticker">' + esc(inst.ticker) + '</span>' +
+        '<span class="instrument-name">' + esc(inst.name) + '</span>' +
+        tags +
+      '</div>' +
+      '<div class="instrument-meta">' + esc(inst.lists.join(', ')) + '</div>' +
+    '</div>' +
+  '</li>';
 }
 
 function renderCollection() {
   if (state.loading) {
-    $('collection-panel').innerHTML = Array(4).fill('<div class="collection-item skeleton skeleton-item"></div>').join('');
+    $('collection-panel').innerHTML = '<li class="dropdown-empty"><p>Loading…</p></li>';
     return;
   }
   var items = [];
@@ -628,8 +592,8 @@ function renderCollection() {
     case 'tech': items = instruments.filter(function(i){return i.sector==='Tech';}).slice(0,4); break;
     case 'healthcare': items = instruments.filter(function(i){return i.sector==='Healthcare';}).slice(0,4); break;
   }
-  $('collection-panel').innerHTML = items.length === 0 
-    ? '<div class="collection-empty">' + (state.activeCol === 'recent' ? 'No recent searches.' : 'No items.') + '</div>'
+  $('collection-panel').innerHTML = items.length === 0
+    ? '<li class="dropdown-empty"><p>' + (state.activeCol === 'recent' ? 'No recent searches.' : 'No items.') + '</p></li>'
     : items.map(renderCollectionItem).join('');
 }
 
@@ -640,7 +604,8 @@ function updateDisplay() {
   } else {
     $('search-input').value = '';
     $('clear-button').classList.remove('visible');
-  }
+    updateCollectionsVisibility();
+}
 }
 
 function updateWarning() {
@@ -697,7 +662,7 @@ function select(inst) {
   updateWarning();
   closeDD();
   renderCollection();
-  showSelectedCard(inst);
+  
   validate();
   updateSmartSuggestion();
 }
@@ -709,13 +674,21 @@ function clearSelection() {
   state.filtered = instruments.slice();
   updateWarning();
   renderCollection();
-  hideSelectedCard();
+  
   validate();
+  updateCollectionsVisibility();
   $('search-input').focus();
 }
 
 function openDD() { state.ddOpen = true; $('dropdown').classList.add('open'); }
 function closeDD() { state.ddOpen = false; state.hlIdx = -1; $('dropdown').classList.remove('open'); }
+
+function updateCollectionsVisibility() {
+  var q = $('search-input').value.trim();
+  var collections = document.querySelector('.collections');
+  if (!collections) return;
+  collections.classList.toggle('hide-tabs', q.length > 0);
+}
 
 function handleKey(e) {
   if (!state.ddOpen) {
@@ -828,11 +801,12 @@ function bindEvents() {
     if (state.selected && q !== state.selected.ticker + ' · ' + state.selected.name) {
       state.selected = null;
       $('clear-button').classList.remove('visible');
-      hideSelectedCard();
+      
       validate();
     }
     filter(q);
     updateWarning();
+    updateCollectionsVisibility();
     if (!state.ddOpen) openDD();
   });
   $('search-input').addEventListener('keydown', handleKey);
@@ -858,8 +832,8 @@ function bindEvents() {
   });
   
   $('collection-panel').addEventListener('click', function(e) {
-    var item = e.target.closest('.collection-item');
-    if (item && !item.classList.contains('skeleton')) {
+    var item = e.target.closest('.dropdown-item');
+    if (item) {
       var inst = instruments.find(function(x) { return x.id === parseInt(item.dataset.id); });
       if (inst) select(inst);
     }
