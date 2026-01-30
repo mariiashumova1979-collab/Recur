@@ -391,6 +391,93 @@
     /* Ensure page can scroll if content exceeds viewport */
     html, body { height: auto !important; overflow: auto !important; }
 
+    /* UX FIX: remove gray-white stripe between blocks */
+    body { background: var(--color-white) !important; }
+    .custom-card + .custom-card { margin-top: 0 !important; }
+    section.custom-card.uk-margin-top { margin-top: 0 !important; }
+
+
+/* === FIX: remove leftover separator strip === */
+.custom-card { margin-bottom: 0 !important; }
+.custom-card + .custom-card { margin-top: 0 !important; border-top: none !important; }
+
+/* === FIX: align inputs and buttons to single grid === */
+.form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+.frequency-pills {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+.frequency-pill label,
+.form-input,
+.input-with-prefix,
+.submit-btn {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Ensure confirm button matches inputs width */
+.confirm-row {
+  display: block !important;
+}
+
+
+/* === v3 FIXES (stronger specificity) === */
+
+/* Keep BOTH cards same width and centered */
+.custom-card {
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.uk-container.uk-container-small {
+  max-width: 980px !important;
+}
+
+/* Remove any full-bleed effect from nested containers */
+.uk-container.uk-container-small.bottom-container {
+  max-width: 980px !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* If any element is stretching full width, constrain it */
+#purchase-form,
+#purchase-form .bottom-container,
+#purchase-form .card-body {
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Align inputs / pills to a clean 2-col grid */
+#purchase-form .form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+#purchase-form .frequency-pills {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+#purchase-form .frequency-pill { width: 100% !important; }
+#purchase-form .frequency-pill label { width: 100% !important; }
+
+/* Make input groups fill their grid cell */
+#purchase-form .form-group,
+#purchase-form .input-with-prefix,
+#purchase-form .form-input,
+#purchase-form #submit-btn {
+  width: 100% !important;
+}
+
 </style>
 </head>
 <body>
@@ -763,9 +850,8 @@ function validate() {
   var hasInstrument = state.selected !== null;
   var hasConsent = $('fx-consent').checked;
   
-  // Button is enabled only if: instrument selected + amount entered + consent given
-  $('submit-btn').disabled = !(hasAmount && hasInstrument && hasConsent);
-  
+  // Button is enabled only if: instrument selected + amount entered
+  $('submit-btn').disabled = !(hasAmount && hasInstrument);
   updateProgress();
   updateAnnualProjection();
   updateConversionBlock();
@@ -900,7 +986,7 @@ function handleInvestTypeChange() {
 
 function handleSubmit(e) {
   e.preventDefault();
-  if (!state.selected || !$('fx-consent').checked) return;
+  if (!state.selected) return;
   
   $('submit-btn').classList.add('loading');
   
