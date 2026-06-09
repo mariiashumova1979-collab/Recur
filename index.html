@@ -118,6 +118,7 @@
   .amount-field:focus-within { border-color: var(--ink); }
   .amount-input-wrap { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
   .amount-prefix { font-size: 2.4rem; font-weight: 700; }
+  .amount-currency { border: none; background: transparent; color: var(--ink); outline: none; cursor: pointer; font-family: var(--sans); padding: 0 6px 0 0; }
   .amount-input { font-size: 2.4rem; font-weight: 700; color: var(--ink); border: none; background: transparent; outline: none; width: 260px; max-width: 100%; font-family: var(--sans); }
   .amount-input::-webkit-outer-spin-button, .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .amount-input { -moz-appearance: textfield; }
@@ -263,7 +264,10 @@
       <label class="field-label" id="amount-label">Amount</label>
       <div class="amount-field">
         <div class="amount-input-wrap">
-          <span class="amount-prefix" id="amount-prefix">€</span>
+          <select id="amount-prefix" class="amount-prefix amount-currency" aria-label="Currency">
+            <option value="USD">USD</option>
+            <option value="EUR" selected>EUR</option>
+          </select>
           <input type="number" id="amount" class="amount-input" value="500" min="0" step="1">
         </div>
         <div class="amount-hint" id="amount-hint">Purchases on the 1st of each month</div>
@@ -614,7 +618,8 @@ function handleSubmit() {
     $('submit-btn').classList.remove('loading');
     var v = parseFloat($('amount').value);
     var period = state.frequency==='weekly' ? 'every Monday' : 'on the 1st of each month';
-    var what = state.invType==='shares' ? '<strong>'+Math.floor(v)+' shares</strong> of' : '<strong>€'+v.toFixed(2)+'</strong> in';
+    var currency = $('amount-prefix').value || 'EUR';
+    var what = state.invType==='shares' ? '<strong>'+Math.floor(v)+' shares</strong> of' : '<strong>'+currency+' '+v.toFixed(2)+'</strong> in';
     $('summary-text').innerHTML = 'You will invest '+what+' <strong>'+state.selected.ticker+'</strong> '+period+', funded from your Revolut card ending 6619.';
     $('summary-panel').classList.add('visible');
     if (state.firstSchedule) { confetti(); localStorage.setItem('hasSchedule','1'); state.firstSchedule=false; toast('🎉 First schedule created!'); }
@@ -652,6 +657,7 @@ function bindEvents() {
   $('etf-card-list').addEventListener('click', function(e){ var card=e.target.closest('.etf-card'); if (card){ var inst=instruments.filter(function(x){ return x.id===parseInt(card.dataset.id); })[0]; if (inst) selectFromCard(inst); } });
 
   $('invest-type').addEventListener('change', handleInvestTypeChange);
+  $('amount-prefix').addEventListener('change', validate);
   $('amount').addEventListener('input', validate);
   $('freq-toggle').addEventListener('click', function(e){ var b=e.target.closest('.freq-btn'); if (b) setFrequency(b.dataset.freq); });
 
