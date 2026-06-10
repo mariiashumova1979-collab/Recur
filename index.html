@@ -302,6 +302,18 @@
   .calc-result-label{font-size:13px;font-weight:500;color:var(--muted)}
   .calc-result-value{font-size:38px;font-weight:800;letter-spacing:-.02em;color:var(--indigo);margin-top:6px}
   .calc-result-text{font-size:13.5px;color:var(--muted);margin-top:10px;max-width:300px}
+  .calc-hint{font-size:12px;color:var(--muted);margin-top:14px;max-width:300px}
+  .calc-breakdown{margin-top:18px;display:grid;gap:8px;max-height:252px;overflow-y:auto;padding-right:2px}
+  .calc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+  .calc-row-left{min-width:0}
+  .calc-row-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .calc-row .ticker{font-size:13px}
+  .calc-row .perf{font-size:10px;padding:3px 7px}
+  .calc-row .alloc{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap}
+  .calc-row-right{display:flex;align-items:center;gap:6px}
+  .calc-row .row-value{font-size:13px;font-weight:700;white-space:nowrap}
+  .row-remove{width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0}
+  .row-remove:hover{background:var(--red-bg);color:var(--red)}
   .calc-bars{display:flex;align-items:flex-end;gap:7px;height:120px;margin-top:auto;padding-top:28px}
   .calc-bars .bar{flex:1;border-radius:5px 5px 2px 2px;background:var(--navy);transition:height .25s ease;min-height:5px}
 
@@ -644,13 +656,15 @@
           </div>
           <div class="calc-note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <span>Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
+            <span id="calcNoteText">Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
           </div>
         </div>
         <div class="calc-result" aria-live="polite">
           <div class="calc-result-label">Estimated Portfolio Value</div>
           <div class="calc-result-value" id="resultValue">1,500,295 EUR</div>
           <p class="calc-result-text" id="resultText">Invest 1,000 EUR monthly and become a millionaire in 30 years.</p>
+          <p class="calc-hint" id="calcHint">Add instruments with “+” in the categories above to project each one using its own last-year return.</p>
+          <div class="calc-breakdown" id="calcBreakdown"></div>
           <div class="calc-bars" id="calcBars" aria-hidden="true"></div>
         </div>
       </div>
@@ -780,6 +794,7 @@
     btn.classList.toggle("added", nowAdded);
     btn.setAttribute("aria-pressed", String(nowAdded));
     btn.setAttribute("aria-label", (nowAdded ? "Remove " + t + " from plan" : "Add " + t + " to plan"));
+    updateCalc();
   });
 
   // Header border on scroll
@@ -792,12 +807,18 @@
 
   /* ============================================================
      Wealth growth calculator
-     Future value of an annuity-due, monthly compounding:
+     FV of an annuity-due, monthly compounding:
      FV = PMT × ((1+i)^n − 1) / i × (1+i),  i = rate/12, n = years×12
-     Defaults (1,000 EUR / 30 years / 8%) give 1,500,295 EUR
-     to match the mockup.
+
+     No instruments selected  → single projection at DEFAULT_RATE
+       (defaults 1,000 EUR / 30 years give 1,500,295 EUR as in mockup).
+     Instruments selected (+) → the monthly amount is split equally
+       and each instrument is projected with its own last-year
+       return ("perf", % за год, from DATA); headline = portfolio
+       total. To project the FULL amount into each instrument
+       instead, set share = pmt in portfolioValue/renderBreakdown.
      ============================================================ */
-  const ANNUAL_RATE = 0.08;
+  const DEFAULT_RATE = 0.08;
   const BAR_COUNT = 12;
 
   const amountRange = document.getElementById("amountRange");
@@ -807,6 +828,12 @@
   const resultValue = document.getElementById("resultValue");
   const resultText = document.getElementById("resultText");
   const calcBars = document.getElementById("calcBars");
+  const calcHint = document.getElementById("calcHint");
+  const calcBreakdown = document.getElementById("calcBreakdown");
+  const calcNoteText = document.getElementById("calcNoteText");
+
+  const NOTE_DEFAULT = "Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.";
+  const NOTE_SELECTED = "Each selected instrument is projected using its own last-year return. Past performance does not guarantee future results.";
 
   function futureValue(pmt, years, annualRate) {
     const i = annualRate / 12;
@@ -823,16 +850,28 @@
     return y + (y === 1 ? " year" : " years");
   }
 
+  function selectedItems() {
+    return DATA.filter(function (i) { return added.has(i.t); });
+  }
+
+  function portfolioValue(pmt, years, items) {
+    if (items.length === 0) return futureValue(pmt, years, DEFAULT_RATE);
+    const share = pmt / items.length;
+    return items.reduce(function (sum, it) {
+      return sum + futureValue(share, years, it.perf / 100);
+    }, 0);
+  }
+
   function updateFill(el) {
     const min = Number(el.min), max = Number(el.max), val = Number(el.value);
     el.style.setProperty("--fill", ((val - min) / (max - min) * 100) + "%");
   }
 
-  function renderBars(pmt, years) {
-    const total = futureValue(pmt, years, ANNUAL_RATE);
+  function renderBars(pmt, years, items) {
+    const total = portfolioValue(pmt, years, items);
     let html = "";
     for (let k = 1; k <= BAR_COUNT; k++) {
-      const v = futureValue(pmt, years * k / BAR_COUNT, ANNUAL_RATE);
+      const v = portfolioValue(pmt, years * k / BAR_COUNT, items);
       const h = Math.max(5, Math.round(v / total * 100));
       const op = (0.3 + 0.7 * (k - 1) / (BAR_COUNT - 1)).toFixed(2);
       html += '<span class="bar" style="height:' + h + '%;opacity:' + op + '"></span>';
@@ -840,22 +879,63 @@
     calcBars.innerHTML = html;
   }
 
+  function renderBreakdown(pmt, years, items) {
+    if (items.length === 0) { calcBreakdown.innerHTML = ""; return; }
+    const share = pmt / items.length;
+    calcBreakdown.innerHTML = items.map(function (it) {
+      return (
+        '<div class="calc-row">' +
+          '<div class="calc-row-left">' +
+            '<div class="calc-row-top">' +
+              '<span class="ticker">' + it.t + '</span>' +
+              perfBadge(it.perf) +
+            '</div>' +
+            '<div class="alloc">≈ ' + fmtNum(share) + ' EUR/mo</div>' +
+          '</div>' +
+          '<div class="calc-row-right">' +
+            '<span class="row-value">' + fmtNum(futureValue(share, years, it.perf / 100)) + ' EUR</span>' +
+            '<button class="row-remove" data-ticker="' + it.t + '" aria-label="Remove ' + it.t + ' from projection">' +
+              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("");
+  }
+
   function updateCalc() {
     const pmt = Number(amountRange.value);
     const years = Number(yearsRange.value);
-    const total = futureValue(pmt, years, ANNUAL_RATE);
+    const items = selectedItems();
+    const total = portfolioValue(pmt, years, items);
 
     amountValue.textContent = fmtNum(pmt) + " EUR";
     yearsValue.textContent = yearsLabel(years);
     resultValue.textContent = fmtNum(total) + " EUR";
+
+    const into = items.length === 0 ? "" :
+      items.length === 1 ? " into " + items[0].t : " across " + items.length + " instruments";
     resultText.textContent = total >= 1000000
-      ? "Invest " + fmtNum(pmt) + " EUR monthly and become a millionaire in " + yearsLabel(years) + "."
-      : "Invest " + fmtNum(pmt) + " EUR monthly and build solid long-term capital in " + yearsLabel(years) + ".";
+      ? "Invest " + fmtNum(pmt) + " EUR monthly" + into + " and become a millionaire in " + yearsLabel(years) + "."
+      : "Invest " + fmtNum(pmt) + " EUR monthly" + into + " and build solid long-term capital in " + yearsLabel(years) + ".";
+
+    calcNoteText.textContent = items.length === 0 ? NOTE_DEFAULT : NOTE_SELECTED;
+    calcHint.style.display = items.length === 0 ? "" : "none";
 
     updateFill(amountRange);
     updateFill(yearsRange);
-    renderBars(pmt, years);
+    renderBreakdown(pmt, years, items);
+    renderBars(pmt, years, items);
   }
+
+  // Remove instrument directly from the projection list
+  calcBreakdown.addEventListener("click", function (e) {
+    const btn = e.target.closest(".row-remove");
+    if (!btn) return;
+    added.delete(btn.dataset.ticker);
+    render();
+    updateCalc();
+  });
 
   amountRange.addEventListener("input", updateCalc);
   yearsRange.addEventListener("input", updateCalc);
