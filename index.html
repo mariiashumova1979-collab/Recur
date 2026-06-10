@@ -22,19 +22,21 @@
     --indigo:#4053C8;
     --green:#179B62;
     --green-bg:#E4F6ED;
-    --red:#E5484D;
+    --red:#D7373F;
+    --red-bg:#FDEBEC;
     --radius:16px;
     --shadow:0 12px 32px rgba(16,26,63,.08);
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  html{scroll-behavior:smooth;scroll-padding-top:84px;overflow-x:clip}
   body{
     font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     color:var(--ink);
     background:#fff;
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
   }
   a{text-decoration:none;color:inherit}
   button{font-family:inherit;cursor:pointer}
@@ -49,7 +51,7 @@
     font-weight:600;font-size:14px;line-height:1;
     border-radius:10px;padding:11px 18px;
     border:1px solid transparent;
-    transition:background .15s ease,border-color .15s ease,transform .15s ease;
+    transition:background .15s ease,border-color .15s ease;
     white-space:nowrap;
   }
   .btn-lg{padding:14px 24px;font-size:15px;border-radius:12px}
@@ -74,29 +76,30 @@
   }
   .site-header.scrolled{border-bottom-color:var(--line)}
   .header-inner{display:flex;align-items:center;gap:32px;height:68px}
-  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;letter-spacing:-.01em}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
   .brand svg{color:var(--navy)}
+  .cta-short{display:none}
   .main-nav{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500;color:var(--muted);margin-left:8px}
   .main-nav a:hover{color:var(--ink)}
   .main-nav a.active{color:var(--blue);font-weight:600}
   .header-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
 
-  /* ---------- Hero ---------- */
-  .hero{padding:24px 0 0}
-  .hero-panel{
-    position:relative;overflow:hidden;
+  /* ---------- Hero (full-width band) ---------- */
+  .hero{
+    position:relative;
     background-color:var(--soft);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 9.5v9M9.5 14h9' stroke='%23DCE3F6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    border:1px solid var(--line);
-    border-radius:24px;
-    padding:72px 64px;
+    border-bottom:1px solid var(--line);
+    padding:72px 0;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(760px 380px at 35% 50%, rgba(245,247,252,.95), rgba(245,247,252,0) 70%);
+  }
+  .hero-inner{
+    position:relative;
     display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;
   }
-  .hero-panel::before{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(720px 360px at 38% 45%, rgba(245,247,252,.95), rgba(245,247,252,0) 70%);
-  }
-  .hero-copy{position:relative}
   .hero-copy h1{font-size:46px;line-height:1.12;font-weight:800;letter-spacing:-.02em;max-width:480px}
   .hero-copy p{margin-top:18px;font-size:16px;color:var(--muted);max-width:440px}
   .hero-actions{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
@@ -126,7 +129,7 @@
   .plan-next-date{font-size:14px;font-weight:700;margin-top:1px}
 
   /* ---------- Feature cards ---------- */
-  .features{padding:48px 0 8px}
+  .features{padding:56px 0 8px}
   .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   .feature-card{
     background:#fff;border:1px solid var(--line);border-radius:var(--radius);
@@ -184,8 +187,14 @@
     transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
   }
   .instrument-card:hover{border-color:var(--lav-300);box-shadow:0 6px 18px rgba(16,26,63,.06);transform:translateY(-1px)}
+  .instrument-info{min-width:0}
+  .instrument-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .ticker{font-weight:700;font-size:15px}
-  .iname{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .perf{font-size:11px;font-weight:700;line-height:1;padding:4px 8px;border-radius:999px;white-space:nowrap}
+  .perf-up{background:var(--green-bg);color:var(--green)}
+  .perf-down{background:var(--red-bg);color:var(--red)}
+  .iname{font-size:13px;font-weight:600;margin-top:9px}
+  .idesc{font-size:12px;color:var(--muted);margin-top:2px}
   .add-btn{
     width:34px;height:34px;border-radius:50%;
     border:1px solid var(--line);background:#fff;color:var(--ink);
@@ -246,6 +255,56 @@
   }
   .demo-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 
+  /* ---------- Wealth growth calculator ---------- */
+  .calc-section{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .calc-card{
+    background:#fff;border:1px solid var(--line);border-radius:20px;
+    box-shadow:var(--shadow);
+    display:grid;grid-template-columns:1.05fr .95fr;
+    overflow:hidden;max-width:980px;margin:0 auto;
+  }
+  .calc-controls{padding:36px;display:grid;gap:30px;align-content:start}
+  .calc-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+  .calc-label{font-size:13.5px;font-weight:600}
+  .calc-value{font-size:15px;font-weight:700;white-space:nowrap}
+
+  input[type="range"]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:6px;border-radius:999px;
+    background:linear-gradient(to right, var(--navy) var(--fill,50%), var(--line) var(--fill,50%));
+    outline-offset:4px;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:18px;height:18px;border-radius:50%;
+    background:#fff;border:2.5px solid var(--navy);
+    box-shadow:0 1px 4px rgba(16,26,63,.25);cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px;height:18px;border-radius:50%;
+    background:#fff;border:2.5px solid var(--navy);
+    box-shadow:0 1px 4px rgba(16,26,63,.25);cursor:pointer;
+  }
+  input[type="range"]::-moz-range-track{height:6px;background:transparent;border:none}
+  .range-scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:8px}
+
+  .calc-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--soft);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;
+  }
+  .calc-note svg{color:var(--indigo);margin-top:1px}
+
+  .calc-result{
+    background:var(--soft);border-left:1px solid var(--line);
+    padding:36px;display:flex;flex-direction:column;
+  }
+  .calc-result-label{font-size:13px;font-weight:500;color:var(--muted)}
+  .calc-result-value{font-size:38px;font-weight:800;letter-spacing:-.02em;color:var(--indigo);margin-top:6px}
+  .calc-result-text{font-size:13.5px;color:var(--muted);margin-top:10px;max-width:300px}
+  .calc-bars{display:flex;align-items:flex-end;gap:7px;height:120px;margin-top:auto;padding-top:28px}
+  .calc-bars .bar{flex:1;border-radius:5px 5px 2px 2px;background:var(--navy);transition:height .25s ease;min-height:5px}
+
   /* ---------- Final CTA ---------- */
   .final-cta{text-align:center;padding:84px 0 96px}
   .final-cta h2{font-size:28px;font-weight:800;letter-spacing:-.01em}
@@ -261,27 +320,50 @@
 
   /* ---------- Responsive ---------- */
   @media (max-width:960px){
-    .hero-panel{grid-template-columns:1fr;padding:48px 32px}
+    .hero{padding:48px 0}
+    .hero-inner{grid-template-columns:1fr}
     .hero-card-wrap{justify-content:flex-start}
     .hero-copy h1{font-size:36px}
     .features-grid{grid-template-columns:1fr}
     .steps{grid-template-columns:repeat(2,1fr)}
-    .step::after{display:none}
+    .step:not(:last-child)::after{display:none}
     .instrument-grid{grid-template-columns:repeat(2,1fr)}
     .why-grid{grid-template-columns:1fr}
     .demo-panel{grid-template-columns:1fr;padding:40px 32px}
     .demo-card{justify-self:start}
+    .calc-card{grid-template-columns:1fr}
+    .calc-result{border-left:none;border-top:1px solid var(--line)}
   }
   @media (max-width:760px){
     .main-nav{display:none}
     .header-actions .btn-outline{display:none}
+    .header-inner{gap:12px;justify-content:space-between}
+    .header-actions{margin-left:0}
+    .header-actions .btn-primary{padding:10px 14px;font-size:13px}
+    .cta-full{display:none}
+    .cta-short{display:inline}
   }
   @media (max-width:640px){
+    .container{padding:0 20px}
     .instrument-grid{grid-template-columns:1fr}
     .steps{grid-template-columns:1fr}
-    .hero-panel{padding:36px 22px}
-    .demo-panel{padding:32px 22px}
+    .hero-copy h1{font-size:30px}
+    .section-head h2{font-size:24px}
+    .demo-copy h2{font-size:25px}
+    .final-cta h2{font-size:24px}
+    .plan-card{width:100%}
+    .demo-panel{padding:36px 22px}
     .section{padding:64px 0}
+    .calc-controls{padding:24px 20px}
+    .calc-result{padding:24px 20px}
+    .calc-result-value{font-size:30px}
+    .calc-bars{height:100px}
+    .footer-inner{flex-direction:column;gap:24px}
+    .footer-links{text-align:left}
+  }
+  @media (max-width:480px){
+    .hero-actions{flex-direction:column;align-items:stretch}
+    .hero-actions .btn{width:100%}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
@@ -304,7 +386,7 @@
     </nav>
     <div class="header-actions">
       <a class="btn btn-outline" href="#how-it-works">How it works</a>
-      <a class="btn btn-primary" href="#categories">Set up Recurring Investment</a>
+      <a class="btn btn-primary" href="#categories"><span class="cta-full">Set up Recurring Investment</span><span class="cta-short">Set up plan</span></a>
     </div>
   </div>
 </header>
@@ -313,49 +395,47 @@
 
   <!-- ======================= Hero ======================= -->
   <section class="hero">
-    <div class="container">
-      <div class="hero-panel">
-        <div class="hero-copy">
-          <h1>Invest regularly in Stocks and ETFs.</h1>
-          <p>Set up weekly or monthly recurring investments into any available instrument, including US &amp; EU Stocks and UCITS ETFs.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary btn-lg" href="#categories">Start AutoInvest</a>
-            <a class="btn btn-outline btn-lg" href="#how-it-works">Learn More</a>
-          </div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h1>Invest regularly in Stocks and ETFs.</h1>
+        <p>Set up weekly or monthly recurring investments into any available instrument, including US &amp; EU Stocks and UCITS ETFs.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#categories">Start AutoInvest</a>
+          <a class="btn btn-outline btn-lg" href="#how-it-works">Learn More</a>
         </div>
-        <div class="hero-card-wrap">
-          <div class="plan-card">
-            <div class="plan-card-head">
-              <div>
-                <div class="plan-title">Broad Market UCITS ETF</div>
-                <div class="plan-sub">Global Equity</div>
-              </div>
-              <svg class="plan-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="hero-card-wrap">
+        <div class="plan-card">
+          <div class="plan-card-head">
+            <div>
+              <div class="plan-title">Broad Market UCITS ETF</div>
+              <div class="plan-sub">Global Equity</div>
             </div>
-            <div class="plan-rows">
-              <div class="plan-row">
-                <span class="label">Amount</span>
-                <span class="value">100 EUR</span>
-              </div>
-              <div class="plan-row">
-                <span class="label">Frequency</span>
-                <span class="value">Monthly</span>
-              </div>
-              <div class="plan-row">
-                <span class="label">Source</span>
-                <span class="pill pill-soft">Funded by auto top-up</span>
-              </div>
-              <div class="plan-row" style="border-bottom:none">
-                <span class="label">Commission</span>
-                <span class="pill pill-green">No commission</span>
-              </div>
+            <svg class="plan-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="plan-rows">
+            <div class="plan-row">
+              <span class="label">Amount</span>
+              <span class="value">100 EUR</span>
             </div>
-            <div class="plan-next">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <div>
-                <div class="plan-next-label">Next purchase</div>
-                <div class="plan-next-date">15 July</div>
-              </div>
+            <div class="plan-row">
+              <span class="label">Frequency</span>
+              <span class="value">Monthly</span>
+            </div>
+            <div class="plan-row">
+              <span class="label">Source</span>
+              <span class="pill pill-soft">Funded by auto top-up</span>
+            </div>
+            <div class="plan-row" style="border-bottom:none">
+              <span class="label">Commission</span>
+              <span class="pill pill-green">No commission</span>
+            </div>
+          </div>
+          <div class="plan-next">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div>
+              <div class="plan-next-label">Next purchase</div>
+              <div class="plan-next-date">15 July</div>
             </div>
           </div>
         </div>
@@ -537,6 +617,46 @@
     </div>
   </section>
 
+  <!-- ======================= Wealth growth calculator ======================= -->
+  <section class="section calc-section" id="growth">
+    <div class="container">
+      <div class="section-head">
+        <h2>See how your wealth grows</h2>
+        <p>Small regular investments can lead to significant long-term capital.</p>
+      </div>
+      <div class="calc-card">
+        <div class="calc-controls">
+          <div class="calc-field">
+            <div class="calc-label-row">
+              <span class="calc-label">Monthly Investment</span>
+              <span class="calc-value" id="amountValue">1,000 EUR</span>
+            </div>
+            <input type="range" id="amountRange" min="100" max="5000" step="50" value="1000" aria-label="Monthly investment amount in euros">
+            <div class="range-scale"><span>100 EUR</span><span>5,000 EUR</span></div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-label-row">
+              <span class="calc-label">Investment Period</span>
+              <span class="calc-value" id="yearsValue">30 years</span>
+            </div>
+            <input type="range" id="yearsRange" min="1" max="40" step="1" value="30" aria-label="Investment period in years">
+            <div class="range-scale"><span>1 year</span><span>40 years</span></div>
+          </div>
+          <div class="calc-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
+          </div>
+        </div>
+        <div class="calc-result" aria-live="polite">
+          <div class="calc-result-label">Estimated Portfolio Value</div>
+          <div class="calc-result-value" id="resultValue">1,500,295 EUR</div>
+          <p class="calc-result-text" id="resultText">Invest 1,000 EUR monthly and become a millionaire in 30 years.</p>
+          <div class="calc-bars" id="calcBars" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ======================= Final CTA ======================= -->
   <section class="final-cta">
     <div class="container">
@@ -568,28 +688,31 @@
 </footer>
 
 <script>
-  // ---------- Instruments data ----------
-  // Items 1–10 reproduce the mockup grid 1:1 (default "Broad Market UCITS" view).
-  // The rest are real UCITS instruments added so that every category chip has content.
+  /* ============================================================
+     Instruments data
+     Items 1–8 reproduce the new mockup grid 1:1
+     (default "Broad Market UCITS" view).
+     The rest are extra UCITS instruments so that every category
+     chip has content. "perf" values (% за год) are illustrative
+     placeholders — edit here when real data is available.
+     ============================================================ */
   const DATA = [
-    { t: "AAPL", n: "Apple Inc.",                                  c: ["broad", "tech"] },
-    { t: "MSFT", n: "Microsoft Corporation",                       c: ["broad", "tech"] },
-    { t: "VWCE", n: "Vanguard FTSE All-World UCITS",               c: ["broad"] },
-    { t: "SXR8", n: "iShares Core S&P 500 UCITS",                  c: ["broad"] },
-    { t: "INRG", n: "iShares Global Clean Energy UCITS",           c: ["broad", "energy"] },
-    { t: "XDWH", n: "Xtrackers MSCI World Health Care UCITS",      c: ["broad", "health"] },
-    { t: "XDWT", n: "Xtrackers MSCI World Info Tech UCITS",        c: ["broad", "tech"] },
-    { t: "EQQQ", n: "Invesco EQQQ Nasdaq-100 UCITS",               c: ["broad", "tech"] },
-    { t: "VHYL", n: "Vanguard FTSE All-World High Dividend UCITS", c: ["broad", "dividend"] },
-    { t: "AGGH", n: "iShares Core Global Aggregate Bond UCITS",    c: ["broad", "bonds"] },
-    { t: "HTWO", n: "L&G Hydrogen Economy UCITS",                  c: ["energy"] },
-    { t: "XDWE", n: "Xtrackers MSCI World Energy UCITS",           c: ["energy"] },
-    { t: "HEAL", n: "iShares Healthcare Innovation UCITS",         c: ["health"] },
-    { t: "SGLD", n: "Invesco Physical Gold ETC",                   c: ["commodities"] },
-    { t: "CMOD", n: "Invesco Bloomberg Commodity UCITS",           c: ["commodities"] },
-    { t: "TDIV", n: "VanEck Dev. Markets Dividend Leaders UCITS",  c: ["dividend"] },
-    { t: "FGEQ", n: "Fidelity Global Quality Income UCITS",        c: ["dividend"] },
-    { t: "VAGF", n: "Vanguard Global Aggregate Bond UCITS",        c: ["bonds"] }
+    { t: "VWCE", name: "Broad Market ETF",         desc: "Мировой рынок акций",                 perf: 14.2,  c: ["broad"] },
+    { t: "SXR8", name: "S&P 500 ETF",              desc: "500 крупнейших компаний США",         perf: 18.5,  c: ["broad"] },
+    { t: "INRG", name: "Clean Energy ETF",         desc: "Зеленая энергетика",                  perf: -5.4,  c: ["broad", "energy"] },
+    { t: "XDWH", name: "Health Care ETF",          desc: "Мировое здравоохранение",             perf: 9.1,   c: ["broad", "health"] },
+    { t: "XDWT", name: "Info Tech ETF",            desc: "Технологический сектор",              perf: 22.6,  c: ["broad", "tech"] },
+    { t: "EQQQ", name: "Nasdaq-100 ETF",           desc: "Крупнейшие компании Nasdaq",          perf: 21.2,  c: ["broad", "tech"] },
+    { t: "VHYL", name: "High Dividend ETF",        desc: "Высокодивидендные акции",             perf: 11.6,  c: ["broad", "dividend"] },
+    { t: "AGGH", name: "Global Aggregate Bond ETF", desc: "Мировой рынок облигаций",            perf: 4.1,   c: ["broad", "bonds"] },
+    { t: "HTWO", name: "Hydrogen Economy ETF",     desc: "Водородная энергетика",               perf: -12.3, c: ["energy"] },
+    { t: "XDWE", name: "World Energy ETF",         desc: "Нефтегазовый сектор",                 perf: 6.8,   c: ["energy"] },
+    { t: "HEAL", name: "Healthcare Innovation ETF", desc: "Инновации в медицине",               perf: 3.5,   c: ["health"] },
+    { t: "SGLD", name: "Physical Gold ETC",        desc: "Физическое золото",                   perf: 25.4,  c: ["commodities"] },
+    { t: "CMOD", name: "Commodity ETF",            desc: "Диверсифицированные сырьевые товары", perf: 8.9,   c: ["commodities"] },
+    { t: "TDIV", name: "Dividend Leaders ETF",     desc: "Дивидендные лидеры развитых рынков",  perf: 13.7,  c: ["dividend"] },
+    { t: "FGEQ", name: "Quality Income ETF",       desc: "Качественные дивидендные компании",   perf: 12.4,  c: ["dividend"] },
+    { t: "VAGF", name: "Global Aggregate Bond ETF", desc: "Глобальные облигации, хедж в EUR",   perf: 3.8,   c: ["bonds"] }
   ];
 
   const grid = document.getElementById("instrumentGrid");
@@ -604,13 +727,23 @@
     return s.replace(/&/g, "&amp;");
   }
 
+  function perfBadge(p) {
+    const cls = p < 0 ? "perf perf-down" : "perf perf-up";
+    const sign = p > 0 ? "+" : "";
+    return '<span class="' + cls + '">' + sign + p.toFixed(1) + '% за год</span>';
+  }
+
   function cardHTML(item) {
     const isAdded = added.has(item.t);
     return (
       '<div class="instrument-card">' +
         '<div class="instrument-info">' +
-          '<div class="ticker">' + item.t + '</div>' +
-          '<div class="iname">' + escapeAmp(item.n) + '</div>' +
+          '<div class="instrument-top">' +
+            '<span class="ticker">' + item.t + '</span>' +
+            perfBadge(item.perf) +
+          '</div>' +
+          '<div class="iname">' + escapeAmp(item.name) + '</div>' +
+          '<div class="idesc">' + item.desc + '</div>' +
         '</div>' +
         '<button class="add-btn' + (isAdded ? ' added' : '') + '" data-ticker="' + item.t + '"' +
           ' aria-pressed="' + isAdded + '"' +
@@ -656,6 +789,77 @@
   }, { passive: true });
 
   render();
+
+  /* ============================================================
+     Wealth growth calculator
+     Future value of an annuity-due, monthly compounding:
+     FV = PMT × ((1+i)^n − 1) / i × (1+i),  i = rate/12, n = years×12
+     Defaults (1,000 EUR / 30 years / 8%) give 1,500,295 EUR
+     to match the mockup.
+     ============================================================ */
+  const ANNUAL_RATE = 0.08;
+  const BAR_COUNT = 12;
+
+  const amountRange = document.getElementById("amountRange");
+  const yearsRange = document.getElementById("yearsRange");
+  const amountValue = document.getElementById("amountValue");
+  const yearsValue = document.getElementById("yearsValue");
+  const resultValue = document.getElementById("resultValue");
+  const resultText = document.getElementById("resultText");
+  const calcBars = document.getElementById("calcBars");
+
+  function futureValue(pmt, years, annualRate) {
+    const i = annualRate / 12;
+    const n = years * 12;
+    if (i === 0) return pmt * n;
+    return pmt * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+  }
+
+  function fmtNum(v) {
+    return Math.round(v).toLocaleString("en-US");
+  }
+
+  function yearsLabel(y) {
+    return y + (y === 1 ? " year" : " years");
+  }
+
+  function updateFill(el) {
+    const min = Number(el.min), max = Number(el.max), val = Number(el.value);
+    el.style.setProperty("--fill", ((val - min) / (max - min) * 100) + "%");
+  }
+
+  function renderBars(pmt, years) {
+    const total = futureValue(pmt, years, ANNUAL_RATE);
+    let html = "";
+    for (let k = 1; k <= BAR_COUNT; k++) {
+      const v = futureValue(pmt, years * k / BAR_COUNT, ANNUAL_RATE);
+      const h = Math.max(5, Math.round(v / total * 100));
+      const op = (0.3 + 0.7 * (k - 1) / (BAR_COUNT - 1)).toFixed(2);
+      html += '<span class="bar" style="height:' + h + '%;opacity:' + op + '"></span>';
+    }
+    calcBars.innerHTML = html;
+  }
+
+  function updateCalc() {
+    const pmt = Number(amountRange.value);
+    const years = Number(yearsRange.value);
+    const total = futureValue(pmt, years, ANNUAL_RATE);
+
+    amountValue.textContent = fmtNum(pmt) + " EUR";
+    yearsValue.textContent = yearsLabel(years);
+    resultValue.textContent = fmtNum(total) + " EUR";
+    resultText.textContent = total >= 1000000
+      ? "Invest " + fmtNum(pmt) + " EUR monthly and become a millionaire in " + yearsLabel(years) + "."
+      : "Invest " + fmtNum(pmt) + " EUR monthly and build solid long-term capital in " + yearsLabel(years) + ".";
+
+    updateFill(amountRange);
+    updateFill(yearsRange);
+    renderBars(pmt, years);
+  }
+
+  amountRange.addEventListener("input", updateCalc);
+  yearsRange.addEventListener("input", updateCalc);
+  updateCalc();
 </script>
 </body>
 </html>
