@@ -169,7 +169,8 @@
   .step p{margin-top:8px;font-size:13px;color:var(--muted)}
 
   /* ---------- Categories ---------- */
-  .categories{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .categories{background:var(--soft);border-top:1px solid var(--line)}
+  .section.categories{padding-bottom:56px}
   .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:32px}
   .chip{
     padding:9px 15px;border-radius:999px;
@@ -256,7 +257,8 @@
   .demo-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 
   /* ---------- Wealth growth calculator ---------- */
-  .calc-section{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .calc-section{background:var(--soft);border-bottom:1px solid var(--line)}
+  .section.calc-section{padding-top:0}
   .calc-card{
     background:#fff;border:1px solid var(--line);border-radius:20px;
     box-shadow:var(--shadow);
@@ -534,6 +536,48 @@
     </div>
   </section>
 
+  <!-- ======================= Wealth growth calculator ======================= -->
+  <section class="section calc-section" id="growth">
+    <div class="container">
+      <div class="section-head">
+        <h2>See how your wealth grows</h2>
+        <p>Small regular investments can lead to significant long-term capital.</p>
+      </div>
+      <div class="calc-card">
+        <div class="calc-controls">
+          <div class="calc-field">
+            <div class="calc-label-row">
+              <span class="calc-label">Monthly Investment</span>
+              <span class="calc-value" id="amountValue">1,000 EUR</span>
+            </div>
+            <input type="range" id="amountRange" min="100" max="5000" step="50" value="1000" aria-label="Monthly investment amount in euros">
+            <div class="range-scale"><span>100 EUR</span><span>5,000 EUR</span></div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-label-row">
+              <span class="calc-label">Investment Period</span>
+              <span class="calc-value" id="yearsValue">30 years</span>
+            </div>
+            <input type="range" id="yearsRange" min="1" max="40" step="1" value="30" aria-label="Investment period in years">
+            <div class="range-scale"><span>1 year</span><span>40 years</span></div>
+          </div>
+          <div class="calc-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span id="calcNoteText">Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
+          </div>
+        </div>
+        <div class="calc-result" aria-live="polite">
+          <div class="calc-result-label">Estimated Portfolio Value</div>
+          <div class="calc-result-value" id="resultValue">1,500,295 EUR</div>
+          <p class="calc-result-text" id="resultText">Invest 1,000 EUR monthly and become a millionaire in 30 years.</p>
+          <p class="calc-hint" id="calcHint">Add instruments with “+” in the categories above to project each one using its own last-year return.</p>
+          <div class="calc-breakdown" id="calcBreakdown"></div>
+          <div class="calc-bars" id="calcBars" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ======================= Why choose ======================= -->
   <section class="section">
     <div class="container">
@@ -624,48 +668,6 @@
             <span class="dot"></span>
             Active Auto-Invest
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================= Wealth growth calculator ======================= -->
-  <section class="section calc-section" id="growth">
-    <div class="container">
-      <div class="section-head">
-        <h2>See how your wealth grows</h2>
-        <p>Small regular investments can lead to significant long-term capital.</p>
-      </div>
-      <div class="calc-card">
-        <div class="calc-controls">
-          <div class="calc-field">
-            <div class="calc-label-row">
-              <span class="calc-label">Monthly Investment</span>
-              <span class="calc-value" id="amountValue">1,000 EUR</span>
-            </div>
-            <input type="range" id="amountRange" min="100" max="5000" step="50" value="1000" aria-label="Monthly investment amount in euros">
-            <div class="range-scale"><span>100 EUR</span><span>5,000 EUR</span></div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-label-row">
-              <span class="calc-label">Investment Period</span>
-              <span class="calc-value" id="yearsValue">30 years</span>
-            </div>
-            <input type="range" id="yearsRange" min="1" max="40" step="1" value="30" aria-label="Investment period in years">
-            <div class="range-scale"><span>1 year</span><span>40 years</span></div>
-          </div>
-          <div class="calc-note">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <span id="calcNoteText">Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
-          </div>
-        </div>
-        <div class="calc-result" aria-live="polite">
-          <div class="calc-result-label">Estimated Portfolio Value</div>
-          <div class="calc-result-value" id="resultValue">1,500,295 EUR</div>
-          <p class="calc-result-text" id="resultText">Invest 1,000 EUR monthly and become a millionaire in 30 years.</p>
-          <p class="calc-hint" id="calcHint">Add instruments with “+” in the categories above to project each one using its own last-year return.</p>
-          <div class="calc-breakdown" id="calcBreakdown"></div>
-          <div class="calc-bars" id="calcBars" aria-hidden="true"></div>
         </div>
       </div>
     </div>
