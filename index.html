@@ -3,680 +3,659 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auto-invest — recurring purchases</title>
+<title>Freedom Financial — Recurring Investments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f3f4f6;
-    --surface: #ffffff;
-    --ink: #0f172a;
-    --muted: #64748b;
-    --faint: #94a3b8;
-    --line: #e5e7eb;
-    --line-strong: #cbd5e1;
-    --green: #1aa75a;
-    --green-dark: #15893f;
-    --green-soft: #eaf7f0;
-    --blue: #2563eb;
-    --red: #dc2626;
-    --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
-    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  :root{
+    --ink:#0E1A3F;
+    --navy:#15214B;
+    --navy-deep:#0D1635;
+    --blue:#2E5BFF;
+    --muted:#5B6477;
+    --soft:#F5F7FC;
+    --line:#E5E9F4;
+    --lav-100:#EAEDFB;
+    --lav-200:#DCE2F8;
+    --lav-300:#C9D3F2;
+    --indigo:#4053C8;
+    --green:#179B62;
+    --green-bg:#E4F6ED;
+    --red:#E5484D;
+    --radius:16px;
+    --shadow:0 12px 32px rgba(16,26,63,.08);
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
-  /* ===== Page ===== */
-  .page { max-width: 1040px; margin: 0 auto; padding: 56px 40px 72px; }
-  h1 { font-size: 2.25rem; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
-  .subtitle { color: var(--muted); margin: 0 0 44px; font-size: 1rem; }
-  section { margin-bottom: 48px; }
-  .step-label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin: 0 0 18px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:#fff;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit;cursor:pointer}
+  svg{display:block;flex:none}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
 
-  /* ===== Subscription cards ===== */
-  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .sub-card { position: relative; display: flex; gap: 16px; align-items: flex-start; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; cursor: pointer; transition: 0.15s; }
-  .sub-card:hover { border-color: var(--line-strong); }
-  .sub-card.selected { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
-  .sub-icon { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #eef2f7; color: var(--muted); }
-  .sub-card.selected .sub-icon { background: var(--green); color: #fff; }
-  .sub-title { font-weight: 600; font-size: 1rem; }
-  .sub-desc { color: var(--muted); font-size: 0.875rem; margin-top: 4px; line-height: 1.45; }
-  .sub-check { position: absolute; top: 24px; right: 24px; color: var(--line-strong); }
-  .sub-card.selected .sub-check { color: var(--green); }
+  .container{max-width:1120px;margin:0 auto;padding:0 24px}
 
-  /* ===== Finder ===== */
-  .finder { position: relative; }
-  .search-area { position: relative; }
-  .search-wrap { position: relative; display: flex; align-items: center; gap: 8px; border-bottom: 1.5px solid var(--line-strong); padding: 4px 0; }
-  .search-wrap:focus-within { border-color: var(--ink); }
-  .search-wrap .search-icon { color: var(--faint); flex-shrink: 0; }
-  .search-input { flex: 1; border: none; background: transparent; padding: 12px 4px; font-size: 1rem; color: var(--ink); outline: none; font-family: var(--sans); }
-  .search-input::placeholder { color: var(--faint); }
-  .clear-button { display: none; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; background: #eef2f7; border: none; border-radius: 50%; color: var(--muted); cursor: pointer; }
-  .clear-button.visible { display: flex; }
+  /* ---------- Buttons & pills ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-weight:600;font-size:14px;line-height:1;
+    border-radius:10px;padding:11px 18px;
+    border:1px solid transparent;
+    transition:background .15s ease,border-color .15s ease,transform .15s ease;
+    white-space:nowrap;
+  }
+  .btn-lg{padding:14px 24px;font-size:15px;border-radius:12px}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover{background:var(--navy-deep)}
+  .btn-outline{background:#fff;border-color:var(--line);color:var(--ink)}
+  .btn-outline:hover{border-color:var(--lav-300);background:var(--soft)}
+  .btn-white{background:#fff;color:var(--navy)}
+  .btn-white:hover{background:#EEF1FA}
 
-  .dropdown { position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px; max-height: 360px; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 28px -8px rgba(15,23,42,0.18); z-index: 100; display: none; }
-  .dropdown.open { display: block; }
-  .dropdown-tabs { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px; position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--line); z-index: 2; }
-  .finder-tab { padding: 6px 14px; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.03em; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; color: var(--muted); cursor: pointer; }
-  .finder-tab:hover { border-color: var(--line-strong); }
-  .finder-tab.active { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .dropdown-list { list-style: none; padding: 8px; margin: 0; }
-  .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
-  .dropdown-item:hover, .dropdown-item.highlighted { background: var(--bg); }
-  .dropdown-item.selected { background: var(--green-soft); }
-  .instrument-icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; object-fit: contain; background: #eef2f7; }
-  .instrument-info { flex: 1; min-width: 0; }
-  .instrument-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .instrument-ticker { font-weight: 600; font-size: 0.9rem; }
-  .instrument-name { font-size: 0.85rem; color: var(--muted); }
-  .instrument-meta { font-family: var(--mono); font-size: 0.65rem; color: var(--faint); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .highlight { background: #fef3c7; border-radius: 2px; }
-  .dropdown-empty { padding: 24px 16px; text-align: center; }
-  .dropdown-empty p { font-size: 0.875rem; color: var(--muted); margin: 0; }
+  .pill{display:inline-block;font-size:12px;font-weight:600;line-height:1;padding:5px 10px;border-radius:999px}
+  .pill-green{background:var(--green-bg);color:var(--green)}
+  .pill-soft{background:var(--lav-100);color:var(--navy)}
 
-  /* ===== ETF collection chips (filter pills) ===== */
-  .etf-chip-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-  .etf-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 0.875rem; color: var(--ink); cursor: pointer; transition: 0.15s; }
-  .etf-chip:hover { border-color: var(--line-strong); }
-  .etf-chip.active { border-color: var(--green); color: var(--green-dark); font-weight: 600; background: var(--green-soft); }
-  .etf-chip .caret { color: var(--faint); display: flex; }
-  .etf-chip.active .caret { color: var(--green); }
+  /* ---------- Header ---------- */
+  .site-header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid transparent;
+    transition:border-color .2s ease;
+  }
+  .site-header.scrolled{border-bottom-color:var(--line)}
+  .header-inner{display:flex;align-items:center;gap:32px;height:68px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;letter-spacing:-.01em}
+  .brand svg{color:var(--navy)}
+  .main-nav{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500;color:var(--muted);margin-left:8px}
+  .main-nav a:hover{color:var(--ink)}
+  .main-nav a.active{color:var(--blue);font-weight:600}
+  .header-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
 
-  /* ===== ETF cards ===== */
-  .etf-card-list { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
-  .etf-card { display: flex; align-items: center; gap: 18px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; cursor: pointer; transition: 0.15s; }
-  .etf-card:hover { border-color: var(--line-strong); }
-  .etf-card.selected { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); background: var(--green-soft); }
-  .etf-avatar { position: relative; overflow: hidden; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
-  .etf-logo { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: contain; background: #fff; }
-  .etf-card-main { flex: 1; min-width: 0; }
-  .etf-card-title { font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .ticker-tag { font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.06em; background: #eef2f7; color: #475569; padding: 3px 8px; border-radius: 6px; }
-  .etf-card-desc { color: var(--muted); font-size: 0.875rem; margin-top: 6px; line-height: 1.45; }
-  .etf-card-perf { text-align: right; flex-shrink: 0; display: flex; align-items: center; gap: 14px; }
-  .perf-spark { display: block; }
-  .perf-num { font-weight: 700; font-size: 1.05rem; }
-  .perf-num.pos { color: var(--green); }
-  .perf-num.neg { color: var(--red); }
-  .perf-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-top: 2px; }
-  .etf-card-chevron { color: var(--line-strong); flex-shrink: 0; display: flex; }
-  .etf-card.selected .etf-card-chevron { color: var(--green); }
+  /* ---------- Hero ---------- */
+  .hero{padding:24px 0 0}
+  .hero-panel{
+    position:relative;overflow:hidden;
+    background-color:var(--soft);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 9.5v9M9.5 14h9' stroke='%23DCE3F6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:72px 64px;
+    display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;
+  }
+  .hero-panel::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(720px 360px at 38% 45%, rgba(245,247,252,.95), rgba(245,247,252,0) 70%);
+  }
+  .hero-copy{position:relative}
+  .hero-copy h1{font-size:46px;line-height:1.12;font-weight:800;letter-spacing:-.02em;max-width:480px}
+  .hero-copy p{margin-top:18px;font-size:16px;color:var(--muted);max-width:440px}
+  .hero-actions{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
 
-  /* ===== Investment details ===== */
-  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
-  .field-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-bottom: 12px; display: block; }
-  .select-wrap { position: relative; }
-  .select-underline { width: 100%; padding: 12px 28px 12px 4px; border: none; border-bottom: 1.5px solid var(--line-strong); background: transparent; font-size: 1rem; color: var(--ink); outline: none; appearance: none; -webkit-appearance: none; cursor: pointer; font-family: var(--sans); }
-  .select-underline:focus { border-color: var(--ink); }
-  .select-wrap .select-caret { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--faint); pointer-events: none; }
-  .freq-toggle { display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px; gap: 4px; }
-  .freq-btn { flex: 1; padding: 13px 18px; border: none; background: transparent; border-radius: 999px; font-size: 0.9rem; color: var(--muted); cursor: pointer; font-family: var(--sans); }
-  .freq-btn.active { background: var(--green); color: #fff; font-weight: 600; }
+  /* Plan card (hero) */
+  .hero-card-wrap{position:relative;display:flex;justify-content:flex-end}
+  .plan-card{
+    width:360px;max-width:100%;
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:22px;
+  }
+  .plan-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:14px}
+  .plan-title{font-weight:700;font-size:15px}
+  .plan-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .plan-check{color:var(--green)}
+  .plan-rows{border-top:1px solid #EEF1F8}
+  .plan-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #EEF1F8;font-size:13.5px}
+  .plan-row .label{color:var(--muted)}
+  .plan-row .value{font-weight:600;text-align:right}
+  .plan-next{
+    margin-top:14px;display:flex;align-items:center;gap:12px;
+    background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  }
+  .plan-next svg{color:var(--indigo)}
+  .plan-next-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+  .plan-next-date{font-size:14px;font-weight:700;margin-top:1px}
 
-  .amount-block { margin-top: 36px; }
-  .amount-field { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-bottom: 1.5px solid var(--line-strong); padding-bottom: 10px; }
-  .amount-field:focus-within { border-color: var(--ink); }
-  .amount-input-wrap { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-  .amount-prefix { font-size: 2.4rem; font-weight: 700; }
-  .amount-currency { border: none; background: transparent; color: var(--ink); outline: none; cursor: pointer; font-family: var(--sans); padding: 0 6px 0 0; }
-  .amount-input { font-size: 2.4rem; font-weight: 700; color: var(--ink); border: none; background: transparent; outline: none; width: 260px; max-width: 100%; font-family: var(--sans); }
-  .amount-input::-webkit-outer-spin-button, .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .amount-input { -moz-appearance: textfield; }
-  .amount-hint { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); white-space: nowrap; padding-bottom: 8px; }
+  /* ---------- Feature cards ---------- */
+  .features{padding:48px 0 8px}
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feature-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:34px 28px;text-align:center;
+  }
+  .icon-circle{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--lav-100);color:var(--indigo);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 18px;
+  }
+  .feature-card h3{font-size:16px;font-weight:700}
+  .feature-card p{margin-top:10px;font-size:13.5px;color:var(--muted);max-width:280px;margin-left:auto;margin-right:auto}
 
-  /* ===== Payment ===== */
-  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .pay-card { position: relative; display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; cursor: pointer; transition: 0.15s; }
-  .pay-card:hover { border-color: var(--line-strong); }
-  .pay-card.selected { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
-  .card-brand { flex-shrink: 0; width: 44px; height: 30px; border-radius: 6px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
-  .card-num { font-family: var(--mono); font-weight: 600; font-size: 0.95rem; letter-spacing: 0.02em; }
-  .card-issuer { font-family: var(--mono); font-size: 0.625rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
-  .pay-check { margin-left: auto; color: var(--line-strong); display: flex; }
-  .pay-card.selected .pay-check { color: var(--green); }
-  .pay-add { border: 1.5px dashed var(--line-strong); justify-content: center; color: var(--muted); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; gap: 10px; }
-  .pay-add:hover { border-color: var(--muted); color: var(--ink); }
+  /* ---------- Sections ---------- */
+  .section{padding:84px 0}
+  .section-head{text-align:center;max-width:620px;margin:0 auto 48px}
+  .section-head h2{font-size:28px;font-weight:800;letter-spacing:-.01em}
+  .section-head p{margin-top:12px;font-size:15px;color:var(--muted)}
 
-  .agree-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; font-size: 0.9rem; color: var(--ink); cursor: pointer; line-height: 1.4; }
-  .agree-row input { display: none; }
-  .cbx { flex-shrink: 0; width: 20px; height: 20px; border: 2px solid var(--line-strong); border-radius: 5px; display: flex; align-items: center; justify-content: center; background: #fff; transition: 0.15s; }
-  .agree-row input:checked + .cbx { background: var(--blue); border-color: var(--blue); }
-  .cbx svg { display: none; color: #fff; }
-  .agree-row input:checked + .cbx svg { display: block; }
-  .agree-row a { color: var(--ink); text-decoration: underline; }
+  /* ---------- How it works ---------- */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .step{position:relative}
+  .step:not(:last-child)::after{
+    content:"";position:absolute;top:19px;left:54px;right:-18px;
+    border-top:2px dashed var(--lav-300);
+  }
+  .step-dot{
+    position:relative;z-index:1;
+    width:40px;height:40px;border-radius:50%;
+    background:var(--lav-100);color:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:15px;
+  }
+  .step:first-child .step-dot{background:var(--navy);color:#fff}
+  .step h3{margin-top:18px;font-size:15px;font-weight:700}
+  .step p{margin-top:8px;font-size:13px;color:var(--muted)}
 
-  .confirm-btn { width: 100%; margin-top: 28px; padding: 20px; border: none; border-radius: 16px; background: var(--green); color: #fff; font-size: 1rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; position: relative; transition: 0.15s; font-family: var(--sans); }
-  .confirm-btn:hover:not(:disabled) { background: var(--green-dark); }
-  .confirm-btn:disabled { background: #eef0f3; color: #b6bcc6; cursor: not-allowed; box-shadow: inset 0 0 0 1px var(--line); }
-  .confirm-btn.loading .btn-text { opacity: 0; }
-  .confirm-btn .spinner { display: none; position: absolute; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  .confirm-btn.loading .spinner { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* ---------- Categories ---------- */
+  .categories{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:32px}
+  .chip{
+    padding:9px 15px;border-radius:999px;
+    border:1px solid var(--line);background:#fff;
+    font-size:13px;font-weight:600;color:var(--muted);
+    transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--lav-300);color:var(--ink)}
+  .chip.active{background:var(--navy);border-color:var(--navy);color:#fff}
 
-  .summary-panel { display: none; margin-top: 20px; padding: 16px 20px; background: var(--green-soft); border: 1px solid var(--green); border-radius: 14px; align-items: flex-start; gap: 12px; }
-  .summary-panel.visible { display: flex; }
-  .summary-panel svg { flex-shrink: 0; color: var(--green); }
-  .summary-panel p { font-size: 0.9rem; color: var(--ink); margin: 0; line-height: 1.5; }
+  .instrument-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .instrument-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
+  }
+  .instrument-card:hover{border-color:var(--lav-300);box-shadow:0 6px 18px rgba(16,26,63,.06);transform:translateY(-1px)}
+  .ticker{font-weight:700;font-size:15px}
+  .iname{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .add-btn{
+    width:34px;height:34px;border-radius:50%;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s ease;
+  }
+  .add-btn:hover{border-color:var(--navy);background:var(--soft)}
+  .add-btn .ic-check{display:none}
+  .add-btn.added{background:var(--green-bg);border-color:#BCE6CF;color:var(--green)}
+  .add-btn.added .ic-plus{display:none}
+  .add-btn.added .ic-check{display:block}
 
-  .footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 24px 40px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.72rem; color: var(--faint); background: var(--surface); }
-  .footer .links { display: flex; gap: 28px; flex-wrap: wrap; }
-  .footer a { color: var(--faint); text-decoration: none; }
-  .footer a:hover { color: var(--muted); }
+  /* ---------- Why choose ---------- */
+  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:880px;margin:0 auto}
+  .why-card{border-radius:var(--radius);padding:28px}
+  .why-card.manual{background:#fff;border:1px solid var(--line)}
+  .why-card.recurring{background:#E9EDFB;border:1px solid #CDD6F4}
+  .why-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .why-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .why-card.manual .why-icon{background:#F1F3F9;color:var(--muted)}
+  .why-card.recurring .why-icon{background:var(--navy);color:#fff}
+  .why-head h3{font-size:16px;font-weight:700}
+  .why-list{list-style:none;display:grid;gap:14px}
+  .why-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--ink)}
+  .why-list li svg{margin-top:1px}
+  .why-card.manual .why-list svg{color:var(--red)}
+  .why-card.recurring .why-list svg{color:var(--green)}
 
-  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
-  .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--ink); border-radius: 12px; color: #fff; font-size: 0.875rem; transform: translateY(120px); opacity: 0; transition: 0.3s; }
-  .toast.visible { transform: translateY(0); opacity: 1; }
-  #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+  /* ---------- Demo panel ---------- */
+  .demo-section{padding:24px 0 84px}
+  .demo-panel{
+    background:radial-gradient(900px 420px at 88% -20%, #2A3C7E 0%, rgba(42,60,126,0) 60%),
+               linear-gradient(135deg,#1A2858 0%,var(--navy-deep) 70%);
+    border-radius:24px;
+    padding:56px 64px;
+    display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:48px;
+    color:#fff;
+  }
+  .demo-copy h2{font-size:30px;font-weight:800;letter-spacing:-.01em}
+  .demo-copy p{margin-top:14px;font-size:15px;color:#C2CAE6;max-width:420px}
+  .demo-copy .btn{margin-top:26px}
+  .demo-card{
+    background:#fff;color:var(--ink);
+    border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.3);
+    padding:22px;max-width:380px;justify-self:end;width:100%;
+  }
+  .demo-card-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #EEF1F8}
+  .demo-avatar{
+    width:40px;height:40px;border-radius:12px;
+    background:var(--lav-100);color:var(--indigo);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;
+  }
+  .demo-status{
+    margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--green-bg);color:#157A4F;
+    border-radius:12px;padding:11px;font-size:13px;font-weight:600;
+  }
+  .demo-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 
-  @media (max-width: 760px) {
-    .page { padding: 32px 20px 56px; }
-    h1 { font-size: 1.75rem; }
-    .sub-grid, .details-grid, .pay-grid { grid-template-columns: 1fr; gap: 16px; }
-    .details-grid { gap: 28px; }
-    .perf-spark { display: none; }
-    .amount-prefix, .amount-input { font-size: 1.9rem; }
-    .footer { padding: 20px; }
+  /* ---------- Final CTA ---------- */
+  .final-cta{text-align:center;padding:84px 0 96px}
+  .final-cta h2{font-size:28px;font-weight:800;letter-spacing:-.01em}
+  .final-cta p{margin-top:12px;font-size:15px;color:var(--muted)}
+  .final-cta .btn{margin-top:28px}
+
+  /* ---------- Footer ---------- */
+  .site-footer{border-top:1px solid var(--line);background:var(--soft);padding:44px 0}
+  .footer-inner{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
+  .footer-legal{font-size:12.5px;color:var(--muted);max-width:560px;line-height:1.65;margin-top:14px}
+  .footer-links{display:grid;gap:10px;font-size:13px;color:var(--muted);text-align:right;align-content:start}
+  .footer-links a:hover{color:var(--ink)}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:960px){
+    .hero-panel{grid-template-columns:1fr;padding:48px 32px}
+    .hero-card-wrap{justify-content:flex-start}
+    .hero-copy h1{font-size:36px}
+    .features-grid{grid-template-columns:1fr}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .step::after{display:none}
+    .instrument-grid{grid-template-columns:repeat(2,1fr)}
+    .why-grid{grid-template-columns:1fr}
+    .demo-panel{grid-template-columns:1fr;padding:40px 32px}
+    .demo-card{justify-self:start}
+  }
+  @media (max-width:760px){
+    .main-nav{display:none}
+    .header-actions .btn-outline{display:none}
+  }
+  @media (max-width:640px){
+    .instrument-grid{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .hero-panel{padding:36px 22px}
+    .demo-panel{padding:32px 22px}
+    .section{padding:64px 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
   }
 </style>
 </head>
 <body>
-<canvas id="confetti-canvas"></canvas>
 
-<div class="page">
-  <h1>Auto-invest</h1>
-  <p class="subtitle">Schedule recurring purchases.</p>
+<!-- ======================= Header ======================= -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="#top">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Freedom Financial
+    </a>
+    <nav class="main-nav">
+      <a href="#categories" class="active">Investment</a>
+      <a href="#">Support</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="#how-it-works">How it works</a>
+      <a class="btn btn-primary" href="#categories">Set up Recurring Investment</a>
+    </div>
+  </div>
+</header>
 
-  <!-- 1. Subscription type -->
-  <section>
-    <div class="step-label">1. Select the type of subscription</div>
-    <div class="sub-grid">
-      <div class="sub-card selected" data-sub="investments">
-        <div class="sub-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/><path d="M16 6h5v5"/></svg></div>
-        <div>
-          <div class="sub-title">Recurring investments</div>
-          <div class="sub-desc">Set up regular purchases automatically.</div>
+<main id="top">
+
+  <!-- ======================= Hero ======================= -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-panel">
+        <div class="hero-copy">
+          <h1>Invest regularly in Stocks and ETFs.</h1>
+          <p>Set up weekly or monthly recurring investments into any available instrument, including US &amp; EU Stocks and UCITS ETFs.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#categories">Start AutoInvest</a>
+            <a class="btn btn-outline btn-lg" href="#how-it-works">Learn More</a>
+          </div>
         </div>
-        <span class="sub-check"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span>
-      </div>
-      <div class="sub-card" data-sub="payments">
-        <div class="sub-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
-        <div>
-          <div class="sub-title">Recurring payments</div>
-          <div class="sub-desc">Choose the amount and frequency yourself.</div>
+        <div class="hero-card-wrap">
+          <div class="plan-card">
+            <div class="plan-card-head">
+              <div>
+                <div class="plan-title">Broad Market UCITS ETF</div>
+                <div class="plan-sub">Global Equity</div>
+              </div>
+              <svg class="plan-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="plan-rows">
+              <div class="plan-row">
+                <span class="label">Amount</span>
+                <span class="value">100 EUR</span>
+              </div>
+              <div class="plan-row">
+                <span class="label">Frequency</span>
+                <span class="value">Monthly</span>
+              </div>
+              <div class="plan-row">
+                <span class="label">Source</span>
+                <span class="pill pill-soft">Funded by auto top-up</span>
+              </div>
+              <div class="plan-row" style="border-bottom:none">
+                <span class="label">Commission</span>
+                <span class="pill pill-green">No commission</span>
+              </div>
+            </div>
+            <div class="plan-next">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <div>
+                <div class="plan-next-label">Next purchase</div>
+                <div class="plan-next-date">15 July</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="sub-check"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg></span>
       </div>
     </div>
   </section>
 
-  <!-- 2. Asset -->
-  <section>
-    <div class="step-label">2. Select an asset to purchase</div>
-    <div class="finder">
-      <div class="search-area">
-      <div class="search-wrap">
-        <span class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
-        <input type="text" id="search-input" class="search-input" placeholder="Ticker, name, sector (Tech, Healthcare, Finance, ETF)..." autocomplete="off">
-        <button type="button" id="clear-button" class="clear-button"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
-      </div>
-      <!-- Ticker finder: dropdown chips (Popular / Recently searched / ...) shown on focus -->
-      <div id="dropdown" class="dropdown">
-        <div id="dropdown-tabs" class="dropdown-tabs">
-          <button class="finder-tab active" data-collection="popular">Popular</button>
-          <button class="finder-tab" data-collection="recent">Recently searched</button>
-          <button class="finder-tab" data-collection="dividend">Dividend</button>
-          <button class="finder-tab" data-collection="tech">Tech</button>
-          <button class="finder-tab" data-collection="healthcare">Healthcare</button>
+  <!-- ======================= Feature cards ======================= -->
+  <section class="features">
+    <div class="container features-grid">
+      <div class="feature-card">
+        <div class="icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </div>
-        <ul id="dropdown-list" class="dropdown-list"></ul>
+        <h3>Invest automatically</h3>
+        <p>Set up weekly or monthly purchases of selected Stocks or UCITS ETFs.</p>
       </div>
-      </div>
-
-      <div class="etf-chip-row" id="etf-chip-row"></div>
-      <div class="etf-card-list" id="etf-card-list"></div>
-    </div>
-  </section>
-
-  <!-- 3. Details -->
-  <section>
-    <div class="step-label">3. Investment details</div>
-    <div class="details-grid">
-      <div>
-        <label class="field-label">Type of invest</label>
-        <div class="select-wrap">
-          <select id="invest-type" class="select-underline">
-            <option value="amount">Amount</option>
-            <option value="shares">Shares</option>
-          </select>
-          <span class="select-caret"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 7.5l5 5 5-5"/></svg></span>
+      <div class="feature-card">
+        <div class="icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         </div>
+        <h3>Funded from your connected card</h3>
+        <p>Automatically top up your balance from a connected payment card for scheduled investments.</p>
       </div>
-      <div>
-        <label class="field-label">How often to repeat</label>
-        <div class="freq-toggle" id="freq-toggle">
-          <button type="button" class="freq-btn" data-freq="weekly">Once a week</button>
-          <button type="button" class="freq-btn active" data-freq="monthly">Once a month</button>
+      <div class="feature-card">
+        <div class="icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
         </div>
-      </div>
-    </div>
-
-    <div class="amount-block">
-      <label class="field-label" id="amount-label">Amount</label>
-      <div class="amount-field">
-        <div class="amount-input-wrap">
-          <select id="amount-prefix" class="amount-prefix amount-currency" aria-label="Currency">
-            <option value="USD">USD</option>
-            <option value="EUR" selected>EUR</option>
-          </select>
-          <input type="number" id="amount" class="amount-input" value="500" min="0" step="1">
-        </div>
-        <div class="amount-hint" id="amount-hint">Purchases on the 1st of each month</div>
+        <h3>No commission</h3>
+        <p>Enjoy zero commission fees when buying eligible instruments via recurring investments.</p>
       </div>
     </div>
   </section>
 
-  <!-- 4. Payment -->
-  <section>
-    <div class="step-label">4. Payment &amp; confirmation</div>
-    <div class="pay-grid">
-      <div class="pay-card selected" id="pay-saved">
-        <div class="card-brand">MC</div>
-        <div>
-          <div class="card-num">•••• 6619</div>
-          <div class="card-issuer">Revolut Ltd</div>
+  <!-- ======================= How it works ======================= -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="section-head">
+        <h2>How it works</h2>
+        <p>Set up your automated investing in four simple steps.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-dot">1</div>
+          <h3>Choose an asset</h3>
+          <p>Select from thousands of available stocks and ETFs on our platform.</p>
         </div>
-        <span class="pay-check"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span>
+        <div class="step">
+          <div class="step-dot">2</div>
+          <h3>Connect a card</h3>
+          <p>Link your payment card to enable automatic top-ups for funding your investments.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot">3</div>
+          <h3>Set amount &amp; frequency</h3>
+          <p>Decide how much to invest and choose a weekly or monthly schedule.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot">4</div>
+          <h3>Confirm setup</h3>
+          <p>Review your plan and confirm. Your portfolio builds itself automatically.</p>
+        </div>
       </div>
-      <div class="pay-card pay-add" id="pay-add">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        Add new card
-      </div>
-    </div>
-
-    <label class="agree-row">
-      <input type="checkbox" id="check-tos" checked>
-      <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-      <span>I agree to set up automatic recurring payments in accordance with the <a href="#">Terms of Service</a>.</span>
-    </label>
-    <label class="agree-row">
-      <input type="checkbox" id="check-data" checked>
-      <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-      <span>I accept the data storage agreement for my card details.</span>
-    </label>
-
-    <button type="button" id="submit-btn" class="confirm-btn" disabled>
-      <span class="btn-text" style="display:flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>Confirm</span>
-      <div class="spinner"></div>
-    </button>
-    <div id="summary-panel" class="summary-panel">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
-      <p id="summary-text"></p>
     </div>
   </section>
-</div>
 
-<footer class="footer">
-  <span>© 2024 Auto-invest. Mock data.</span>
-  <div class="links">
-    <a href="#">Privacy Policy</a>
-    <a href="#">Terms of Service</a>
-    <a href="#">Risk Disclosure</a>
+  <!-- ======================= Categories ======================= -->
+  <section class="section categories" id="categories">
+    <div class="container">
+      <div class="section-head">
+        <h2>Discover Investment Categories</h2>
+        <p>Build a diversified portfolio easily by choosing from our popular themes, including Stocks and UCITS ETFs.</p>
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip active" data-cat="broad">Broad Market UCITS</button>
+        <button class="chip" data-cat="tech">Technology UCITS</button>
+        <button class="chip" data-cat="energy">Energy &amp; Green UCITS</button>
+        <button class="chip" data-cat="health">Healthcare UCITS</button>
+        <button class="chip" data-cat="commodities">Commodities UCITS</button>
+        <button class="chip" data-cat="dividend">Dividend UCITS</button>
+        <button class="chip" data-cat="bonds">Bonds UCITS</button>
+      </div>
+      <div class="instrument-grid" id="instrumentGrid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ======================= Why choose ======================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Why choose Recurring Investments?</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card manual">
+          <div class="why-head">
+            <div class="why-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+            </div>
+            <h3>Manual Investing</h3>
+          </div>
+          <ul class="why-list">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Top up manually before each purchase
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Manual purchase execution required
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Easy to skip plans and make emotional decisions.
+            </li>
+          </ul>
+        </div>
+        <div class="why-card recurring">
+          <div class="why-head">
+            <div class="why-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </div>
+            <h3>Recurring Investing</h3>
+          </div>
+          <ul class="why-list">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Auto top-up from connected card for any instrument.
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Scheduled, automatic execution with less effort.
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Consistent discipline and no commission.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= See it in action ======================= -->
+  <section class="demo-section">
+    <div class="container">
+      <div class="demo-panel">
+        <div class="demo-copy">
+          <h2>See it in action</h2>
+          <p>You set up a monthly recurring investment of 100 EUR into a Broad Market UCITS ETF or a leading US stock like Apple.</p>
+          <a class="btn btn-white" href="#categories">Start this plan</a>
+        </div>
+        <div class="demo-card">
+          <div class="demo-card-head">
+            <div class="demo-avatar">BM</div>
+            <div>
+              <div class="plan-title">Broad Market UCITS ETF</div>
+              <div class="plan-sub">Global Equity</div>
+            </div>
+          </div>
+          <div class="plan-rows" style="border-top:none">
+            <div class="plan-row">
+              <span class="label">Monthly Investment</span>
+              <span class="value">100 EUR</span>
+            </div>
+            <div class="plan-row">
+              <span class="label">Next execution</span>
+              <span class="value">1st of next month</span>
+            </div>
+            <div class="plan-row" style="border-bottom:none">
+              <span class="label">Commission</span>
+              <span class="pill pill-green">No commission</span>
+            </div>
+          </div>
+          <div class="demo-status">
+            <span class="dot"></span>
+            Active Auto-Invest
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Final CTA ======================= -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Ready to put your portfolio on autopilot?</h2>
+      <p>Join thousands of investors who use Freedom Financial to build wealth automatically.</p>
+      <a class="btn btn-primary btn-lg" href="#categories">Set up Recurring Investment</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================= Footer ======================= -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <a class="brand" href="#top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Freedom Financial
+      </a>
+      <p class="footer-legal">© 2024 Freedom Financial. All rights reserved. Investing involves risk, including loss of principal. Past performance does not guarantee future results. Please consider your investment objectives and read our risk disclosure carefully before investing.</p>
+    </div>
+    <nav class="footer-links">
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Risk Disclosure</a>
+      <a href="#">Contact Us</a>
+    </nav>
   </div>
 </footer>
 
-<div class="toast-container"><div id="toast" class="toast"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg><span id="toast-message"></span></div></div>
-
 <script>
-function getLogoUrl(ticker, market) {
-  return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + ticker.toLowerCase() + '.' + (market || 'us');
-}
+  // ---------- Instruments data ----------
+  // Items 1–10 reproduce the mockup grid 1:1 (default "Broad Market UCITS" view).
+  // The rest are real UCITS instruments added so that every category chip has content.
+  const DATA = [
+    { t: "AAPL", n: "Apple Inc.",                                  c: ["broad", "tech"] },
+    { t: "MSFT", n: "Microsoft Corporation",                       c: ["broad", "tech"] },
+    { t: "VWCE", n: "Vanguard FTSE All-World UCITS",               c: ["broad"] },
+    { t: "SXR8", n: "iShares Core S&P 500 UCITS",                  c: ["broad"] },
+    { t: "INRG", n: "iShares Global Clean Energy UCITS",           c: ["broad", "energy"] },
+    { t: "XDWH", n: "Xtrackers MSCI World Health Care UCITS",      c: ["broad", "health"] },
+    { t: "XDWT", n: "Xtrackers MSCI World Info Tech UCITS",        c: ["broad", "tech"] },
+    { t: "EQQQ", n: "Invesco EQQQ Nasdaq-100 UCITS",               c: ["broad", "tech"] },
+    { t: "VHYL", n: "Vanguard FTSE All-World High Dividend UCITS", c: ["broad", "dividend"] },
+    { t: "AGGH", n: "iShares Core Global Aggregate Bond UCITS",    c: ["broad", "bonds"] },
+    { t: "HTWO", n: "L&G Hydrogen Economy UCITS",                  c: ["energy"] },
+    { t: "XDWE", n: "Xtrackers MSCI World Energy UCITS",           c: ["energy"] },
+    { t: "HEAL", n: "iShares Healthcare Innovation UCITS",         c: ["health"] },
+    { t: "SGLD", n: "Invesco Physical Gold ETC",                   c: ["commodities"] },
+    { t: "CMOD", n: "Invesco Bloomberg Commodity UCITS",           c: ["commodities"] },
+    { t: "TDIV", n: "VanEck Dev. Markets Dividend Leaders UCITS",  c: ["dividend"] },
+    { t: "FGEQ", n: "Fidelity Global Quality Income UCITS",        c: ["dividend"] },
+    { t: "VAGF", n: "Vanguard Global Aggregate Bond UCITS",        c: ["bonds"] }
+  ];
 
-var ruToEn = {'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.','ё':'`'};
-var ruAliases = {
-  'AAPL':['апл','эпл','яблоко','айфон'],'MSFT':['майкрософт','мсфт','виндовс'],'GOOGL':['гугл','алфабет'],
-  'AMZN':['амазон','амзн'],'NVDA':['нвидиа','нвидия','видеокарта'],'META':['мета','фейсбук'],'TSLA':['тесла','маск'],
-  'JNJ':['джонсон'],'UNH':['юнайтед'],'LLY':['лилли'],'PFE':['пфайзер'],'V':['виза'],'JPM':['джпморган','морган'],
-  'MA':['мастеркард'],'KO':['кока','кола'],'PG':['проктер'],'SPY':['спай','снп'],'QQQ':['насдак'],'SCHD':['дивиденд'],'AMD':['амд']
-};
+  const grid = document.getElementById("instrumentGrid");
+  const chipsWrap = document.getElementById("chips");
+  const added = new Set();
+  let activeCat = "broad";
 
-var instruments = [
-  {id:1,ticker:'AAPL',name:'Apple Inc.',sector:'Tech',lists:['popular','tech'],price:178.52},
-  {id:2,ticker:'MSFT',name:'Microsoft',sector:'Tech',lists:['popular','tech'],price:378.91},
-  {id:3,ticker:'GOOGL',name:'Alphabet',sector:'Tech',lists:['popular','tech'],price:141.23},
-  {id:4,ticker:'AMZN',name:'Amazon',sector:'Tech',lists:['popular','tech'],price:178.25},
-  {id:5,ticker:'NVDA',name:'NVIDIA',sector:'Tech',lists:['popular','tech'],price:875.28},
-  {id:6,ticker:'META',name:'Meta',sector:'Tech',lists:['popular','tech'],price:505.95},
-  {id:7,ticker:'TSLA',name:'Tesla',sector:'Tech',lists:['popular','tech'],price:175.34},
-  {id:8,ticker:'JNJ',name:'J&J',sector:'Healthcare',lists:['dividend','healthcare'],price:156.78},
-  {id:9,ticker:'UNH',name:'UnitedHealth',sector:'Healthcare',lists:['healthcare'],price:527.89},
-  {id:10,ticker:'LLY',name:'Eli Lilly',sector:'Healthcare',lists:['popular','healthcare'],price:782.45},
-  {id:11,ticker:'PFE',name:'Pfizer',sector:'Healthcare',lists:['dividend','healthcare'],price:27.89},
-  {id:12,ticker:'V',name:'Visa',sector:'Finance',lists:['popular','finance'],price:279.45},
-  {id:13,ticker:'JPM',name:'JPMorgan',sector:'Finance',lists:['dividend','finance'],price:198.67},
-  {id:14,ticker:'MA',name:'Mastercard',sector:'Finance',lists:['popular','finance'],price:458.23},
-  {id:15,ticker:'KO',name:'Coca-Cola',sector:'Consumer',lists:['dividend','consumer'],price:60.23},
-  {id:16,ticker:'PG',name:'P&G',sector:'Consumer',lists:['dividend','consumer'],price:162.34},
-  {id:17,ticker:'SPY',name:'S&P 500 ETF',sector:'ETF',lists:['popular','etf'],price:502.34,isETF:true},
-  {id:18,ticker:'QQQ',name:'Nasdaq ETF',sector:'ETF',lists:['popular','etf'],price:438.67,isETF:true},
-  {id:19,ticker:'SCHD',name:'Dividend ETF',sector:'ETF',lists:['dividend','etf'],price:78.45,isETF:true},
-  {id:20,ticker:'AMD',name:'AMD',sector:'Tech',lists:['popular','tech'],price:178.56}
-];
+  const ICON_PLUS = '<svg class="ic-plus" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  const ICON_CHECK = '<svg class="ic-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-// ===== UCITS ETF instruments (mock / illustrative). yoy = 1Y performance, %. =====
-var etfInstruments = [
-  {id:101,ticker:'VWCE',name:'Vanguard FTSE All-World UCITS',lists:['etf','broad'],price:132.40,isETF:true,ucits:true,yoy:12.42,desc:'Vanguard, the largest fund, the whole world.'},
-  {id:103,ticker:'IWDA',name:'iShares Core MSCI World UCITS',lists:['etf','broad'],price:104.20,isETF:true,ucits:true,yoy:14.15,desc:'iShares, developed markets, 23 countries.'},
-  {id:102,ticker:'CSPX',name:'iShares Core S&P 500 UCITS',lists:['etf','broad'],price:618.50,isETF:true,ucits:true,yoy:22.10,desc:'iShares, the US 500, a core holding.'},
-  {id:104,ticker:'VUAA',name:'Vanguard S&P 500 UCITS',lists:['etf','broad'],price:115.80,isETF:true,ucits:true,yoy:22.00,desc:'Vanguard, the S&P 500, accumulating.'},
-  {id:111,ticker:'EQQQ',name:'Invesco EQQQ Nasdaq-100 UCITS',lists:['etf','nasdaq'],price:482.30,isETF:true,ucits:true,yoy:24.60,desc:'Invesco, the Nasdaq-100, big tech.'},
-  {id:112,ticker:'CNDX',name:'iShares Nasdaq 100 UCITS',lists:['etf','nasdaq'],price:1280.00,isETF:true,ucits:true,yoy:24.90,desc:'iShares, the Nasdaq-100, accumulating.'},
-  {id:113,ticker:'SXRV',name:'iShares Nasdaq 100 UCITS (EUR)',lists:['etf','nasdaq'],price:940.00,isETF:true,ucits:true,yoy:24.70,desc:'iShares, the Nasdaq-100, EUR line.'},
-  {id:121,ticker:'AGGH',name:'iShares Core Global Aggregate Bond UCITS',lists:['etf','bonds'],price:4.85,isETF:true,ucits:true,yoy:3.20,desc:'iShares, global bonds, investment-grade.'},
-  {id:122,ticker:'IGLO',name:'iShares Global Govt Bond UCITS',lists:['etf','bonds'],price:108.40,isETF:true,ucits:true,yoy:2.10,desc:'iShares, government bonds, developed markets.'},
-  {id:123,ticker:'VAGP',name:'Vanguard Global Aggregate Bond UCITS',lists:['etf','bonds'],price:23.60,isETF:true,ucits:true,yoy:3.00,desc:'Vanguard, global bonds, broad aggregate.'},
-  {id:124,ticker:'IBTA',name:'iShares $ Treasury Bond 1-3yr UCITS',lists:['etf','bonds'],price:5.05,isETF:true,ucits:true,yoy:4.40,desc:'iShares, US Treasuries, short-dated.'},
-  {id:131,ticker:'SMGB',name:'VanEck Semiconductor UCITS',lists:['etf','semis'],price:42.80,isETF:true,ucits:true,yoy:36.50,desc:'VanEck, semiconductors, the top 25 chipmakers.'},
-  {id:132,ticker:'SEMI',name:'Amundi MSCI Semiconductors ESG UCITS',lists:['etf','semis'],price:58.20,isETF:true,ucits:true,yoy:33.10,desc:'Amundi, semiconductors, ESG-screened.'},
-  {id:133,ticker:'SEMG',name:'iShares MSCI Global Semiconductors UCITS',lists:['etf','semis'],price:7.40,isETF:true,ucits:true,yoy:31.80,desc:'iShares, semiconductors, global supply chain.'},
-  {id:141,ticker:'EIMI',name:'iShares Core MSCI EM IMI UCITS',lists:['etf','em'],price:34.60,isETF:true,ucits:true,yoy:12.30,desc:'iShares, emerging markets, 3,000+ companies.'},
-  {id:142,ticker:'VFEM',name:'Vanguard FTSE Emerging Markets UCITS',lists:['etf','em'],price:56.20,isETF:true,ucits:true,yoy:11.10,desc:'Vanguard, emerging markets, large & mid-cap.'},
-  {id:143,ticker:'AEEM',name:'Amundi MSCI Emerging Markets UCITS',lists:['etf','em'],price:6.10,isETF:true,ucits:true,yoy:12.80,desc:'Amundi, emerging markets, low cost.'},
-  {id:144,ticker:'EMIM',name:'iShares MSCI EM IMI UCITS',lists:['etf','em'],price:33.90,isETF:true,ucits:true,yoy:12.00,desc:'iShares, emerging markets, broad coverage.'},
-  {id:151,ticker:'VHYL',name:'Vanguard FTSE All-World High Div Yield UCITS',lists:['etf','dividend'],price:64.80,isETF:true,ucits:true,yoy:9.80,desc:'Vanguard, high dividends, worldwide.'},
-  {id:152,ticker:'ISPA',name:'iShares STOXX Global Select Dividend 100 UCITS',lists:['etf','dividend'],price:29.40,isETF:true,ucits:true,yoy:7.20,desc:'iShares, the top 100 dividends, distributing.'},
-  {id:153,ticker:'TDIV',name:'VanEck Dev Markets Dividend Leaders UCITS',lists:['etf','dividend'],price:46.10,isETF:true,ucits:true,yoy:10.50,desc:'VanEck, dividend leaders, developed markets.'},
-  {id:154,ticker:'FUSD',name:'Fidelity US Quality Income UCITS',lists:['etf','dividend'],price:9.80,isETF:true,ucits:true,yoy:14.20,desc:'Fidelity, quality income, the US.'}
-];
-instruments = instruments.concat(etfInstruments);
-
-var etfCollections = [
-  {id:'broad',   title:'Broad market',  etfs:[101,103,102,104]},
-  {id:'nasdaq',  title:'Nasdaq-100',    etfs:[111,112,113]},
-  {id:'bonds',   title:'Bonds',         etfs:[121,122,123,124]},
-  {id:'semis',   title:'Semiconductors',etfs:[131,132,133]},
-  {id:'em',      title:'Emerging markets', etfs:[141,142,143,144]},
-  {id:'dividend',title:'Dividend UCITS',etfs:[151,152,153,154]}
-];
-
-var state = {
-  selected: null,
-  selectedSource: null,
-  recent: JSON.parse(localStorage.getItem('recent') || '[]'),
-  activeCol: 'popular',
-  ddOpen: false,
-  hlIdx: -1,
-  filtered: instruments.slice(),
-  loading: true,
-  invType: 'amount',
-  activeEtfCol: 'broad',
-  frequency: 'monthly',
-  cardSelected: true,
-  subscriptionType: 'investments',
-  firstSchedule: !localStorage.getItem('hasSchedule')
-};
-
-var $ = function(id) { return document.getElementById(id); };
-function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-function ruToEnText(t) { return t.split('').map(function(c){ return ruToEn[c] || c; }).join(''); }
-function matchesRuAlias(tk, q) { var a = ruAliases[tk]; if (!a) return false; var lq = q.toLowerCase(); return a.some(function(x){ return x.indexOf(lq) >= 0 || lq.indexOf(x) >= 0; }); }
-function hl(t, q) { if (!q) return esc(t); return esc(t).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')','gi'), '<span class="highlight">$1</span>'); }
-
-function toast(m) { $('toast-message').textContent = m; $('toast').classList.add('visible'); setTimeout(function(){ $('toast').classList.remove('visible'); }, 3000); }
-
-function confetti() {
-  var c = $('confetti-canvas'), ctx = c.getContext('2d');
-  c.width = window.innerWidth; c.height = window.innerHeight;
-  var p = [], cols = ['#1aa75a','#FFD700','#2563eb','#4ECDC4','#45B7D1'];
-  for (var i=0;i<100;i++) p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8});
-  var f=0;
-  (function anim(){ ctx.clearRect(0,0,c.width,c.height); p.forEach(function(o){ o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs; ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);ctx.restore(); }); if(++f<100)requestAnimationFrame(anim); else ctx.clearRect(0,0,c.width,c.height); })();
-}
-
-/* ===== ETF visuals ===== */
-function etfColor(t) { var cols=['#1aa75a','#3b82f6','#8b5cf6','#f59e0b','#0ea5e9','#ec4899','#06b6d4']; var s=0; for(var i=0;i<t.length;i++) s+=t.charCodeAt(i); return cols[s%cols.length]; }
-function hexToRgba(hex,a){ var h=hex.replace('#',''); var r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16); return 'rgba('+r+','+g+','+b+','+a+')'; }
-function etfSparkSvg(yoy) {
-  var up = yoy >= 0, shape=[0,0.18,0.12,0.32,0.28,0.5,0.62,0.8], w=56,h=22,n=shape.length;
-  var pts = shape.map(function(v,i){ var nx=(i/(n-1))*w; var ny=up?v:(1-v); return nx.toFixed(0)+','+((h-2)-ny*(h-4)).toFixed(1); }).join(' ');
-  return '<svg class="perf-spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+(up?'#1aa75a':'#dc2626')+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>';
-}
-
-function renderEtfChipRow() {
-  $('etf-chip-row').innerHTML = etfCollections.map(function(c){
-    return '<button type="button" class="etf-chip'+(state.activeEtfCol===c.id?' active':'')+'" data-col="'+c.id+'">'+esc(c.title)+
-      '<span class="caret"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 7.5l5 5 5-5"/></svg></span></button>';
-  }).join('');
-}
-
-function renderEtfCards() {
-  var col = etfCollections.filter(function(c){ return c.id===state.activeEtfCol; })[0];
-  if (!col) { $('etf-card-list').innerHTML=''; return; }
-  $('etf-card-list').innerHTML = col.etfs.map(function(eid){
-    var inst = instruments.filter(function(x){ return x.id===eid; })[0];
-    if (!inst) return '';
-    var isSel = state.selected && state.selected.id===inst.id;
-    var pos = inst.yoy>=0, color=etfColor(inst.ticker);
-    var chevron = isSel
-      ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>'
-      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
-    return '<div class="etf-card'+(isSel?' selected':'')+'" data-id="'+inst.id+'">'+
-      '<div class="etf-avatar" style="background:'+hexToRgba(color,0.14)+';color:'+color+'">'+esc(inst.ticker.charAt(0))+
-        '<img class="etf-logo" src="'+getLogoUrl(inst.ticker,'eu')+'" onerror="this.style.display=\'none\'" alt="">'+
-      '</div>'+
-      '<div class="etf-card-main">'+
-        '<div class="etf-card-title">'+esc(inst.name)+'<span class="ticker-tag">'+esc(inst.ticker)+'</span></div>'+
-        '<div class="etf-card-desc">'+esc(inst.desc||'')+'</div>'+
-      '</div>'+
-      '<div class="etf-card-perf">'+etfSparkSvg(inst.yoy)+
-        '<div><div class="perf-num '+(pos?'pos':'neg')+'">'+(pos?'+':'')+inst.yoy.toFixed(2)+'%</div><div class="perf-label">1Y Performance</div></div>'+
-      '</div>'+
-      '<span class="etf-card-chevron">'+chevron+'</span>'+
-    '</div>';
-  }).join('');
-}
-
-function setActiveEtfCol(id) { state.activeEtfCol = id; renderEtfChipRow(); renderEtfCards(); }
-
-/* ===== Ticker finder dropdown ===== */
-function renderDropdownItem(inst, idx, q) {
-  var isH = idx===state.hlIdx, isS = state.selected && state.selected.id===inst.id;
-  return '<li class="dropdown-item'+(isH?' highlighted':'')+(isS?' selected':'')+'" data-id="'+inst.id+'">'+
-    '<img class="instrument-icon" src="'+getLogoUrl(inst.ticker, inst.ucits?'eu':'us')+'" onerror="this.style.opacity=0" alt="">'+
-    '<div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">'+hl(inst.ticker,q)+'</span><span class="instrument-name">'+hl(inst.name,q)+'</span></div>'+
-    '<div class="instrument-meta">'+esc(inst.sector||'')+'</div></div></li>';
-}
-function renderDropdown() {
-  var q = $('search-input').value.trim();
-  $('dropdown-list').innerHTML = state.filtered.length===0
-    ? '<li class="dropdown-empty"><p>No instruments found</p></li>'
-    : state.filtered.map(function(inst,idx){ return renderDropdownItem(inst,idx,q); }).join('');
-}
-function renderCollectionItem(inst) {
-  var isS = state.selected && state.selected.id===inst.id;
-  return '<li class="dropdown-item'+(isS?' selected':'')+'" data-id="'+inst.id+'">'+
-    '<img class="instrument-icon" src="'+getLogoUrl(inst.ticker, inst.ucits?'eu':'us')+'" onerror="this.style.opacity=0" alt="">'+
-    '<div class="instrument-info"><div class="instrument-header"><span class="instrument-ticker">'+esc(inst.ticker)+'</span><span class="instrument-name">'+esc(inst.name)+'</span></div>'+
-    '<div class="instrument-meta">'+esc(inst.sector||'')+'</div></div></li>';
-}
-function renderCollection() {
-  if (state.loading) { $('dropdown-list').innerHTML = '<li class="dropdown-empty"><p>Loading…</p></li>'; return; }
-  var items = [];
-  switch (state.activeCol) {
-    case 'popular': items = instruments.filter(function(i){return i.lists.indexOf('popular')>=0;}).slice(0,6); break;
-    case 'recent': items = state.recent.slice(0,6); break;
-    case 'dividend': items = instruments.filter(function(i){return i.lists.indexOf('dividend')>=0;}).slice(0,6); break;
-    case 'tech': items = instruments.filter(function(i){return i.sector==='Tech';}).slice(0,6); break;
-    case 'healthcare': items = instruments.filter(function(i){return i.sector==='Healthcare';}).slice(0,6); break;
+  function escapeAmp(s) {
+    return s.replace(/&/g, "&amp;");
   }
-  $('dropdown-list').innerHTML = items.length===0
-    ? '<li class="dropdown-empty"><p>'+(state.activeCol==='recent'?'No recent searches.':'No items.')+'</p></li>'
-    : items.map(renderCollectionItem).join('');
-}
-function isSearching() {
-  var q = $('search-input').value.trim();
-  if (!q) return false;
-  if (state.selected && state.selectedSource==='search' && q === state.selected.ticker+' · '+state.selected.name) return false;
-  return true;
-}
-function renderDropdownContent() {
-  var tabs = $('dropdown-tabs');
-  if (isSearching()) { tabs.style.display='none'; renderDropdown(); }
-  else { tabs.style.display=''; renderCollection(); }
-}
-function computeFilter(q) {
-  var lq=q.toLowerCase(), enQ=ruToEnText(lq);
-  state.filtered = q ? instruments.filter(function(i){
-    if (i.ticker.toLowerCase().indexOf(lq)>=0) return true;
-    if (i.ticker.toLowerCase().indexOf(enQ)>=0) return true;
-    if (i.name.toLowerCase().indexOf(lq)>=0) return true;
-    if (i.name.toLowerCase().indexOf(enQ)>=0) return true;
-    if ((i.sector||'').toLowerCase().indexOf(lq)>=0) return true;
-    if (i.lists.some(function(l){ return l.indexOf(lq)>=0; })) return true;
-    if (matchesRuAlias(i.ticker,lq)) return true;
-    return false;
-  }) : instruments.slice();
-  state.hlIdx = -1;
-}
-function openDD(){ state.ddOpen=true; $('dropdown').classList.add('open'); }
-function closeDD(){ state.ddOpen=false; state.hlIdx=-1; $('dropdown').classList.remove('open'); }
-function setActiveCol(c) { state.activeCol=c; document.querySelectorAll('.finder-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.collection===c); }); renderCollection(); }
 
-function pushRecent(inst) {
-  state.recent = state.recent.filter(function(x){ return x.id!==inst.id; });
-  state.recent.unshift(inst);
-  if (state.recent.length>8) state.recent = state.recent.slice(0,8);
-  localStorage.setItem('recent', JSON.stringify(state.recent));
-}
-function selectInstrument(inst, source) {
-  state.selected = inst; state.selectedSource = source;
-  pushRecent(inst);
-  renderEtfCards();
-  validate();
-}
-function selectFromSearch(inst) {
-  selectInstrument(inst, 'search');
-  $('search-input').value = inst.ticker+' · '+inst.name;
-  $('clear-button').classList.add('visible');
-  closeDD();
-}
-function selectFromCard(inst) {
-  if (state.selected && state.selected.id===inst.id) {
-    state.selected = null; state.selectedSource = null;
-    renderEtfCards(); validate(); return;
+  function cardHTML(item) {
+    const isAdded = added.has(item.t);
+    return (
+      '<div class="instrument-card">' +
+        '<div class="instrument-info">' +
+          '<div class="ticker">' + item.t + '</div>' +
+          '<div class="iname">' + escapeAmp(item.n) + '</div>' +
+        '</div>' +
+        '<button class="add-btn' + (isAdded ? ' added' : '') + '" data-ticker="' + item.t + '"' +
+          ' aria-pressed="' + isAdded + '"' +
+          ' aria-label="' + (isAdded ? 'Remove ' : 'Add ') + item.t + (isAdded ? ' from plan' : ' to plan') + '">' +
+          ICON_PLUS + ICON_CHECK +
+        '</button>' +
+      '</div>'
+    );
   }
-  selectInstrument(inst, 'card');
-  $('search-input').value = '';
-  $('clear-button').classList.remove('visible');
-  closeDD();
-}
-function clearSelection() {
-  state.selected = null; state.selectedSource = null;
-  $('search-input').value=''; $('clear-button').classList.remove('visible');
-  state.filtered = instruments.slice();
-  renderEtfCards(); validate();
-  openDD(); renderDropdownContent(); $('search-input').focus();
-}
-function updateDisplay() {
-  if (state.selected && state.selectedSource==='search') {
-    $('search-input').value = state.selected.ticker+' · '+state.selected.name;
-    $('clear-button').classList.add('visible');
-  } else {
-    $('search-input').value=''; $('clear-button').classList.remove('visible');
+
+  function render() {
+    const items = DATA.filter(function (i) { return i.c.indexOf(activeCat) !== -1; });
+    grid.innerHTML = items.map(cardHTML).join("");
   }
-}
-function handleKey(e) {
-  if (!state.ddOpen) { if (e.key==='ArrowDown'||e.key==='ArrowUp'){ openDD(); renderDropdownContent(); } return; }
-  if (e.key==='Escape') { closeDD(); updateDisplay(); return; }
-  if (!isSearching()) return;
-  if (e.key==='ArrowDown') { e.preventDefault(); state.hlIdx=Math.min(state.hlIdx+1, state.filtered.length-1); renderDropdown(); var h=$('dropdown-list').querySelector('.highlighted'); if(h)h.scrollIntoView({block:'nearest'}); }
-  else if (e.key==='ArrowUp') { e.preventDefault(); state.hlIdx=Math.max(state.hlIdx-1,0); renderDropdown(); var h2=$('dropdown-list').querySelector('.highlighted'); if(h2)h2.scrollIntoView({block:'nearest'}); }
-  else if (e.key==='Enter') { e.preventDefault(); if (state.hlIdx>=0 && state.filtered[state.hlIdx]) selectFromSearch(state.filtered[state.hlIdx]); }
-}
 
-/* ===== Details ===== */
-function updateAmountHint() { $('amount-hint').textContent = state.frequency==='weekly' ? 'Purchases every Monday' : 'Purchases on the 1st of each month'; }
-function setFrequency(f) {
-  state.frequency = f;
-  document.querySelectorAll('.freq-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.freq===f); });
-  updateAmountHint();
-}
-function handleInvestTypeChange() {
-  state.invType = $('invest-type').value;
-  if (state.invType==='shares') { $('amount-prefix').style.display='none'; $('amount-label').textContent='Quantity'; $('amount').step='1'; $('amount').value=''; }
-  else { $('amount-prefix').style.display=''; $('amount-label').textContent='Amount'; $('amount').step='1'; }
-  validate();
-}
-function validate() {
-  var v = parseFloat($('amount').value);
-  var ok = v>0 && state.selected && state.cardSelected && $('check-tos').checked && $('check-data').checked;
-  $('submit-btn').disabled = !ok;
-}
-function handleSubmit() {
-  if ($('submit-btn').disabled) return;
-  $('submit-btn').classList.add('loading');
-  setTimeout(function(){
-    $('submit-btn').classList.remove('loading');
-    var v = parseFloat($('amount').value);
-    var period = state.frequency==='weekly' ? 'every Monday' : 'on the 1st of each month';
-    var currency = $('amount-prefix').value || 'EUR';
-    var what = state.invType==='shares' ? '<strong>'+Math.floor(v)+' shares</strong> of' : '<strong>'+currency+' '+v.toFixed(2)+'</strong> in';
-    $('summary-text').innerHTML = 'You will invest '+what+' <strong>'+state.selected.ticker+'</strong> '+period+', funded from your Revolut card ending 6619.';
-    $('summary-panel').classList.add('visible');
-    if (state.firstSchedule) { confetti(); localStorage.setItem('hasSchedule','1'); state.firstSchedule=false; toast('🎉 First schedule created!'); }
-    else { toast('Schedule created successfully!'); }
-  }, 1100);
-}
-
-/* ===== Bindings ===== */
-function bindEvents() {
-  document.querySelectorAll('.sub-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      state.subscriptionType = card.dataset.sub;
-      document.querySelectorAll('.sub-card').forEach(function(c){ c.classList.toggle('selected', c===card); });
+  // Category chips
+  chipsWrap.addEventListener("click", function (e) {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    activeCat = chip.dataset.cat;
+    chipsWrap.querySelectorAll(".chip").forEach(function (c) {
+      c.classList.toggle("active", c === chip);
     });
+    render();
   });
 
-  $('search-input').addEventListener('focus', function(){ openDD(); renderDropdownContent(); });
-  $('search-input').addEventListener('input', function(e){
-    var q = e.target.value;
-    if (state.selected && state.selectedSource==='search' && q !== state.selected.ticker+' · '+state.selected.name) {
-      state.selected=null; state.selectedSource=null; $('clear-button').classList.remove('visible'); renderEtfCards(); validate();
-    }
-    computeFilter(q); if (!state.ddOpen) openDD(); renderDropdownContent();
+  // Add / remove instrument (toggle)
+  grid.addEventListener("click", function (e) {
+    const btn = e.target.closest(".add-btn");
+    if (!btn) return;
+    const t = btn.dataset.ticker;
+    const nowAdded = !added.has(t);
+    if (nowAdded) { added.add(t); } else { added.delete(t); }
+    btn.classList.toggle("added", nowAdded);
+    btn.setAttribute("aria-pressed", String(nowAdded));
+    btn.setAttribute("aria-label", (nowAdded ? "Remove " + t + " from plan" : "Add " + t + " to plan"));
   });
-  $('search-input').addEventListener('keydown', handleKey);
-  $('clear-button').addEventListener('click', clearSelection);
-  $('dropdown-list').addEventListener('click', function(e){
-    var item = e.target.closest('.dropdown-item');
-    if (item) { var inst = instruments.filter(function(x){ return x.id===parseInt(item.dataset.id); })[0]; if (inst) selectFromSearch(inst); }
-  });
-  $('dropdown-tabs').addEventListener('click', function(e){ var tab=e.target.closest('.finder-tab'); if (tab){ e.preventDefault(); setActiveCol(tab.dataset.collection); } });
-  document.addEventListener('click', function(e){ if (!$('search-input').contains(e.target) && !$('dropdown').contains(e.target)) { closeDD(); updateDisplay(); } });
 
-  $('etf-chip-row').addEventListener('click', function(e){ var chip=e.target.closest('.etf-chip'); if (chip) setActiveEtfCol(chip.dataset.col); });
-  $('etf-card-list').addEventListener('click', function(e){ var card=e.target.closest('.etf-card'); if (card){ var inst=instruments.filter(function(x){ return x.id===parseInt(card.dataset.id); })[0]; if (inst) selectFromCard(inst); } });
+  // Header border on scroll
+  const header = document.getElementById("siteHeader");
+  window.addEventListener("scroll", function () {
+    header.classList.toggle("scrolled", window.scrollY > 8);
+  }, { passive: true });
 
-  $('invest-type').addEventListener('change', handleInvestTypeChange);
-  $('amount-prefix').addEventListener('change', validate);
-  $('amount').addEventListener('input', validate);
-  $('freq-toggle').addEventListener('click', function(e){ var b=e.target.closest('.freq-btn'); if (b) setFrequency(b.dataset.freq); });
-
-  $('pay-saved').addEventListener('click', function(){ state.cardSelected=true; $('pay-saved').classList.add('selected'); validate(); });
-  $('pay-add').addEventListener('click', function(){ toast('Add new card flow (mock).'); });
-  $('check-tos').addEventListener('change', validate);
-  $('check-data').addEventListener('change', validate);
-  $('submit-btn').addEventListener('click', handleSubmit);
-}
-
-function init() {
-  bindEvents();
-  renderEtfChipRow();
-  renderEtfCards();
-  updateAmountHint();
-  validate();
-  setTimeout(function(){ state.loading=false; if (state.ddOpen) renderDropdownContent(); }, 500);
-}
-document.addEventListener('DOMContentLoaded', init);
+  render();
 </script>
 </body>
 </html>
