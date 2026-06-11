@@ -24,9 +24,10 @@
     --serif: 'Georgia', 'Times New Roman', serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  html { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
-  .app { display: flex; min-height: 100vh; width: 100%; }
+  .app { display: flex; min-height: 100vh; width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; }
 
   /* ===== Sidebar ===== */
   .sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -45,18 +46,18 @@
   .logout { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
 
   /* ===== Main ===== */
-  .main { flex: 1; width: 100%; padding: 28px 36px 64px; max-width: 1180px; margin: 0 auto; }
+  .main { flex: 1; width: 100%; min-width: 0; padding: 28px 36px 64px; max-width: 1180px; margin: 0 auto; }
   .main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
   .main-title { font-family: var(--serif); font-size: 2rem; font-weight: 700; margin: 0; }
   .head-icons { display: flex; gap: 18px; color: var(--muted); }
   .head-icons svg { cursor: pointer; }
 
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px; }
+  .card { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px; }
   .card-label { font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
 
   /* ===== Subscription ===== */
   .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
-  .sub-card { position: relative; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
+  .sub-card { position: relative; display: flex; gap: 14px; align-items: flex-start; min-width: 0; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
   .sub-card:hover { border-color: var(--line-strong); }
   .sub-card.selected { border-color: var(--green); background: var(--green-soft); }
   .sub-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #eef2f7; color: var(--muted); }
@@ -68,7 +69,7 @@
   .search-wrap { position: relative; display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; padding: 13px 16px; }
   .search-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
   .search-wrap .search-icon { color: var(--faint); }
-  .search-input { flex: 1; border: none; background: transparent; font-size: 0.95rem; color: var(--ink); outline: none; font-family: var(--sans); }
+  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-size: 0.95rem; color: var(--ink); outline: none; font-family: var(--sans); }
   .search-input::placeholder { color: var(--faint); }
 
   .search-lang { display: inline-flex; flex-shrink: 0; padding: 2px; background: #f4f6f8; border: 1px solid var(--line); border-radius: 999px; }
@@ -106,7 +107,7 @@
   .cur-select-wrap { position: relative; }
   .cur-select { appearance: none; -webkit-appearance: none; border: 1px solid var(--line); border-radius: 8px; background: #f4f6f8; padding: 8px 26px 8px 12px; font-weight: 700; font-size: 0.85rem; color: var(--green); cursor: pointer; font-family: var(--sans); }
   .cur-select-wrap .cc { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--faint); }
-  .amount-input { flex: 1; border: none; border-bottom: 1.5px solid var(--line); background: transparent; font-size: 2rem; font-weight: 700; color: var(--ink); outline: none; padding: 4px 0; font-family: var(--sans); }
+  .amount-input { flex: 1; min-width: 0; border: none; border-bottom: 1.5px solid var(--line); background: transparent; font-size: 2rem; font-weight: 700; color: var(--ink); outline: none; padding: 4px 0; font-family: var(--sans); }
   .amount-input:focus { border-color: var(--green); }
   .amount-note { display: flex; align-items: flex-start; gap: 6px; font-size: 0.78rem; color: var(--muted); margin-top: 14px; line-height: 1.4; }
   .amount-note svg { flex-shrink: 0; margin-top: 1px; color: var(--faint); }
@@ -183,11 +184,12 @@
   .toast.visible { transform: translateY(0); opacity: 1; }
   #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
 
-  @media (max-width: 960px) {
+  @media (max-width: 960px), (max-device-width: 960px) {
     .sidebar { display: none; }
     .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
     .bottom-nav { display: flex; }
-    .main { padding: 18px 16px 90px; max-width: none; }
+    .app { display: block; width: 100%; max-width: 100%; }
+    .main { margin: 0; padding: 18px 16px 90px; max-width: none; width: 100%; }
     .main-head .head-icons { display: none; }
     .main-title { font-size: 1.5rem; }
     .sub-grid, .two-col, .forecast-grid, .pay-grid { grid-template-columns: 1fr; }
@@ -198,7 +200,7 @@
     .confirm-btn { width: 100%; }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (max-device-width: 640px) {
     body { background: #f6f7f9; }
     .main { padding: 14px 12px 92px; }
     .main-head { margin-bottom: 14px; }
@@ -224,9 +226,64 @@
     .toast-container { left: 12px; right: 12px; bottom: 82px; }
     .toast { justify-content: center; }
   }
+
+
+  /* JS fallback for mobile browsers that open the page with desktop CSS viewport */
+  html.is-mobile,
+  html.is-mobile body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  html.is-mobile body { background: #f6f7f9; }
+  html.is-mobile .sidebar { display: none !important; }
+  html.is-mobile .app { display: block !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; overflow-x: hidden; }
+  html.is-mobile .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
+  html.is-mobile .bottom-nav { display: flex; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  html.is-mobile .main { margin: 0 !important; width: 100% !important; max-width: none !important; min-width: 0 !important; padding: 14px 12px 92px; }
+  html.is-mobile .main-head { margin-bottom: 14px; }
+  html.is-mobile .main-title { display: none; }
+  html.is-mobile .main-head .head-icons { display: none; }
+  html.is-mobile .sub-grid,
+  html.is-mobile .two-col,
+  html.is-mobile .forecast-grid,
+  html.is-mobile .pay-grid { grid-template-columns: 1fr; }
+  html.is-mobile .card { padding: 16px; border-radius: 12px; margin-bottom: 14px; }
+  html.is-mobile .sub-card { padding: 15px; }
+  html.is-mobile .search-wrap { flex-wrap: wrap; padding: 11px 12px; }
+  html.is-mobile .search-icon { order: 1; }
+  html.is-mobile .search-input { order: 2; min-width: calc(100% - 76px); font-size: 0.9rem; }
+  html.is-mobile .clear-button { order: 3; }
+  html.is-mobile .search-lang { order: 4; width: 100%; justify-content: center; margin-top: 8px; }
+  html.is-mobile .lang-btn { flex: 1; padding: 7px 10px; }
+  html.is-mobile .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  html.is-mobile .chip-row::-webkit-scrollbar { display: none; }
+  html.is-mobile .asset-desc { display: none; }
+  html.is-mobile .asset-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 13px; }
+  html.is-mobile .asset-right { grid-column: 2; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  html.is-mobile .asset-price { font-size: 0.9rem; }
+  html.is-mobile .asset-yoy { margin-top: 0; white-space: nowrap; }
+  html.is-mobile .amount-row { gap: 10px; }
+  html.is-mobile .amount-input { font-size: 1.55rem; min-width: 0; }
+  html.is-mobile .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
+  html.is-mobile .forecast-head { align-items: flex-start; gap: 10px; }
+  html.is-mobile .forecast-badge { flex-shrink: 0; }
+  html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
+  html.is-mobile .confirm-btn { width: 100%; }
+  html.is-mobile .toast-container { left: 12px; right: 12px; bottom: 82px; }
+  html.is-mobile .toast { justify-content: center; }
+
 </style>
 </head>
 <body>
+<script>
+(function(){
+  function applyMobileClass(){
+    var sw = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+    var shortSide = Math.min(sw || window.innerWidth, window.innerWidth || sw);
+    document.documentElement.classList.toggle('is-mobile', shortSide <= 960);
+  }
+  applyMobileClass();
+  window.addEventListener('resize', applyMobileClass);
+  window.addEventListener('orientationchange', applyMobileClass);
+})();
+</script>
 <canvas id="confetti-canvas"></canvas>
 
 <div class="app">
