@@ -1,947 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Freedom Financial — Recurring Investments</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>InvestGrow — Регулярные инвестиции</title>
 <style>
-  :root{
-    --ink:#0E1A3F;
-    --navy:#15214B;
-    --navy-deep:#0D1635;
-    --blue:#2E5BFF;
-    --muted:#5B6477;
-    --soft:#F5F7FC;
-    --line:#E5E9F4;
-    --lav-100:#EAEDFB;
-    --lav-200:#DCE2F8;
-    --lav-300:#C9D3F2;
-    --indigo:#4053C8;
-    --green:#179B62;
-    --green-bg:#E4F6ED;
-    --red:#D7373F;
-    --red-bg:#FDEBEC;
-    --radius:16px;
-    --shadow:0 12px 32px rgba(16,26,63,.08);
+  :root {
+    --bg: #eef0f3;
+    --surface: #ffffff;
+    --ink: #1a2233;
+    --muted: #6b7280;
+    --faint: #9aa3af;
+    --line: #e5e7eb;
+    --line-strong: #d1d5db;
+    --green: #15824a;
+    --green-dark: #10663a;
+    --green-soft: #e7f4ec;
+    --green-border: #34a06a;
+    --blue: #2563eb;
+    --red: #dc2626;
+    --sidebar-head: #8b93a1;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --serif: 'Georgia', 'Times New Roman', serif;
   }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;scroll-padding-top:84px;overflow-x:clip}
-  body{
-    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--ink);
-    background:#fff;
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:clip;
-  }
-  a{text-decoration:none;color:inherit}
-  button{font-family:inherit;cursor:pointer}
-  svg{display:block;flex:none}
-  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+  .app { display: flex; min-height: 100vh; }
 
-  .container{max-width:1120px;margin:0 auto;padding:0 24px}
+  /* ===== Sidebar ===== */
+  .sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .logo { font-weight: 800; font-size: 1.35rem; color: var(--green); padding: 4px 8px 8px; }
+  .user-card { display: flex; align-items: center; gap: 12px; background: #eef4ff; border-radius: 12px; padding: 12px; }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #cbd5e1 url('https://i.pravatar.cc/80?img=12') center/cover; flex-shrink: 0; }
+  .user-name { font-weight: 600; font-size: 0.9rem; }
+  .user-role { font-size: 0.72rem; color: var(--muted); }
+  .nav-head { background: var(--sidebar-head); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 7px 12px; border-radius: 8px; margin-top: 6px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 8px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
+  .nav-item:hover { background: var(--bg); color: var(--ink); }
+  .nav-item.active { background: #eef0f3; color: var(--ink); font-weight: 600; }
+  .nav-item svg { flex-shrink: 0; color: var(--faint); }
+  .new-order-btn { margin-top: 10px; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 13px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+  .new-order-btn:hover { background: var(--green-dark); }
+  .logout { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
 
-  /* ---------- Buttons & pills ---------- */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    font-weight:600;font-size:14px;line-height:1;
-    border-radius:10px;padding:11px 18px;
-    border:1px solid transparent;
-    transition:background .15s ease,border-color .15s ease;
-    white-space:nowrap;
-  }
-  .btn-lg{padding:14px 24px;font-size:15px;border-radius:12px}
-  .btn-primary{background:var(--navy);color:#fff}
-  .btn-primary:hover{background:var(--navy-deep)}
-  .btn-outline{background:#fff;border-color:var(--line);color:var(--ink)}
-  .btn-outline:hover{border-color:var(--lav-300);background:var(--soft)}
-  .btn-white{background:#fff;color:var(--navy)}
-  .btn-white:hover{background:#EEF1FA}
+  /* ===== Main ===== */
+  .main { flex: 1; padding: 28px 36px 64px; max-width: 1180px; }
+  .main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+  .main-title { font-family: var(--serif); font-size: 2rem; font-weight: 700; margin: 0; }
+  .head-icons { display: flex; gap: 18px; color: var(--muted); }
+  .head-icons svg { cursor: pointer; }
 
-  .pill{display:inline-block;font-size:12px;font-weight:600;line-height:1;padding:5px 10px;border-radius:999px}
-  .pill-green{background:var(--green-bg);color:var(--green)}
-  .pill-soft{background:var(--lav-100);color:var(--navy)}
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px; }
+  .card-label { font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
 
-  /* ---------- Header ---------- */
-  .site-header{
-    position:sticky;top:0;z-index:50;
-    background:rgba(255,255,255,.92);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid transparent;
-    transition:border-color .2s ease;
-  }
-  .site-header.scrolled{border-bottom-color:var(--line)}
-  .header-inner{display:flex;align-items:center;gap:32px;height:68px}
-  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
-  .brand svg{color:var(--navy)}
-  .cta-short{display:none}
-  .main-nav{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500;color:var(--muted);margin-left:8px}
-  .main-nav a:hover{color:var(--ink)}
-  .main-nav a.active{color:var(--blue);font-weight:600}
-  .header-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+  /* ===== Subscription ===== */
+  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .sub-card { position: relative; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
+  .sub-card:hover { border-color: var(--line-strong); }
+  .sub-card.selected { border-color: var(--green); background: var(--green-soft); }
+  .sub-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #eef2f7; color: var(--muted); }
+  .sub-card.selected .sub-icon { background: var(--green); color: #fff; }
+  .sub-title { font-weight: 600; font-size: 0.95rem; }
+  .sub-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.4; }
 
-  /* ---------- Hero (full-width band) ---------- */
-  .hero{
-    position:relative;
-    background-color:var(--soft);
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 9.5v9M9.5 14h9' stroke='%23DCE3F6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    border-bottom:1px solid var(--line);
-    padding:72px 0;
-  }
-  .hero::before{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(760px 380px at 35% 50%, rgba(245,247,252,.95), rgba(245,247,252,0) 70%);
-  }
-  .hero-inner{
-    position:relative;
-    display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;
-  }
-  .hero-copy h1{font-size:46px;line-height:1.12;font-weight:800;letter-spacing:-.02em;max-width:480px}
-  .hero-copy p{margin-top:18px;font-size:16px;color:var(--muted);max-width:440px}
-  .hero-actions{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  /* ===== Finder ===== */
+  .search-wrap { position: relative; display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; padding: 13px 16px; }
+  .search-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+  .search-wrap .search-icon { color: var(--faint); }
+  .search-input { flex: 1; border: none; background: transparent; font-size: 0.95rem; color: var(--ink); outline: none; font-family: var(--sans); }
+  .search-input::placeholder { color: var(--faint); }
+  .clear-button { display: none; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; background: #eef2f7; border: none; border-radius: 50%; color: var(--muted); cursor: pointer; }
+  .clear-button.visible { display: flex; }
 
-  /* Plan card (hero) */
-  .hero-card-wrap{position:relative;display:flex;justify-content:flex-end}
-  .plan-card{
-    width:360px;max-width:100%;
-    background:#fff;border:1px solid var(--line);border-radius:18px;
-    box-shadow:var(--shadow);
-    padding:22px;
-  }
-  .plan-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:14px}
-  .plan-title{font-weight:700;font-size:15px}
-  .plan-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
-  .plan-check{color:var(--green)}
-  .plan-rows{border-top:1px solid #EEF1F8}
-  .plan-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #EEF1F8;font-size:13.5px}
-  .plan-row .label{color:var(--muted)}
-  .plan-row .value{font-weight:600;text-align:right}
-  .plan-next{
-    margin-top:14px;display:flex;align-items:center;gap:12px;
-    background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
-  }
-  .plan-next svg{color:var(--indigo)}
-  .plan-next-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
-  .plan-next-date{font-size:14px;font-weight:700;margin-top:1px}
+  .col-label { font-size: 0.85rem; color: var(--muted); margin: 18px 0 12px; }
+  .chip-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip { padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: #f4f6f8; font-size: 0.83rem; color: var(--muted); cursor: pointer; transition: 0.15s; white-space: nowrap; }
+  .chip:hover { border-color: var(--line-strong); color: var(--ink); }
+  .chip.active { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
 
-  /* ---------- Feature cards ---------- */
-  .features{padding:56px 0 8px}
-  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .feature-card{
-    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
-    padding:34px 28px;text-align:center;
-  }
-  .icon-circle{
-    width:56px;height:56px;border-radius:50%;
-    background:var(--lav-100);color:var(--indigo);
-    display:flex;align-items:center;justify-content:center;
-    margin:0 auto 18px;
-  }
-  .feature-card h3{font-size:16px;font-weight:700}
-  .feature-card p{margin-top:10px;font-size:13.5px;color:var(--muted);max-width:280px;margin-left:auto;margin-right:auto}
+  .asset-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .asset-row { display: flex; align-items: center; gap: 16px; padding: 14px 16px; background: #fbfcfd; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
+  .asset-row:hover { border-color: var(--line-strong); }
+  .asset-row.selected { border-color: var(--green); background: var(--green-soft); }
+  .asset-avatar { position: relative; overflow: hidden; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; }
+  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: contain; background: #fff; }
+  .asset-main { flex: 1; min-width: 0; }
+  .asset-ticker { font-weight: 700; font-size: 0.92rem; }
+  .asset-name { font-size: 0.82rem; color: var(--muted); }
+  .asset-desc { font-size: 0.8rem; color: var(--green); margin-top: 3px; }
+  .asset-right { text-align: right; flex-shrink: 0; }
+  .asset-price { font-weight: 700; font-size: 0.95rem; }
+  .asset-yoy { font-size: 0.8rem; font-weight: 600; margin-top: 2px; }
+  .asset-yoy.pos { color: var(--green); }
+  .asset-yoy.neg { color: var(--red); }
 
-  /* ---------- Sections ---------- */
-  .section{padding:84px 0}
-  .section-head{text-align:center;max-width:620px;margin:0 auto 48px}
-  .section-head h2{font-size:28px;font-weight:800;letter-spacing:-.01em}
-  .section-head p{margin-top:12px;font-size:15px;color:var(--muted)}
+  /* ===== Amount + frequency ===== */
+  .two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .amount-row { display: flex; align-items: center; gap: 14px; }
+  .cur-select-wrap { position: relative; }
+  .cur-select { appearance: none; -webkit-appearance: none; border: 1px solid var(--line); border-radius: 8px; background: #f4f6f8; padding: 8px 26px 8px 12px; font-weight: 700; font-size: 0.85rem; color: var(--green); cursor: pointer; font-family: var(--sans); }
+  .cur-select-wrap .cc { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--faint); }
+  .amount-input { flex: 1; border: none; border-bottom: 1.5px solid var(--line); background: transparent; font-size: 2rem; font-weight: 700; color: var(--ink); outline: none; padding: 4px 0; font-family: var(--sans); }
+  .amount-input:focus { border-color: var(--green); }
+  .amount-note { display: flex; align-items: flex-start; gap: 6px; font-size: 0.78rem; color: var(--muted); margin-top: 14px; line-height: 1.4; }
+  .amount-note svg { flex-shrink: 0; margin-top: 1px; color: var(--faint); }
+  .quick-add { display: flex; gap: 8px; margin-top: 14px; }
+  .quick-btn { flex: 1; padding: 9px; background: #eef4ff; border: none; border-radius: 8px; color: var(--blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+  .quick-btn:hover { background: #e0eaff; }
 
-  /* ---------- How it works ---------- */
-  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-  .step{position:relative}
-  .step:not(:last-child)::after{
-    content:"";position:absolute;top:19px;left:54px;right:-18px;
-    border-top:2px dashed var(--lav-300);
-  }
-  .step-dot{
-    position:relative;z-index:1;
-    width:40px;height:40px;border-radius:50%;
-    background:var(--lav-100);color:var(--navy);
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:15px;
-  }
-  .step:first-child .step-dot{background:var(--navy);color:#fff}
-  .step h3{margin-top:18px;font-size:15px;font-weight:700}
-  .step p{margin-top:8px;font-size:13px;color:var(--muted)}
+  .freq-options { display: flex; flex-direction: column; gap: 10px; }
+  .freq-opt { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
+  .freq-opt:hover { border-color: var(--line-strong); }
+  .freq-opt.active { border-color: var(--green); background: var(--green-soft); font-weight: 600; }
+  .freq-opt .check { color: var(--line-strong); display: flex; }
+  .freq-opt.active .check { color: var(--green); }
 
-  /* ---------- Categories ---------- */
-  .categories{background:var(--soft);border-top:1px solid var(--line)}
-  .section.categories{padding-bottom:56px}
-  .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:32px}
-  .chip{
-    padding:9px 15px;border-radius:999px;
-    border:1px solid var(--line);background:#fff;
-    font-size:13px;font-weight:600;color:var(--muted);
-    transition:all .15s ease;
-  }
-  .chip:hover{border-color:var(--lav-300);color:var(--ink)}
-  .chip.active{background:var(--navy);border-color:var(--navy);color:#fff}
+  /* ===== Forecast ===== */
+  .forecast-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .forecast-badge { background: var(--green-soft); color: var(--green); font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  .forecast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .forecast-cell { border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .forecast-period { font-size: 0.78rem; color: var(--muted); }
+  .forecast-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--green); margin: 8px 0 12px; }
+  .forecast-bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .forecast-bar span { display: block; height: 100%; background: var(--green); border-radius: 999px; transition: width 0.4s; }
+  .forecast-result { display: flex; align-items: flex-start; gap: 8px; font-size: 0.83rem; color: var(--muted); margin-top: 16px; line-height: 1.45; }
+  .forecast-result svg { flex-shrink: 0; color: var(--green); margin-top: 1px; }
+  .forecast-result strong { color: var(--ink); }
 
-  .instrument-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .instrument-card{
-    background:#fff;border:1px solid var(--line);border-radius:14px;
-    padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;
-    transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
-  }
-  .instrument-card:hover{border-color:var(--lav-300);box-shadow:0 6px 18px rgba(16,26,63,.06);transform:translateY(-1px)}
-  .instrument-info{min-width:0}
-  .instrument-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .ticker{font-weight:700;font-size:15px}
-  .perf{font-size:11px;font-weight:700;line-height:1;padding:4px 8px;border-radius:999px;white-space:nowrap}
-  .perf-up{background:var(--green-bg);color:var(--green)}
-  .perf-down{background:var(--red-bg);color:var(--red)}
-  .iname{font-size:13px;font-weight:600;margin-top:9px}
-  .idesc{font-size:12px;color:var(--muted);margin-top:2px}
-  .add-btn{
-    width:34px;height:34px;border-radius:50%;
-    border:1px solid var(--line);background:#fff;color:var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    transition:all .15s ease;
-  }
-  .add-btn:hover{border-color:var(--navy);background:var(--soft)}
-  .add-btn .ic-check{display:none}
-  .add-btn.added{background:var(--green-bg);border-color:#BCE6CF;color:var(--green)}
-  .add-btn.added .ic-plus{display:none}
-  .add-btn.added .ic-check{display:block}
+  /* ===== Payment ===== */
+  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pay-card { position: relative; display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; min-height: 96px; transition: 0.15s; }
+  .pay-card:hover { border-color: var(--line-strong); }
+  .pay-card.selected { border-color: var(--green); background: var(--green-soft); }
+  .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); display: flex; }
+  .card-num { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; }
+  .card-issuer { font-size: 0.68rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  .pay-add { flex-direction: column; gap: 8px; justify-content: center; border: 1.5px dashed var(--line-strong); background: #f7f9fb; color: var(--muted); font-size: 0.85rem; }
+  .pay-add .plus { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
 
-  /* ---------- Why choose ---------- */
-  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:880px;margin:0 auto}
-  .why-card{border-radius:var(--radius);padding:28px}
-  .why-card.manual{background:#fff;border:1px solid var(--line)}
-  .why-card.recurring{background:#E9EDFB;border:1px solid #CDD6F4}
-  .why-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-  .why-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-  .why-card.manual .why-icon{background:#F1F3F9;color:var(--muted)}
-  .why-card.recurring .why-icon{background:var(--navy);color:#fff}
-  .why-head h3{font-size:16px;font-weight:700}
-  .why-list{list-style:none;display:grid;gap:14px}
-  .why-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--ink)}
-  .why-list li svg{margin-top:1px}
-  .why-card.manual .why-list svg{color:var(--red)}
-  .why-card.recurring .why-list svg{color:var(--green)}
+  /* ===== Confirm ===== */
+  .agree-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; font-size: 0.86rem; color: var(--ink); cursor: pointer; line-height: 1.45; }
+  .agree-row input { display: none; }
+  .cbx { flex-shrink: 0; width: 20px; height: 20px; border: 2px solid var(--line-strong); border-radius: 5px; display: flex; align-items: center; justify-content: center; background: #fff; transition: 0.15s; }
+  .agree-row input:checked + .cbx { background: var(--blue); border-color: var(--blue); }
+  .cbx svg { display: none; color: #fff; }
+  .agree-row input:checked + .cbx svg { display: block; }
+  .agree-row a { color: var(--green); text-decoration: none; }
 
-  /* ---------- Demo panel ---------- */
-  .demo-section{padding:24px 0 84px}
-  .demo-panel{
-    background:radial-gradient(900px 420px at 88% -20%, #2A3C7E 0%, rgba(42,60,126,0) 60%),
-               linear-gradient(135deg,#1A2858 0%,var(--navy-deep) 70%);
-    border-radius:24px;
-    padding:56px 64px;
-    display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:48px;
-    color:#fff;
-  }
-  .demo-copy h2{font-size:30px;font-weight:800;letter-spacing:-.01em}
-  .demo-copy p{margin-top:14px;font-size:15px;color:#C2CAE6;max-width:420px}
-  .demo-copy .btn{margin-top:26px}
-  .demo-card{
-    background:#fff;color:var(--ink);
-    border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.3);
-    padding:22px;max-width:380px;justify-self:end;width:100%;
-  }
-  .demo-card-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #EEF1F8}
-  .demo-avatar{
-    width:40px;height:40px;border-radius:12px;
-    background:var(--lav-100);color:var(--indigo);
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:13px;
-  }
-  .demo-status{
-    margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;
-    background:var(--green-bg);color:#157A4F;
-    border-radius:12px;padding:11px;font-size:13px;font-weight:600;
-  }
-  .demo-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+  .confirm-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 22px; flex-wrap: wrap; }
+  .total-label { font-size: 0.8rem; color: var(--muted); }
+  .total-value { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; margin-top: 4px; }
+  .confirm-btn { background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 16px 40px; font-size: 0.95rem; font-weight: 700; cursor: pointer; position: relative; transition: 0.15s; font-family: var(--sans); }
+  .confirm-btn:hover:not(:disabled) { background: var(--green-dark); }
+  .confirm-btn:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
+  .confirm-btn.loading .btn-text { opacity: 0; }
+  .confirm-btn .spinner { display: none; position: absolute; top: 50%; left: 50%; margin: -10px 0 0 -10px; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .confirm-btn.loading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .summary-panel { display: none; margin-top: 18px; padding: 14px 18px; background: var(--green-soft); border: 1px solid var(--green); border-radius: 12px; align-items: flex-start; gap: 10px; }
+  .summary-panel.visible { display: flex; }
+  .summary-panel svg { flex-shrink: 0; color: var(--green); }
+  .summary-panel p { margin: 0; font-size: 0.88rem; line-height: 1.5; }
 
-  /* ---------- Wealth growth calculator ---------- */
-  .calc-section{background:var(--soft);border-bottom:1px solid var(--line)}
-  .section.calc-section{padding-top:0}
-  .calc-card{
-    background:#fff;border:1px solid var(--line);border-radius:20px;
-    box-shadow:var(--shadow);
-    display:grid;grid-template-columns:1.05fr .95fr;
-    overflow:hidden;max-width:980px;margin:0 auto;
-  }
-  .calc-controls{padding:36px;display:grid;gap:30px;align-content:start}
-  .calc-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
-  .calc-label{font-size:13.5px;font-weight:600}
-  .calc-value{font-size:15px;font-weight:700;white-space:nowrap}
+  /* ===== Mobile chrome ===== */
+  .mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .mobile-topbar .m-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 8px 0 10px; justify-content: space-around; z-index: 50; }
+  .bn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.65rem; color: var(--faint); }
+  .bn-item.active { color: var(--blue); }
+  .bn-item .bn-ic { width: 32px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+  .bn-item.active .bn-ic { background: var(--blue); color: #fff; }
 
-  input[type="range"]{
-    -webkit-appearance:none;appearance:none;
-    width:100%;height:6px;border-radius:999px;
-    background:linear-gradient(to right, var(--navy) var(--fill,50%), var(--line) var(--fill,50%));
-    outline-offset:4px;
-  }
-  input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance:none;appearance:none;
-    width:18px;height:18px;border-radius:50%;
-    background:#fff;border:2.5px solid var(--navy);
-    box-shadow:0 1px 4px rgba(16,26,63,.25);cursor:pointer;
-  }
-  input[type="range"]::-moz-range-thumb{
-    width:18px;height:18px;border-radius:50%;
-    background:#fff;border:2.5px solid var(--navy);
-    box-shadow:0 1px 4px rgba(16,26,63,.25);cursor:pointer;
-  }
-  input[type="range"]::-moz-range-track{height:6px;background:transparent;border:none}
-  .range-scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:8px}
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
+  .toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--ink); border-radius: 12px; color: #fff; font-size: 0.85rem; transform: translateY(140px); opacity: 0; transition: 0.3s; }
+  .toast.visible { transform: translateY(0); opacity: 1; }
+  #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
 
-  .calc-note{
-    display:flex;gap:10px;align-items:flex-start;
-    background:var(--soft);border:1px solid var(--line);border-radius:12px;
-    padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;
-  }
-  .calc-note svg{color:var(--indigo);margin-top:1px}
-
-  .calc-result{
-    background:var(--soft);border-left:1px solid var(--line);
-    padding:36px;display:flex;flex-direction:column;
-  }
-  .calc-result-label{font-size:13px;font-weight:500;color:var(--muted)}
-  .calc-result-value{font-size:38px;font-weight:800;letter-spacing:-.02em;color:var(--indigo);margin-top:6px}
-  .calc-result-text{font-size:13.5px;color:var(--muted);margin-top:10px;max-width:300px}
-  .calc-hint{font-size:12px;color:var(--muted);margin-top:14px;max-width:300px}
-  .calc-breakdown{margin-top:18px;display:grid;gap:8px;max-height:252px;overflow-y:auto;padding-right:2px}
-  .calc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-  .calc-row-left{min-width:0}
-  .calc-row-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .calc-row .ticker{font-size:13px}
-  .calc-row .perf{font-size:10px;padding:3px 7px}
-  .calc-row .alloc{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap}
-  .calc-row-right{display:flex;align-items:center;gap:6px}
-  .calc-row .row-value{font-size:13px;font-weight:700;white-space:nowrap}
-  .row-remove{width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0}
-  .row-remove:hover{background:var(--red-bg);color:var(--red)}
-  .calc-bars{display:flex;align-items:flex-end;gap:7px;height:120px;margin-top:auto;padding-top:28px}
-  .calc-bars .bar{flex:1;border-radius:5px 5px 2px 2px;background:var(--navy);transition:height .25s ease;min-height:5px}
-
-  /* ---------- Final CTA ---------- */
-  .final-cta{text-align:center;padding:84px 0 96px}
-  .final-cta h2{font-size:28px;font-weight:800;letter-spacing:-.01em}
-  .final-cta p{margin-top:12px;font-size:15px;color:var(--muted)}
-  .final-cta .btn{margin-top:28px}
-
-  /* ---------- Footer ---------- */
-  .site-footer{border-top:1px solid var(--line);background:var(--soft);padding:44px 0}
-  .footer-inner{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
-  .footer-legal{font-size:12.5px;color:var(--muted);max-width:560px;line-height:1.65;margin-top:14px}
-  .footer-links{display:grid;gap:10px;font-size:13px;color:var(--muted);text-align:right;align-content:start}
-  .footer-links a:hover{color:var(--ink)}
-
-  /* ---------- Responsive ---------- */
-  @media (max-width:960px){
-    .hero{padding:48px 0}
-    .hero-inner{grid-template-columns:1fr}
-    .hero-card-wrap{justify-content:flex-start}
-    .hero-copy h1{font-size:36px}
-    .features-grid{grid-template-columns:1fr}
-    .steps{grid-template-columns:repeat(2,1fr)}
-    .step:not(:last-child)::after{display:none}
-    .instrument-grid{grid-template-columns:repeat(2,1fr)}
-    .why-grid{grid-template-columns:1fr}
-    .demo-panel{grid-template-columns:1fr;padding:40px 32px}
-    .demo-card{justify-self:start}
-    .calc-card{grid-template-columns:1fr}
-    .calc-result{border-left:none;border-top:1px solid var(--line)}
-  }
-  @media (max-width:760px){
-    .main-nav{display:none}
-    .header-actions .btn-outline{display:none}
-    .header-inner{gap:12px;justify-content:space-between}
-    .header-actions{margin-left:0}
-    .header-actions .btn-primary{padding:10px 14px;font-size:13px}
-    .cta-full{display:none}
-    .cta-short{display:inline}
-  }
-  @media (max-width:640px){
-    .container{padding:0 20px}
-    .instrument-grid{grid-template-columns:1fr}
-    .steps{grid-template-columns:1fr}
-    .hero-copy h1{font-size:30px}
-    .section-head h2{font-size:24px}
-    .demo-copy h2{font-size:25px}
-    .final-cta h2{font-size:24px}
-    .plan-card{width:100%}
-    .demo-panel{padding:36px 22px}
-    .section{padding:64px 0}
-    .calc-controls{padding:24px 20px}
-    .calc-result{padding:24px 20px}
-    .calc-result-value{font-size:30px}
-    .calc-bars{height:100px}
-    .footer-inner{flex-direction:column;gap:24px}
-    .footer-links{text-align:left}
-  }
-  @media (max-width:480px){
-    .hero-actions{flex-direction:column;align-items:stretch}
-    .hero-actions .btn{width:100%}
-  }
-  @media (prefers-reduced-motion:reduce){
-    html{scroll-behavior:auto}
-    *{transition:none !important}
+  @media (max-width: 960px) {
+    .sidebar { display: none; }
+    .mobile-topbar { display: flex; }
+    .bottom-nav { display: flex; }
+    .main { padding: 18px 16px 90px; }
+    .main-head .head-icons { display: none; }
+    .main-title { font-size: 1.5rem; }
+    .sub-grid, .two-col, .forecast-grid, .pay-grid { grid-template-columns: 1fr; }
+    .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .asset-desc { display: none; }
+    .confirm-foot { flex-direction: column; align-items: stretch; }
+    .confirm-btn { width: 100%; }
   }
 </style>
 </head>
 <body>
+<canvas id="confetti-canvas"></canvas>
 
-<!-- ======================= Header ======================= -->
-<header class="site-header" id="siteHeader">
-  <div class="container header-inner">
-    <a class="brand" href="#top">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-      Freedom Financial
-    </a>
-    <nav class="main-nav">
-      <a href="#categories" class="active">Investment</a>
-      <a href="#">Support</a>
-    </nav>
-    <div class="header-actions">
-      <a class="btn btn-outline" href="#how-it-works">How it works</a>
-      <a class="btn btn-primary" href="#categories"><span class="cta-full">Set up Recurring Investment</span><span class="cta-short">Set up plan</span></a>
+<div class="app">
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="logo">InvestGrow</div>
+    <div class="user-card">
+      <div class="user-avatar"></div>
+      <div><div class="user-name">Alexander V.</div><div class="user-role">Premium Investor</div></div>
     </div>
+
+    <div class="nav-head">Денежные средства</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Вывод денег</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Пополнить счет</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Конвертация валюты</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Пакетный перевод активов</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 16l-4-4 4-4"/><path d="M17 8l4 4-4 4"/><path d="M3 12h18"/></svg>Перевод между счетами</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>Долгосрочное размещение денег</div>
+    <div class="nav-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>Рекурренты</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Подтверждение источника средств</div>
+
+    <div class="nav-head">Персональные данные</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>Смена Email</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Смена номера телефона</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Тест на инвестиционный опыт</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Форма W-8BEN</div>
+    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Изменение сведений</div>
+
+    <button class="new-order-btn">New Order</button>
+    <div class="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Logout</div>
+  </aside>
+
+  <!-- Mobile top bar -->
+  <div class="mobile-topbar">
+    <span class="m-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+    <span style="color:var(--blue)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
   </div>
-</header>
 
-<main id="top">
-
-  <!-- ======================= Hero ======================= -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-copy">
-        <h1>Invest regularly in Stocks and ETFs.</h1>
-        <p>Set up weekly or monthly recurring investments into any available instrument, including US &amp; EU Stocks and UCITS ETFs.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#categories">Start AutoInvest</a>
-          <a class="btn btn-outline btn-lg" href="#how-it-works">Learn More</a>
-        </div>
+  <!-- Main -->
+  <main class="main">
+    <div class="main-head">
+      <h1 class="main-title">Регулярные инвестиции</h1>
+      <div class="head-icons">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </div>
-      <div class="hero-card-wrap">
-        <div class="plan-card">
-          <div class="plan-card-head">
-            <div>
-              <div class="plan-title">Broad Market UCITS ETF</div>
-              <div class="plan-sub">Global Equity</div>
-            </div>
-            <svg class="plan-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+
+    <!-- Subscription -->
+    <div class="sub-grid">
+      <div class="sub-card selected" data-sub="investments">
+        <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></div>
+        <div><div class="sub-title">Регулярные инвестиции</div><div class="sub-desc">Настройте регулярные покупки, и система будет автоматически инвестировать за вас</div></div>
+      </div>
+      <div class="sub-card" data-sub="payments">
+        <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div>
+        <div><div class="sub-title">Регулярные платежи</div><div class="sub-desc">Выберите сумму и частоту самостоятельно, чтобы всегда иметь средства для торговли</div></div>
+      </div>
+    </div>
+
+    <!-- Asset -->
+    <div class="card">
+      <div class="card-label">Выберите актив для покупки</div>
+      <div class="search-wrap">
+        <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+        <input type="text" id="search-input" class="search-input" placeholder="Введите тикер, имя" autocomplete="off">
+        <button type="button" id="clear-button" class="clear-button"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
+      </div>
+      <div class="col-label">Коллекции</div>
+      <div class="chip-row" id="chip-row"></div>
+      <div class="asset-list" id="asset-list"></div>
+    </div>
+
+    <!-- Amount + frequency -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-label">Сумма инвестиций</div>
+        <div class="amount-row">
+          <div class="cur-select-wrap">
+            <select id="currency" class="cur-select"><option value="EUR">EUR</option><option value="USD">USD</option></select>
+            <span class="cc"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7.5l5 5 5-5"/></svg></span>
           </div>
-          <div class="plan-rows">
-            <div class="plan-row">
-              <span class="label">Amount</span>
-              <span class="value">100 EUR</span>
-            </div>
-            <div class="plan-row">
-              <span class="label">Frequency</span>
-              <span class="value">Monthly</span>
-            </div>
-            <div class="plan-row">
-              <span class="label">Source</span>
-              <span class="pill pill-soft">Funded by auto top-up</span>
-            </div>
-            <div class="plan-row" style="border-bottom:none">
-              <span class="label">Commission</span>
-              <span class="pill pill-green">No commission</span>
-            </div>
-          </div>
-          <div class="plan-next">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <div>
-              <div class="plan-next-label">Next purchase</div>
-              <div class="plan-next-date">15 July</div>
-            </div>
-          </div>
+          <input type="text" id="amount" class="amount-input" inputmode="decimal" value="1,000.00">
+        </div>
+        <div class="quick-add">
+          <button type="button" class="quick-btn" data-add="100">+100</button>
+          <button type="button" class="quick-btn" data-add="500">+500</button>
+          <button type="button" class="quick-btn" data-add="1000">+1000</button>
+        </div>
+        <div class="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Частота</div>
+        <div class="freq-options" id="freq-options">
+          <div class="freq-opt active" data-freq="week"><span>Раз в неделю</span><span class="check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span></div>
+          <div class="freq-opt" data-freq="month"><span>Раз в месяц</span><span class="check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg></span></div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ======================= Feature cards ======================= -->
-  <section class="features">
-    <div class="container features-grid">
-      <div class="feature-card">
-        <div class="icon-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        </div>
-        <h3>Invest automatically</h3>
-        <p>Set up weekly or monthly purchases of selected Stocks or UCITS ETFs.</p>
+    <!-- Forecast -->
+    <div class="card">
+      <div class="forecast-head">
+        <div class="card-label" style="margin:0">Прогноз доходности</div>
+        <span class="forecast-badge">+12% годовых</span>
       </div>
-      <div class="feature-card">
-        <div class="icon-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        </div>
-        <h3>Funded from your connected card</h3>
-        <p>Automatically top up your balance from a connected payment card for scheduled investments.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-        </div>
-        <h3>No commission</h3>
-        <p>Enjoy zero commission fees when buying eligible instruments via recurring investments.</p>
+      <div class="forecast-grid" id="forecast-grid"></div>
+      <div class="forecast-result">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        <span id="forecast-result-text"></span>
       </div>
     </div>
-  </section>
 
-  <!-- ======================= How it works ======================= -->
-  <section class="section" id="how-it-works">
-    <div class="container">
-      <div class="section-head">
-        <h2>How it works</h2>
-        <p>Set up your automated investing in four simple steps.</p>
-      </div>
-      <div class="steps">
-        <div class="step">
-          <div class="step-dot">1</div>
-          <h3>Choose an asset</h3>
-          <p>Select from thousands of available stocks and ETFs on our platform.</p>
+    <!-- Payment -->
+    <div class="card">
+      <div class="card-label">Способ оплаты</div>
+      <div class="pay-grid">
+        <div class="pay-card selected" id="pay-saved">
+          <div class="card-brand"></div>
+          <div><div class="card-num">•••• 6619</div><div class="card-issuer">Revolut Ltd</div></div>
         </div>
-        <div class="step">
-          <div class="step-dot">2</div>
-          <h3>Connect a card</h3>
-          <p>Link your payment card to enable automatic top-ups for funding your investments.</p>
-        </div>
-        <div class="step">
-          <div class="step-dot">3</div>
-          <h3>Set amount &amp; frequency</h3>
-          <p>Decide how much to invest and choose a weekly or monthly schedule.</p>
-        </div>
-        <div class="step">
-          <div class="step-dot">4</div>
-          <h3>Confirm setup</h3>
-          <p>Review your plan and confirm. Your portfolio builds itself automatically.</p>
+        <div class="pay-card pay-add" id="pay-add">
+          <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+          Новая карта
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ======================= Categories ======================= -->
-  <section class="section categories" id="categories">
-    <div class="container">
-      <div class="section-head">
-        <h2>Discover Investment Categories</h2>
-        <p>Build a diversified portfolio easily by choosing from our popular themes, including Stocks and UCITS ETFs.</p>
-      </div>
-      <div class="chips" id="chips">
-        <button class="chip active" data-cat="broad">Broad Market UCITS</button>
-        <button class="chip" data-cat="tech">Technology UCITS</button>
-        <button class="chip" data-cat="energy">Energy &amp; Green UCITS</button>
-        <button class="chip" data-cat="health">Healthcare UCITS</button>
-        <button class="chip" data-cat="commodities">Commodities UCITS</button>
-        <button class="chip" data-cat="dividend">Dividend UCITS</button>
-        <button class="chip" data-cat="bonds">Bonds UCITS</button>
-      </div>
-      <div class="instrument-grid" id="instrumentGrid" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <!-- ======================= Wealth growth calculator ======================= -->
-  <section class="section calc-section" id="growth">
-    <div class="container">
-      <div class="section-head">
-        <h2>See how your wealth grows</h2>
-        <p>Small regular investments can lead to significant long-term capital.</p>
-      </div>
-      <div class="calc-card">
-        <div class="calc-controls">
-          <div class="calc-field">
-            <div class="calc-label-row">
-              <span class="calc-label">Monthly Investment</span>
-              <span class="calc-value" id="amountValue">1,000 EUR</span>
-            </div>
-            <input type="range" id="amountRange" min="100" max="5000" step="50" value="1000" aria-label="Monthly investment amount in euros">
-            <div class="range-scale"><span>100 EUR</span><span>5,000 EUR</span></div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-label-row">
-              <span class="calc-label">Investment Period</span>
-              <span class="calc-value" id="yearsValue">30 years</span>
-            </div>
-            <input type="range" id="yearsRange" min="1" max="40" step="1" value="30" aria-label="Investment period in years">
-            <div class="range-scale"><span>1 year</span><span>40 years</span></div>
-          </div>
-          <div class="calc-note">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <span id="calcNoteText">Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.</span>
-          </div>
+    <!-- Confirm -->
+    <div class="card">
+      <label class="agree-row">
+        <input type="checkbox" id="check-tos">
+        <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span>Я соглашаюсь настроить автоматические повторяющиеся платежи в соответствии с <a href="#">условиями предоставления услуг</a></span>
+      </label>
+      <label class="agree-row">
+        <input type="checkbox" id="check-data">
+        <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span>Я принимаю соглашение о хранении данных карты.</span>
+      </label>
+      <div class="confirm-foot">
+        <div>
+          <div class="total-label">Общая сумма списания</div>
+          <div class="total-value" id="total-value">1,000.00 EUR</div>
         </div>
-        <div class="calc-result" aria-live="polite">
-          <div class="calc-result-label">Estimated Portfolio Value</div>
-          <div class="calc-result-value" id="resultValue">1,500,295 EUR</div>
-          <p class="calc-result-text" id="resultText">Invest 1,000 EUR monthly and become a millionaire in 30 years.</p>
-          <p class="calc-hint" id="calcHint">Add instruments with “+” in the categories above to project each one using its own last-year return.</p>
-          <div class="calc-breakdown" id="calcBreakdown"></div>
-          <div class="calc-bars" id="calcBars" aria-hidden="true"></div>
-        </div>
+        <button type="button" id="submit-btn" class="confirm-btn" disabled>
+          <span class="btn-text">Подтвердить поручение</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+      <div id="summary-panel" class="summary-panel">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
+        <p id="summary-text"></p>
       </div>
     </div>
-  </section>
+  </main>
+</div>
 
-  <!-- ======================= Why choose ======================= -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <h2>Why choose Recurring Investments?</h2>
-      </div>
-      <div class="why-grid">
-        <div class="why-card manual">
-          <div class="why-head">
-            <div class="why-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
-            </div>
-            <h3>Manual Investing</h3>
-          </div>
-          <ul class="why-list">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Top up manually before each purchase
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Manual purchase execution required
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Easy to skip plans and make emotional decisions.
-            </li>
-          </ul>
-        </div>
-        <div class="why-card recurring">
-          <div class="why-head">
-            <div class="why-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            </div>
-            <h3>Recurring Investing</h3>
-          </div>
-          <ul class="why-list">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Auto top-up from connected card for any instrument.
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Scheduled, automatic execution with less effort.
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Consistent discipline and no commission.
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- Mobile bottom nav -->
+<nav class="bottom-nav">
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Home</div>
+  <div class="bn-item active"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>Invest</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>Wallet</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Profile</div>
+</nav>
 
-  <!-- ======================= See it in action ======================= -->
-  <section class="demo-section">
-    <div class="container">
-      <div class="demo-panel">
-        <div class="demo-copy">
-          <h2>See it in action</h2>
-          <p>You set up a monthly recurring investment of 100 EUR into a Broad Market UCITS ETF or a leading US stock like Apple.</p>
-          <a class="btn btn-white" href="#categories">Start this plan</a>
-        </div>
-        <div class="demo-card">
-          <div class="demo-card-head">
-            <div class="demo-avatar">BM</div>
-            <div>
-              <div class="plan-title">Broad Market UCITS ETF</div>
-              <div class="plan-sub">Global Equity</div>
-            </div>
-          </div>
-          <div class="plan-rows" style="border-top:none">
-            <div class="plan-row">
-              <span class="label">Monthly Investment</span>
-              <span class="value">100 EUR</span>
-            </div>
-            <div class="plan-row">
-              <span class="label">Next execution</span>
-              <span class="value">1st of next month</span>
-            </div>
-            <div class="plan-row" style="border-bottom:none">
-              <span class="label">Commission</span>
-              <span class="pill pill-green">No commission</span>
-            </div>
-          </div>
-          <div class="demo-status">
-            <span class="dot"></span>
-            Active Auto-Invest
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================= Final CTA ======================= -->
-  <section class="final-cta">
-    <div class="container">
-      <h2>Ready to put your portfolio on autopilot?</h2>
-      <p>Join thousands of investors who use Freedom Financial to build wealth automatically.</p>
-      <a class="btn btn-primary btn-lg" href="#categories">Set up Recurring Investment</a>
-    </div>
-  </section>
-
-</main>
-
-<!-- ======================= Footer ======================= -->
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>
-      <a class="brand" href="#top">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-        Freedom Financial
-      </a>
-      <p class="footer-legal">© 2024 Freedom Financial. All rights reserved. Investing involves risk, including loss of principal. Past performance does not guarantee future results. Please consider your investment objectives and read our risk disclosure carefully before investing.</p>
-    </div>
-    <nav class="footer-links">
-      <a href="#">Terms of Service</a>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Risk Disclosure</a>
-      <a href="#">Contact Us</a>
-    </nav>
-  </div>
-</footer>
+<div class="toast-container"><div id="toast" class="toast"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg><span id="toast-message"></span></div></div>
 
 <script>
-  /* ============================================================
-     Instruments data
-     Items 1–8 reproduce the new mockup grid 1:1
-     (default "Broad Market UCITS" view).
-     The rest are extra UCITS instruments so that every category
-     chip has content. "perf" values (% за год) are illustrative
-     placeholders — edit here when real data is available.
-     ============================================================ */
-  const DATA = [
-    { t: "VWCE", name: "Broad Market ETF",         desc: "Мировой рынок акций",                 perf: 14.2,  c: ["broad"] },
-    { t: "SXR8", name: "S&P 500 ETF",              desc: "500 крупнейших компаний США",         perf: 18.5,  c: ["broad"] },
-    { t: "INRG", name: "Clean Energy ETF",         desc: "Зеленая энергетика",                  perf: -5.4,  c: ["broad", "energy"] },
-    { t: "XDWH", name: "Health Care ETF",          desc: "Мировое здравоохранение",             perf: 9.1,   c: ["broad", "health"] },
-    { t: "XDWT", name: "Info Tech ETF",            desc: "Технологический сектор",              perf: 22.6,  c: ["broad", "tech"] },
-    { t: "EQQQ", name: "Nasdaq-100 ETF",           desc: "Крупнейшие компании Nasdaq",          perf: 21.2,  c: ["broad", "tech"] },
-    { t: "VHYL", name: "High Dividend ETF",        desc: "Высокодивидендные акции",             perf: 11.6,  c: ["broad", "dividend"] },
-    { t: "AGGH", name: "Global Aggregate Bond ETF", desc: "Мировой рынок облигаций",            perf: 4.1,   c: ["broad", "bonds"] },
-    { t: "HTWO", name: "Hydrogen Economy ETF",     desc: "Водородная энергетика",               perf: -12.3, c: ["energy"] },
-    { t: "XDWE", name: "World Energy ETF",         desc: "Нефтегазовый сектор",                 perf: 6.8,   c: ["energy"] },
-    { t: "HEAL", name: "Healthcare Innovation ETF", desc: "Инновации в медицине",               perf: 3.5,   c: ["health"] },
-    { t: "SGLD", name: "Physical Gold ETC",        desc: "Физическое золото",                   perf: 25.4,  c: ["commodities"] },
-    { t: "CMOD", name: "Commodity ETF",            desc: "Диверсифицированные сырьевые товары", perf: 8.9,   c: ["commodities"] },
-    { t: "TDIV", name: "Dividend Leaders ETF",     desc: "Дивидендные лидеры развитых рынков",  perf: 13.7,  c: ["dividend"] },
-    { t: "FGEQ", name: "Quality Income ETF",       desc: "Качественные дивидендные компании",   perf: 12.4,  c: ["dividend"] },
-    { t: "VAGF", name: "Global Aggregate Bond ETF", desc: "Глобальные облигации, хедж в EUR",   perf: 3.8,   c: ["bonds"] }
-  ];
+var ASSUMED_RETURN = 0.12;
+var CUR_SYMBOL = { EUR: '€', USD: '$' };
 
-  const grid = document.getElementById("instrumentGrid");
-  const chipsWrap = document.getElementById("chips");
-  const added = new Set();
-  let activeCat = "broad";
+function getLogoUrl(base, market) { return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + base.toLowerCase() + '.' + (market || 'us'); }
 
-  const ICON_PLUS = '<svg class="ic-plus" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
-  const ICON_CHECK = '<svg class="ic-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+// id, base ticker, exchange, name, ru description, price, yoy(%, за год)
+var instruments = [
+  {id:1, base:'AAPL', ex:'US', name:'Apple Inc.',          price:178.52, yoy:18.5, desc:'Крупнейшая технологическая компания'},
+  {id:2, base:'NVDA', ex:'US', name:'NVIDIA',              price:875.28, yoy:96.2, desc:'Лидер рынка AI-чипов'},
+  {id:3, base:'MSFT', ex:'US', name:'Microsoft',           price:378.91, yoy:24.1, desc:'Облака, софт и искусственный интеллект'},
+  {id:4, base:'TSLA', ex:'US', name:'Tesla',               price:175.34, yoy:-8.4, desc:'Электромобили и автопилот'},
+  {id:5, base:'VWCE', ex:'EU', name:'Vanguard FTSE All-World UCITS',     price:132.40, yoy:12.42, isETF:true, desc:'Весь мир в одном фонде'},
+  {id:6, base:'CSPX', ex:'EU', name:'iShares Core S&P 500 UCITS',        price:618.50, yoy:22.10, isETF:true, desc:'500 крупнейших компаний США'},
+  {id:7, base:'IWDA', ex:'EU', name:'iShares Core MSCI World UCITS',     price:104.20, yoy:14.15, isETF:true, desc:'Развитые рынки, 23 страны'},
+  {id:8, base:'EQQQ', ex:'EU', name:'Invesco EQQQ Nasdaq-100 UCITS',     price:482.30, yoy:24.60, isETF:true, desc:'Топ-100 технологических компаний'},
+  {id:9, base:'EIMI', ex:'EU', name:'iShares Core MSCI EM IMI UCITS',    price:34.60,  yoy:12.30, isETF:true, desc:'Развивающиеся рынки'},
+  {id:10,base:'VHYL', ex:'EU', name:'Vanguard All-World High Div UCITS', price:64.80,  yoy:9.80,  isETF:true, desc:'Высокие дивиденды по всему миру'},
+  {id:11,base:'AGGH', ex:'EU', name:'iShares Global Aggregate Bond UCITS',price:4.85,  yoy:3.20,  isETF:true, desc:'Глобальные облигации'},
+  {id:12,base:'AMD',  ex:'US', name:'AMD',                 price:178.56, yoy:52.0, desc:'Чипы и серверные процессоры'},
+  {id:13,base:'ASML', ex:'EU', name:'ASML Holding',        price:920.50, yoy:21.3, desc:'Оборудование для производства чипов'},
+  {id:14,base:'SMGB', ex:'EU', name:'VanEck Semiconductor UCITS',        price:42.80, yoy:36.50, isETF:true, desc:'Топ-25 производителей чипов'},
+  {id:15,base:'EQIX', ex:'US', name:'Equinix',             price:845.20, yoy:16.7, desc:'Глобальные дата-центры'},
+  {id:16,base:'DLR',  ex:'US', name:'Digital Realty',      price:152.40, yoy:28.9, desc:'REIT дата-центров'},
+  {id:17,base:'DKNG', ex:'US', name:'DraftKings Inc',      price:42.15,  yoy:42.5, desc:'Растущий букмекерский бизнес'},
+  {id:18,base:'FLTR', ex:'EU', name:'Flutter Entertainment',price:185.40,yoy:18.2, desc:'Лидер мирового рынка беттинга'},
+  {id:19,base:'ENT',  ex:'EU', name:'Entain',              price:9.85,   yoy:-12.4,desc:'Глобальный беттинг и гейминг'},
+  {id:20,base:'MGM',  ex:'US', name:'MGM Resorts',         price:44.20,  yoy:6.1,  desc:'Казино и онлайн-беттинг'},
+  {id:21,base:'CCJ',  ex:'US', name:'Cameco',              price:52.30,  yoy:64.8, desc:'Крупнейший добытчик урана'},
+  {id:22,base:'URA',  ex:'US', name:'Global X Uranium ETF',price:31.40,  yoy:38.2, isETF:true, desc:'ETF на урановую отрасль'},
+  {id:23,base:'NLR',  ex:'US', name:'VanEck Uranium+Nuclear ETF',price:92.10,yoy:29.5,isETF:true, desc:'Атомная энергетика и уран'},
+  {id:24,base:'BWXT', ex:'US', name:'BWX Technologies',    price:105.60, yoy:33.1, desc:'Ядерные технологии и оборона'}
+];
 
-  function escapeAmp(s) {
-    return s.replace(/&/g, "&amp;");
-  }
+var collections = [
+  {id:'popular',   title:'Популярные',        items:[1,2,3,4]},
+  {id:'topetf',    title:'ТОП ETF',           items:[5,6,7]},
+  {id:'euetf',     title:'Европейские ETF',   items:[8,9,10,11,5]},
+  {id:'semis',     title:'Полупроводники',    items:[2,12,13,14]},
+  {id:'datacenter',title:'Дата-центры',       items:[15,16,2,3]},
+  {id:'betting',   title:'Спортивные ставки', items:[17,18,19,20]},
+  {id:'nuclear',   title:'Ядерная энергетика',items:[21,22,23,24]}
+];
 
-  function perfBadge(p) {
-    const cls = p < 0 ? "perf perf-down" : "perf perf-up";
-    const sign = p > 0 ? "+" : "";
-    return '<span class="' + cls + '">' + sign + p.toFixed(1) + '% за год</span>';
-  }
+var state = { selected:null, query:'', activeCol:'popular', currency:'EUR', frequency:'week', cardSelected:true, subscription:'investments' };
+var firstSchedule = !localStorage.getItem('hasSchedule');
 
-  function cardHTML(item) {
-    const isAdded = added.has(item.t);
-    return (
-      '<div class="instrument-card">' +
-        '<div class="instrument-info">' +
-          '<div class="instrument-top">' +
-            '<span class="ticker">' + item.t + '</span>' +
-            perfBadge(item.perf) +
-          '</div>' +
-          '<div class="iname">' + escapeAmp(item.name) + '</div>' +
-          '<div class="idesc">' + item.desc + '</div>' +
-        '</div>' +
-        '<button class="add-btn' + (isAdded ? ' added' : '') + '" data-ticker="' + item.t + '"' +
-          ' aria-pressed="' + isAdded + '"' +
-          ' aria-label="' + (isAdded ? 'Remove ' : 'Add ') + item.t + (isAdded ? ' from plan' : ' to plan') + '">' +
-          ICON_PLUS + ICON_CHECK +
-        '</button>' +
-      '</div>'
-    );
-  }
+var $ = function(id){ return document.getElementById(id); };
+function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+function byId(id){ for (var i=0;i<instruments.length;i++) if (instruments[i].id===id) return instruments[i]; return null; }
+function color(t){ var c=['#15824a','#3b82f6','#8b5cf6','#f59e0b','#0ea5e9','#ec4899','#06b6d4']; var s=0; for(var i=0;i<t.length;i++) s+=t.charCodeAt(i); return c[s%c.length]; }
+function rgba(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
+function fmt(v){ return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function parseAmount(){ var n=parseFloat(($('amount').value||'').replace(/[^\d.]/g,'')); return isNaN(n)?0:n; }
 
-  function render() {
-    const items = DATA.filter(function (i) { return i.c.indexOf(activeCat) !== -1; });
-    grid.innerHTML = items.map(cardHTML).join("");
-  }
+function toast(m){ $('toast-message').textContent=m; $('toast').classList.add('visible'); setTimeout(function(){ $('toast').classList.remove('visible'); },3000); }
+function confetti(){ var c=$('confetti-canvas'),ctx=c.getContext('2d'); c.width=innerWidth;c.height=innerHeight; var p=[],cols=['#15824a','#FFD700','#2563eb','#4ECDC4','#45B7D1']; for(var i=0;i<100;i++)p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8}); var f=0;(function a(){ctx.clearRect(0,0,c.width,c.height);p.forEach(function(o){o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs;ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);ctx.restore();});if(++f<100)requestAnimationFrame(a);else ctx.clearRect(0,0,c.width,c.height);})(); }
 
-  // Category chips
-  chipsWrap.addEventListener("click", function (e) {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    activeCat = chip.dataset.cat;
-    chipsWrap.querySelectorAll(".chip").forEach(function (c) {
-      c.classList.toggle("active", c === chip);
+function renderChips(){
+  $('chip-row').innerHTML = collections.map(function(c){
+    return '<button type="button" class="chip'+(state.activeCol===c.id&&!state.query?' active':'')+'" data-col="'+c.id+'">'+esc(c.title)+'</button>';
+  }).join('');
+}
+
+function curOf(inst){ return inst.ex==='US' ? '$' : '€'; }
+
+function assetRow(inst){
+  if (!inst) return '';
+  var sel = state.selected && state.selected.id===inst.id;
+  var pos = inst.yoy>=0, col=color(inst.base);
+  return '<div class="asset-row'+(sel?' selected':'')+'" data-id="'+inst.id+'">'+
+    '<div class="asset-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(inst.base.charAt(0))+
+      '<img class="asset-logo" src="'+getLogoUrl(inst.base, inst.ex.toLowerCase())+'" onerror="this.style.display=\'none\'" alt="">'+
+    '</div>'+
+    '<div class="asset-main">'+
+      '<div class="asset-ticker">'+esc(inst.base)+'.'+esc(inst.ex)+'</div>'+
+      '<div class="asset-name">'+esc(inst.name)+'</div>'+
+      '<div class="asset-desc">'+esc(inst.desc)+'</div>'+
+    '</div>'+
+    '<div class="asset-right">'+
+      '<div class="asset-price">'+curOf(inst)+inst.price.toFixed(2)+'</div>'+
+      '<div class="asset-yoy '+(pos?'pos':'neg')+'">'+(pos?'+':'')+inst.yoy.toFixed(1)+'% за год</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderAssets(){
+  var list;
+  if (state.query) {
+    var lq = state.query.toLowerCase();
+    list = instruments.filter(function(i){
+      return (i.base.toLowerCase().indexOf(lq)>=0) || (i.name.toLowerCase().indexOf(lq)>=0) || (i.desc.toLowerCase().indexOf(lq)>=0);
     });
-    render();
-  });
-
-  // Add / remove instrument (toggle)
-  grid.addEventListener("click", function (e) {
-    const btn = e.target.closest(".add-btn");
-    if (!btn) return;
-    const t = btn.dataset.ticker;
-    const nowAdded = !added.has(t);
-    if (nowAdded) { added.add(t); } else { added.delete(t); }
-    btn.classList.toggle("added", nowAdded);
-    btn.setAttribute("aria-pressed", String(nowAdded));
-    btn.setAttribute("aria-label", (nowAdded ? "Remove " + t + " from plan" : "Add " + t + " to plan"));
-    updateCalc();
-  });
-
-  // Header border on scroll
-  const header = document.getElementById("siteHeader");
-  window.addEventListener("scroll", function () {
-    header.classList.toggle("scrolled", window.scrollY > 8);
-  }, { passive: true });
-
-  render();
-
-  /* ============================================================
-     Wealth growth calculator
-     FV of an annuity-due, monthly compounding:
-     FV = PMT × ((1+i)^n − 1) / i × (1+i),  i = rate/12, n = years×12
-
-     No instruments selected  → single projection at DEFAULT_RATE
-       (defaults 1,000 EUR / 30 years give 1,500,295 EUR as in mockup).
-     Instruments selected (+) → the monthly amount is split equally
-       and each instrument is projected with its own last-year
-       return ("perf", % за год, from DATA); headline = portfolio
-       total. To project the FULL amount into each instrument
-       instead, set share = pmt in portfolioValue/renderBreakdown.
-     ============================================================ */
-  const DEFAULT_RATE = 0.08;
-  const BAR_COUNT = 12;
-
-  const amountRange = document.getElementById("amountRange");
-  const yearsRange = document.getElementById("yearsRange");
-  const amountValue = document.getElementById("amountValue");
-  const yearsValue = document.getElementById("yearsValue");
-  const resultValue = document.getElementById("resultValue");
-  const resultText = document.getElementById("resultText");
-  const calcBars = document.getElementById("calcBars");
-  const calcHint = document.getElementById("calcHint");
-  const calcBreakdown = document.getElementById("calcBreakdown");
-  const calcNoteText = document.getElementById("calcNoteText");
-
-  const NOTE_DEFAULT = "Assumes an estimated 8% annual return based on historical performance of diversified UCITS ETFs.";
-  const NOTE_SELECTED = "Each selected instrument is projected using its own last-year return. Past performance does not guarantee future results.";
-
-  function futureValue(pmt, years, annualRate) {
-    const i = annualRate / 12;
-    const n = years * 12;
-    if (i === 0) return pmt * n;
-    return pmt * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+  } else {
+    var col = collections.filter(function(c){ return c.id===state.activeCol; })[0];
+    list = col ? col.items.map(byId) : [];
   }
+  $('asset-list').innerHTML = list.length
+    ? list.map(assetRow).join('')
+    : '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.88rem">Ничего не найдено</div>';
+}
 
-  function fmtNum(v) {
-    return Math.round(v).toLocaleString("en-US");
-  }
+function renderForecast(){
+  var amt = parseAmount(), cur = state.currency;
+  var y1 = amt*Math.pow(1+ASSUMED_RETURN,1), y3 = amt*Math.pow(1+ASSUMED_RETURN,3), y5 = amt*Math.pow(1+ASSUMED_RETURN,5);
+  var rows = [['Через 1 год',y1],['Через 3 года',y3],['Через 5 лет',y5]];
+  $('forecast-grid').innerHTML = rows.map(function(r){
+    var w = y5>0 ? Math.round(r[1]/y5*100) : 0;
+    return '<div class="forecast-cell"><div class="forecast-period">'+r[0]+'</div><div class="forecast-value">'+fmt(r[1])+' '+cur+'</div><div class="forecast-bar"><span style="width:'+w+'%"></span></div></div>';
+  }).join('');
+  var gain = y5-amt;
+  $('forecast-result-text').innerHTML = 'Ожидаемый результат: <strong>+'+fmt(gain)+' '+cur+'</strong> чистой прибыли за 5 лет при регулярном инвестировании.';
+}
 
-  function yearsLabel(y) {
-    return y + (y === 1 ? " year" : " years");
-  }
+function renderTotal(){ $('total-value').textContent = fmt(parseAmount())+' '+state.currency; }
 
-  function selectedItems() {
-    return DATA.filter(function (i) { return added.has(i.t); });
-  }
+function validate(){
+  var ok = parseAmount()>0 && state.selected && state.cardSelected && $('check-tos').checked && $('check-data').checked;
+  $('submit-btn').disabled = !ok;
+}
 
-  function portfolioValue(pmt, years, items) {
-    if (items.length === 0) return futureValue(pmt, years, DEFAULT_RATE);
-    const share = pmt / items.length;
-    return items.reduce(function (sum, it) {
-      return sum + futureValue(share, years, it.perf / 100);
-    }, 0);
-  }
+function recompute(){ renderForecast(); renderTotal(); validate(); }
 
-  function updateFill(el) {
-    const min = Number(el.min), max = Number(el.max), val = Number(el.value);
-    el.style.setProperty("--fill", ((val - min) / (max - min) * 100) + "%");
-  }
+function selectAsset(inst){
+  if (state.selected && state.selected.id===inst.id){ state.selected=null; }
+  else { state.selected=inst; }
+  renderAssets(); validate();
+}
 
-  function renderBars(pmt, years, items) {
-    const total = portfolioValue(pmt, years, items);
-    let html = "";
-    for (let k = 1; k <= BAR_COUNT; k++) {
-      const v = portfolioValue(pmt, years * k / BAR_COUNT, items);
-      const h = Math.max(5, Math.round(v / total * 100));
-      const op = (0.3 + 0.7 * (k - 1) / (BAR_COUNT - 1)).toFixed(2);
-      html += '<span class="bar" style="height:' + h + '%;opacity:' + op + '"></span>';
-    }
-    calcBars.innerHTML = html;
-  }
+function setCollection(id){ state.activeCol=id; state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); }
+function setFrequency(f){ state.frequency=f; document.querySelectorAll('.freq-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.freq===f); }); }
 
-  function renderBreakdown(pmt, years, items) {
-    if (items.length === 0) { calcBreakdown.innerHTML = ""; return; }
-    const share = pmt / items.length;
-    calcBreakdown.innerHTML = items.map(function (it) {
-      return (
-        '<div class="calc-row">' +
-          '<div class="calc-row-left">' +
-            '<div class="calc-row-top">' +
-              '<span class="ticker">' + it.t + '</span>' +
-              perfBadge(it.perf) +
-            '</div>' +
-            '<div class="alloc">≈ ' + fmtNum(share) + ' EUR/mo</div>' +
-          '</div>' +
-          '<div class="calc-row-right">' +
-            '<span class="row-value">' + fmtNum(futureValue(share, years, it.perf / 100)) + ' EUR</span>' +
-            '<button class="row-remove" data-ticker="' + it.t + '" aria-label="Remove ' + it.t + ' from projection">' +
-              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
-            '</button>' +
-          '</div>' +
-        '</div>'
-      );
-    }).join("");
-  }
+function handleSubmit(){
+  if ($('submit-btn').disabled) return;
+  $('submit-btn').classList.add('loading');
+  setTimeout(function(){
+    $('submit-btn').classList.remove('loading');
+    var period = state.frequency==='week' ? 'раз в неделю' : 'раз в месяц';
+    var t = state.selected.base+'.'+state.selected.ex;
+    $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', списание с карты Revolut •••• 6619.';
+    $('summary-panel').classList.add('visible');
+    if (firstSchedule){ confetti(); localStorage.setItem('hasSchedule','1'); firstSchedule=false; toast('🎉 Первое поручение создано!'); }
+    else { toast('Поручение успешно создано.'); }
+  }, 1100);
+}
 
-  function updateCalc() {
-    const pmt = Number(amountRange.value);
-    const years = Number(yearsRange.value);
-    const items = selectedItems();
-    const total = portfolioValue(pmt, years, items);
+function bind(){
+  document.querySelectorAll('.sub-card').forEach(function(card){ card.addEventListener('click', function(){ state.subscription=card.dataset.sub; document.querySelectorAll('.sub-card').forEach(function(c){ c.classList.toggle('selected', c===card); }); }); });
 
-    amountValue.textContent = fmtNum(pmt) + " EUR";
-    yearsValue.textContent = yearsLabel(years);
-    resultValue.textContent = fmtNum(total) + " EUR";
+  $('search-input').addEventListener('input', function(e){ state.query=e.target.value.trim(); $('clear-button').classList.toggle('visible', !!state.query); renderChips(); renderAssets(); });
+  $('clear-button').addEventListener('click', function(){ state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); $('search-input').focus(); });
 
-    const into = items.length === 0 ? "" :
-      items.length === 1 ? " into " + items[0].t : " across " + items.length + " instruments";
-    resultText.textContent = total >= 1000000
-      ? "Invest " + fmtNum(pmt) + " EUR monthly" + into + " and become a millionaire in " + yearsLabel(years) + "."
-      : "Invest " + fmtNum(pmt) + " EUR monthly" + into + " and build solid long-term capital in " + yearsLabel(years) + ".";
+  $('chip-row').addEventListener('click', function(e){ var c=e.target.closest('.chip'); if (c) setCollection(c.dataset.col); });
+  $('asset-list').addEventListener('click', function(e){ var r=e.target.closest('.asset-row'); if (r){ var inst=byId(parseInt(r.dataset.id)); if (inst) selectAsset(inst); } });
 
-    calcNoteText.textContent = items.length === 0 ? NOTE_DEFAULT : NOTE_SELECTED;
-    calcHint.style.display = items.length === 0 ? "" : "none";
+  $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); });
+  $('amount').addEventListener('input', recompute);
+  $('amount').addEventListener('blur', function(){ var n=parseAmount(); if (n>0) $('amount').value=fmt(n); recompute(); });
+  document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmount()+parseFloat(b.dataset.add)); recompute(); }); });
 
-    updateFill(amountRange);
-    updateFill(yearsRange);
-    renderBreakdown(pmt, years, items);
-    renderBars(pmt, years, items);
-  }
+  $('freq-options').addEventListener('click', function(e){ var o=e.target.closest('.freq-opt'); if (o) setFrequency(o.dataset.freq); });
 
-  // Remove instrument directly from the projection list
-  calcBreakdown.addEventListener("click", function (e) {
-    const btn = e.target.closest(".row-remove");
-    if (!btn) return;
-    added.delete(btn.dataset.ticker);
-    render();
-    updateCalc();
-  });
+  $('pay-saved').addEventListener('click', function(){ state.cardSelected=true; $('pay-saved').classList.add('selected'); validate(); });
+  $('pay-add').addEventListener('click', function(){ toast('Добавление карты (мок).'); });
+  $('check-tos').addEventListener('change', validate);
+  $('check-data').addEventListener('change', validate);
+  $('submit-btn').addEventListener('click', handleSubmit);
+}
 
-  amountRange.addEventListener("input", updateCalc);
-  yearsRange.addEventListener("input", updateCalc);
-  updateCalc();
+function init(){ bind(); renderChips(); renderAssets(); recompute(); }
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
