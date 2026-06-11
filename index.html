@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InvestGrow — Регулярные инвестиции</title>
+<title>Регулярные инвестиции</title>
 <style>
   :root {
     --bg: #eef0f3;
@@ -26,7 +26,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
-  .app { display: flex; min-height: 100vh; }
+  .app { display: flex; min-height: 100vh; width: 100%; }
 
   /* ===== Sidebar ===== */
   .sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -45,7 +45,7 @@
   .logout { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
 
   /* ===== Main ===== */
-  .main { flex: 1; padding: 28px 36px 64px; max-width: 1180px; }
+  .main { flex: 1; width: 100%; padding: 28px 36px 64px; max-width: 1180px; margin: 0 auto; }
   .main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
   .main-title { font-family: var(--serif); font-size: 2rem; font-weight: 700; margin: 0; }
   .head-icons { display: flex; gap: 18px; color: var(--muted); }
@@ -70,6 +70,11 @@
   .search-wrap .search-icon { color: var(--faint); }
   .search-input { flex: 1; border: none; background: transparent; font-size: 0.95rem; color: var(--ink); outline: none; font-family: var(--sans); }
   .search-input::placeholder { color: var(--faint); }
+
+  .search-lang { display: inline-flex; flex-shrink: 0; padding: 2px; background: #f4f6f8; border: 1px solid var(--line); border-radius: 999px; }
+  .lang-btn { border: none; background: transparent; color: var(--muted); border-radius: 999px; padding: 5px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: var(--sans); }
+  .lang-btn.active { background: var(--green); color: #fff; }
+  .mobile-title { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; color: var(--ink); }
   .clear-button { display: none; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; background: #eef2f7; border: none; border-radius: 50%; color: var(--muted); cursor: pointer; }
   .clear-button.visible { display: flex; }
 
@@ -180,16 +185,44 @@
 
   @media (max-width: 960px) {
     .sidebar { display: none; }
-    .mobile-topbar { display: flex; }
+    .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
     .bottom-nav { display: flex; }
-    .main { padding: 18px 16px 90px; }
+    .main { padding: 18px 16px 90px; max-width: none; }
     .main-head .head-icons { display: none; }
     .main-title { font-size: 1.5rem; }
     .sub-grid, .two-col, .forecast-grid, .pay-grid { grid-template-columns: 1fr; }
-    .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .chip-row::-webkit-scrollbar { display: none; }
     .asset-desc { display: none; }
     .confirm-foot { flex-direction: column; align-items: stretch; }
     .confirm-btn { width: 100%; }
+  }
+
+  @media (max-width: 640px) {
+    body { background: #f6f7f9; }
+    .main { padding: 14px 12px 92px; }
+    .main-head { margin-bottom: 14px; }
+    .main-title { display: none; }
+    .card { padding: 16px; border-radius: 12px; margin-bottom: 14px; }
+    .sub-card { padding: 15px; }
+    .search-wrap { flex-wrap: wrap; padding: 11px 12px; }
+    .search-icon { order: 1; }
+    .search-input { order: 2; min-width: calc(100% - 76px); font-size: 0.9rem; }
+    .clear-button { order: 3; }
+    .search-lang { order: 4; width: 100%; justify-content: center; margin-top: 8px; }
+    .lang-btn { flex: 1; padding: 7px 10px; }
+    .asset-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 13px; }
+    .asset-right { grid-column: 2; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .asset-price { font-size: 0.9rem; }
+    .asset-yoy { margin-top: 0; white-space: nowrap; }
+    .amount-row { gap: 10px; }
+    .amount-input { font-size: 1.55rem; min-width: 0; }
+    .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .forecast-head { align-items: flex-start; gap: 10px; }
+    .forecast-badge { flex-shrink: 0; }
+    .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+    .toast-container { left: 12px; right: 12px; bottom: 82px; }
+    .toast { justify-content: center; }
   }
 </style>
 </head>
@@ -199,12 +232,6 @@
 <div class="app">
   <!-- Sidebar (desktop) -->
   <aside class="sidebar">
-    <div class="logo">InvestGrow</div>
-    <div class="user-card">
-      <div class="user-avatar"></div>
-      <div><div class="user-name">Alexander V.</div><div class="user-role">Premium Investor</div></div>
-    </div>
-
     <div class="nav-head">Денежные средства</div>
     <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</div>
     <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Вывод денег</div>
@@ -229,7 +256,7 @@
 
   <!-- Mobile top bar -->
   <div class="mobile-topbar">
-    <span class="m-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+    <span class="mobile-title">Регулярные инвестиции</span>
     <span style="color:var(--blue)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
   </div>
 
@@ -260,8 +287,12 @@
       <div class="card-label">Выберите актив для покупки</div>
       <div class="search-wrap">
         <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
-        <input type="text" id="search-input" class="search-input" placeholder="Введите тикер, имя" autocomplete="off">
-        <button type="button" id="clear-button" class="clear-button"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
+        <input type="text" id="search-input" class="search-input" placeholder="Введите тикер, название или слово по-русски" autocomplete="off">
+        <button type="button" id="clear-button" class="clear-button" aria-label="Очистить поиск"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
+        <div class="search-lang" role="group" aria-label="Язык поиска">
+          <button type="button" class="lang-btn active" data-lang="ru">RU</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
       </div>
       <div class="col-label">Коллекции</div>
       <div class="chip-row" id="chip-row"></div>
@@ -355,10 +386,10 @@
 
 <!-- Mobile bottom nav -->
 <nav class="bottom-nav">
-  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Home</div>
-  <div class="bn-item active"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>Invest</div>
-  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>Wallet</div>
-  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Profile</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Главная</div>
+  <div class="bn-item active"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>Инвест</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>Счёт</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Профиль</div>
 </nav>
 
 <div class="toast-container"><div id="toast" class="toast"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg><span id="toast-message"></span></div></div>
@@ -407,7 +438,57 @@ var collections = [
   {id:'nuclear',   title:'Ядерная энергетика',items:[21,22,23,24]}
 ];
 
-var state = { selected:null, query:'', activeCol:'popular', currency:'EUR', frequency:'week', cardSelected:true, subscription:'investments' };
+var searchAliases = {
+  AAPL: {ru:['яблоко','эпл','айфон','iphone','макбук','технологии'], en:['apple','iphone','macbook','consumer electronics']},
+  NVDA: {ru:['нвидиа','видеокарты','гпу','ии','искусственный интеллект','чипы'], en:['nvidia','gpu','ai','artificial intelligence','chips']},
+  MSFT: {ru:['майкрософт','виндовс','офис','облака','azure'], en:['microsoft','windows','office','cloud','azure']},
+  TSLA: {ru:['тесла','электромобиль','электромобили','автопилот'], en:['tesla','ev','electric vehicles','autopilot']},
+  VWCE: {ru:['весь мир','мировой etf','широкий рынок','глобальный фонд'], en:['all world','global etf','broad market','vanguard']},
+  CSPX: {ru:['s&p 500','сп500','снп500','американский рынок','500 компаний сша'], en:['s&p 500','sp500','us market','ishares']},
+  IWDA: {ru:['msci world','развитые рынки','мировые акции'], en:['msci world','developed markets','world stocks']},
+  EQQQ: {ru:['nasdaq','насдак','qqq','технологический etf','топ 100'], en:['nasdaq','nasdaq 100','qqq','technology etf']},
+  EIMI: {ru:['развивающиеся рынки','emerging markets','em'], en:['emerging markets','em','developing markets']},
+  VHYL: {ru:['дивиденды','дивидендный etf','высокие дивиденды'], en:['dividend','high dividend','dividend etf']},
+  AGGH: {ru:['облигации','бонды','bond','глобальные облигации'], en:['bonds','bond etf','aggregate bonds']},
+  AMD:  {ru:['амд','чипы','процессоры','полупроводники'], en:['amd','chips','processors','semiconductors']},
+  ASML: {ru:['асмл','литография','оборудование для чипов','полупроводники'], en:['asml','lithography','chip equipment','semiconductors']},
+  SMGB: {ru:['полупроводники','semiconductor etf','чипы etf'], en:['semiconductor etf','chips etf','vaneck semiconductor']},
+  EQIX: {ru:['дата центр','дата-центр','центры обработки данных','цод'], en:['data center','datacenter','reits']},
+  DLR:  {ru:['дата центр','дата-центр','цод','reit'], en:['data center','datacenter','reit']},
+  DKNG: {ru:['букмекер','ставки','спорт ставки','беттинг'], en:['draftkings','betting','sports betting']},
+  FLTR: {ru:['flutter','беттинг','ставки','букмекер'], en:['flutter','betting','sports betting']},
+  ENT:  {ru:['entain','беттинг','ставки','гейминг'], en:['entain','betting','gaming']},
+  MGM:  {ru:['казино','mgm','отели','беттинг'], en:['mgm','casino','resorts','betting']},
+  CCJ:  {ru:['уран','атомная энергия','ядерная энергетика'], en:['cameco','uranium','nuclear energy']},
+  URA:  {ru:['уран etf','атомная энергия','ядерная энергетика'], en:['uranium etf','nuclear energy','global x uranium']},
+  NLR:  {ru:['атомная энергетика','уран','ядерный etf'], en:['nuclear etf','uranium','nuclear energy']},
+  BWXT: {ru:['ядерные технологии','атомная энергетика','оборона'], en:['nuclear technologies','defense','bwxt']}
+};
+
+function normalizeSearchText(t){
+  return String(t || '').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9+&.\s-]/gi,' ').replace(/\s+/g,' ').trim();
+}
+function searchTextFor(inst, lang){
+  var aliases = searchAliases[inst.base] || {ru:[], en:[]};
+  var common = [inst.base, inst.base + '.' + inst.ex, inst.name, inst.desc, inst.ex, inst.isETF ? 'etf ucits фонд' : 'акция stock'];
+  var langSpecific = lang === 'ru' ? aliases.ru : aliases.en;
+  return normalizeSearchText(common.concat(langSpecific).join(' '));
+}
+function matchesSearch(inst, query){
+  var q = normalizeSearchText(query);
+  if (!q) return true;
+  var tokens = q.split(' ').filter(Boolean);
+  var activeText = searchTextFor(inst, state.searchLang);
+  var fallbackText = searchTextFor(inst, state.searchLang === 'ru' ? 'en' : 'ru');
+  return tokens.every(function(token){ return activeText.indexOf(token) >= 0 || fallbackText.indexOf(token) >= 0; });
+}
+function updateSearchPlaceholder(){
+  $('search-input').placeholder = state.searchLang === 'ru'
+    ? 'Введите тикер, название или слово по-русски'
+    : 'Search ticker, company or keyword';
+}
+
+var state = { selected:null, query:'', activeCol:'popular', currency:'EUR', frequency:'week', cardSelected:true, subscription:'investments', searchLang:'ru' };
 var firstSchedule = !localStorage.getItem('hasSchedule');
 
 var $ = function(id){ return document.getElementById(id); };
@@ -452,17 +533,14 @@ function assetRow(inst){
 function renderAssets(){
   var list;
   if (state.query) {
-    var lq = state.query.toLowerCase();
-    list = instruments.filter(function(i){
-      return (i.base.toLowerCase().indexOf(lq)>=0) || (i.name.toLowerCase().indexOf(lq)>=0) || (i.desc.toLowerCase().indexOf(lq)>=0);
-    });
+    list = instruments.filter(function(i){ return matchesSearch(i, state.query); });
   } else {
     var col = collections.filter(function(c){ return c.id===state.activeCol; })[0];
     list = col ? col.items.map(byId) : [];
   }
   $('asset-list').innerHTML = list.length
     ? list.map(assetRow).join('')
-    : '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.88rem">Ничего не найдено</div>';
+    : '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.88rem">Ничего не найдено. Попробуйте тикер, название или слово вроде «яблоко».</div>';
 }
 
 function renderForecast(){
@@ -514,6 +592,14 @@ function bind(){
 
   $('search-input').addEventListener('input', function(e){ state.query=e.target.value.trim(); $('clear-button').classList.toggle('visible', !!state.query); renderChips(); renderAssets(); });
   $('clear-button').addEventListener('click', function(){ state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); $('search-input').focus(); });
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.searchLang = btn.dataset.lang;
+      document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b===btn); });
+      updateSearchPlaceholder();
+      renderAssets();
+    });
+  });
 
   $('chip-row').addEventListener('click', function(e){ var c=e.target.closest('.chip'); if (c) setCollection(c.dataset.col); });
   $('asset-list').addEventListener('click', function(e){ var r=e.target.closest('.asset-row'); if (r){ var inst=byId(parseInt(r.dataset.id)); if (inst) selectAsset(inst); } });
@@ -532,7 +618,7 @@ function bind(){
   $('submit-btn').addEventListener('click', handleSubmit);
 }
 
-function init(){ bind(); renderChips(); renderAssets(); recompute(); }
+function init(){ bind(); updateSearchPlaceholder(); renderChips(); renderAssets(); recompute(); }
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
