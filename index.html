@@ -169,6 +169,19 @@
   .summary-panel.visible { display: flex; }
   .summary-panel svg { flex-shrink: 0; color: var(--green); }
   .summary-panel p { margin: 0; font-size: 0.88rem; line-height: 1.5; }
+  .summary-content { flex: 1; min-width: 0; }
+  .first-purchase { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(21,130,74,0.22); }
+  .first-purchase-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+  .first-purchase-desc { margin-top: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--muted); }
+  .first-purchase-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .first-purchase-btn { border-radius: 9px; padding: 10px 16px; font-family: var(--sans); font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: 0.15s; }
+  .first-purchase-btn.primary { border: 1px solid var(--green); background: var(--green); color: #fff; }
+  .first-purchase-btn.primary:hover { background: var(--green-dark); }
+  .first-purchase-btn.secondary { border: 1px solid var(--green); background: #fff; color: var(--green); }
+  .first-purchase-btn.secondary:hover { background: var(--green-soft); }
+  .first-purchase-btn:disabled { opacity: 0.55; cursor: default; }
+  .first-purchase-result { display: none; align-items: center; gap: 7px; margin-top: 12px; color: var(--green); font-size: 0.82rem; font-weight: 600; }
+  .first-purchase-result.visible { display: flex; }
 
   /* ===== Mobile chrome ===== */
   .mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
@@ -198,6 +211,8 @@
     .asset-desc { display: none; }
     .confirm-foot { flex-direction: column; align-items: stretch; }
     .confirm-btn { width: 100%; }
+    .first-purchase-actions { flex-direction: column; }
+    .first-purchase-btn { width: 100%; }
   }
 
   @media (max-width: 640px), (max-device-width: 640px) {
@@ -266,6 +281,8 @@
   html.is-mobile .forecast-badge { flex-shrink: 0; }
   html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
   html.is-mobile .confirm-btn { width: 100%; }
+  html.is-mobile .first-purchase-actions { flex-direction: column; }
+  html.is-mobile .first-purchase-btn { width: 100%; }
   html.is-mobile .toast-container { left: 12px; right: 12px; bottom: 82px; }
   html.is-mobile .toast { justify-content: center; }
 
@@ -435,7 +452,21 @@
       </div>
       <div id="summary-panel" class="summary-panel">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
-        <p id="summary-text"></p>
+        <div class="summary-content">
+          <p id="summary-text"></p>
+          <div id="first-purchase" class="first-purchase">
+            <div class="first-purchase-title">Выполнить первую покупку сейчас?</div>
+            <div class="first-purchase-desc">Это необязательно. Если пропустить этот шаг, первая покупка будет выполнена по расписанию.</div>
+            <div id="first-purchase-actions" class="first-purchase-actions">
+              <button type="button" id="buy-now-btn" class="first-purchase-btn primary">Купить сейчас</button>
+              <button type="button" id="buy-scheduled-btn" class="first-purchase-btn secondary">Начать по расписанию</button>
+            </div>
+            <div id="first-purchase-result" class="first-purchase-result">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
+              <span id="first-purchase-result-text"></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -630,6 +661,30 @@ function selectAsset(inst){
 function setCollection(id){ state.activeCol=id; state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); }
 function setFrequency(f){ state.frequency=f; document.querySelectorAll('.freq-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.freq===f); }); }
 
+function resetFirstPurchaseChoice(){
+  $('first-purchase-actions').style.display = 'flex';
+  $('first-purchase-result').classList.remove('visible');
+  $('first-purchase-result-text').textContent = '';
+  $('buy-now-btn').disabled = false;
+  $('buy-scheduled-btn').disabled = false;
+}
+
+function chooseFirstPurchase(now){
+  $('buy-now-btn').disabled = true;
+  $('buy-scheduled-btn').disabled = true;
+  $('first-purchase-actions').style.display = 'none';
+  var t = state.selected.base+'.'+state.selected.ex;
+  if (now) {
+    $('first-purchase-result-text').textContent = 'Первая покупка '+t+' на '+fmt(parseAmount())+' '+state.currency+' отправлена на исполнение.';
+    toast('Первая покупка отправлена на исполнение.');
+  } else {
+    var period = state.frequency==='week' ? 'недельному' : 'месячному';
+    $('first-purchase-result-text').textContent = 'Первая покупка будет выполнена по '+period+' расписанию.';
+    toast('Первая покупка запланирована.');
+  }
+  $('first-purchase-result').classList.add('visible');
+}
+
 function handleSubmit(){
   if ($('submit-btn').disabled) return;
   $('submit-btn').classList.add('loading');
@@ -638,7 +693,9 @@ function handleSubmit(){
     var period = state.frequency==='week' ? 'раз в неделю' : 'раз в месяц';
     var t = state.selected.base+'.'+state.selected.ex;
     $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', списание с карты Revolut •••• 6619.';
+    resetFirstPurchaseChoice();
     $('summary-panel').classList.add('visible');
+    $('summary-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
     if (firstSchedule){ confetti(); localStorage.setItem('hasSchedule','1'); firstSchedule=false; toast('🎉 Первое поручение создано!'); }
     else { toast('Поручение успешно создано.'); }
   }, 1100);
@@ -673,6 +730,8 @@ function bind(){
   $('check-tos').addEventListener('change', validate);
   $('check-data').addEventListener('change', validate);
   $('submit-btn').addEventListener('click', handleSubmit);
+  $('buy-now-btn').addEventListener('click', function(){ chooseFirstPurchase(true); });
+  $('buy-scheduled-btn').addEventListener('click', function(){ chooseFirstPurchase(false); });
 }
 
 function init(){ bind(); updateSearchPlaceholder(); renderChips(); renderAssets(); recompute(); }
