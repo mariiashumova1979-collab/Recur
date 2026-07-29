@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<!-- Start state: step 1 completed and collapsed; step 2 active -->
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Регулярные инвестиции · шаг 2</title>
+<title>Регулярные инвестиции</title>
 <style>
   :root {
     --bg: #eef0f3;
@@ -34,7 +33,7 @@
   .sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
   .logo { font-weight: 800; font-size: 1.35rem; color: var(--green); padding: 4px 8px 8px; }
   .user-card { display: flex; align-items: center; gap: 12px; background: #eef4ff; border-radius: 12px; padding: 12px; }
-  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #cbd5e1 url('https://i.pravatar.cc/80?img=12') center/cover; flex-shrink: 0; }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; }
   .user-name { font-weight: 600; font-size: 0.9rem; }
   .user-role { font-size: 0.72rem; color: var(--muted); }
   .nav-head { background: var(--sidebar-head); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 7px 12px; border-radius: 8px; margin-top: 6px; }
@@ -79,19 +78,23 @@
   .step.active .step-chevron { transform: rotate(180deg); }
   .step-body { display: none; padding: 2px 20px 20px 61px; }
   .step.active .step-body { display: block; }
-  /* Step 1 is a fixed, pre-completed context block and never opens. */
-  #step-1 .step-body { display: none !important; }
-  #step-1 .step-head { cursor: default; }
   .step-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
   .step-next { min-width: 150px; padding: 11px 18px; border: 0; border-radius: 10px; background: var(--green); color: #fff; font-family: var(--sans); font-weight: 700; cursor: pointer; }
   .step-next:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
   .step-help { margin: 0 0 14px; color: var(--muted); font-size: .8rem; line-height: 1.45; }
   .review-list { display: grid; gap: 0; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
   .review-row { display: flex; justify-content: space-between; gap: 20px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: .84rem; }
+  .review-split { padding: 4px 14px 8px; }
+  .review-sub { display: flex; justify-content: space-between; gap: 20px; padding: 5px 0; font-size: 0.8rem; color: var(--muted); }
+  .review-sub span:last-child { font-weight: 600; color: var(--ink); }
   .review-row:last-child { border-bottom: 0; }
   .review-row span { color: var(--muted); }
   .review-row strong { text-align: right; }
 
+  /* ===== Type selector (step 0) ===== */
+  .type-select { margin-bottom: 20px; }
+  .type-select-label { font-size: 0.92rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+  .type-select .sub-grid { margin-bottom: 0; }
   /* ===== Subscription ===== */
   .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
   .sub-card { position: relative; display: flex; gap: 14px; align-items: flex-start; min-width: 0; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
@@ -123,6 +126,38 @@
   .chip.active { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
 
   .asset-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .inst-mode { display: inline-flex; background: #eef1f4; border-radius: 10px; padding: 3px; margin-bottom: 16px; }
+  .inst-mode-btn { border: 0; background: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
+  .inst-mode-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .split-builder { border: 1px solid var(--green-border); background: var(--green-soft); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; }
+  .split-name-label { font-size: 0.8rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .split-name-input { width: 100%; box-sizing: border-box; border: 1px solid var(--line-strong); border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; font-family: var(--sans); background: var(--surface); color: var(--ink); }
+  .split-name-input:focus { outline: none; border-color: var(--green); }
+  .split-suggest { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .split-suggest .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; font-weight: 600; color: var(--green); cursor: pointer; font-family: var(--sans); }
+  .split-suggest .chip:hover { border-color: var(--green-border); }
+  .split-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .split-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .split-item-av { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+  .split-item-main { flex: 1; min-width: 0; }
+  .split-item-tk { font-weight: 600; font-size: 0.85rem; color: var(--ink); }
+  .split-item-nm { font-size: 0.74rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .split-stepper { display: flex; align-items: center; gap: 2px; background: #eef1f4; border-radius: 8px; padding: 2px; }
+  .split-stepper button { width: 26px; height: 26px; border: 0; background: var(--surface); border-radius: 6px; color: var(--ink); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .split-stepper button:hover { color: var(--green); }
+  .split-pct { min-width: 42px; text-align: center; font-weight: 700; font-size: 0.85rem; color: var(--ink); }
+  .split-remove { flex-shrink: 0; border: 0; background: none; color: var(--faint); cursor: pointer; padding: 4px; display: flex; }
+  .split-remove:hover { color: #c0392b; }
+  .split-empty { font-size: 0.8rem; color: var(--muted); margin-top: 12px; line-height: 1.4; }
+  .split-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+  .split-total { font-weight: 700; font-size: 0.9rem; color: var(--green); }
+  .split-total.off { color: #b45309; }
+  .split-evenly { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 9px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
+  .split-evenly:hover { border-color: var(--green-border); color: var(--green); }
+  .split-done { width: 100%; margin-top: 14px; background: var(--green); color: #fff; border: 0; border-radius: 12px; padding: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--sans); transition: 0.15s; }
+  .split-done:hover:not(:disabled) { background: var(--green-dark); }
+  .split-done:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
+  .asset-row.in-split { border-color: var(--green); background: var(--green-soft); }
   .asset-row { display: flex; align-items: center; gap: 16px; padding: 14px 16px; background: #fbfcfd; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
   .asset-row:hover { border-color: var(--line-strong); }
   .asset-row.selected { border-color: var(--green); background: var(--green-soft); }
@@ -159,19 +194,6 @@
   .freq-opt .check { color: var(--line-strong); display: flex; }
   .freq-opt.active .check { color: var(--green); }
 
-  /* ===== Forecast ===== */
-  .forecast-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .forecast-badge { background: var(--green-soft); color: var(--green); font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
-  .forecast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .forecast-cell { border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-  .forecast-period { font-size: 0.78rem; color: var(--muted); }
-  .forecast-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--green); margin: 8px 0 12px; }
-  .forecast-bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
-  .forecast-bar span { display: block; height: 100%; background: var(--green); border-radius: 999px; transition: width 0.4s; }
-  .forecast-result { display: flex; align-items: flex-start; gap: 8px; font-size: 0.83rem; color: var(--muted); margin-top: 16px; line-height: 1.45; }
-  .forecast-result svg { flex-shrink: 0; color: var(--green); margin-top: 1px; }
-  .forecast-result strong { color: var(--ink); }
-
   /* ===== Payment ===== */
   .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .pay-card { position: relative; display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; min-height: 96px; transition: 0.15s; }
@@ -180,8 +202,32 @@
   .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); display: flex; }
   .card-num { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; }
   .card-issuer { font-size: 0.68rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
-  .pay-add { flex-direction: column; gap: 8px; justify-content: center; border: 1.5px dashed var(--line-strong); background: #f7f9fb; color: var(--muted); font-size: 0.85rem; }
-  .pay-add .plus { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .acct-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .pay-card.selected .acct-icon { background: var(--green); color: #fff; }
+  .pay-add { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 10px; min-height: 0; padding: 13px 18px; border: 1.5px dashed var(--line-strong); background: #f7f9fb; color: var(--muted); font-size: 0.85rem; }
+  .pay-add .plus { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .pay-section-label { font-size: 0.74rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+  .backup-source { margin-top: 16px; border: 1.5px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--surface); transition: 0.15s; }
+  .accumulate-opt { display: flex; align-items: flex-start; gap: 14px; margin-top: 16px; border: 1.5px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--surface); transition: 0.15s; }
+  .accumulate-opt.on { border-color: var(--green-border); background: var(--green-soft); }
+  .accumulate-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .accumulate-opt.on .accumulate-icon { background: var(--green); color: #fff; }
+  .accumulate-text { flex: 1; min-width: 0; }
+  .accumulate-title { font-weight: 600; font-size: 0.9rem; }
+  .accumulate-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.45; }
+  .backup-source.on { border-color: var(--green-border); background: var(--green-soft); }
+  .backup-main { display: flex; align-items: flex-start; gap: 14px; }
+  .backup-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .backup-source.on .backup-icon { background: var(--green); color: #fff; }
+  .backup-text { flex: 1; min-width: 0; }
+  .backup-title { font-weight: 600; font-size: 0.9rem; }
+  .backup-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.45; }
+  .switch { flex-shrink: 0; cursor: pointer; margin-top: 2px; }
+  .switch input { display: none; }
+  .switch-track { display: block; width: 42px; height: 24px; border-radius: 999px; background: var(--line-strong); position: relative; transition: 0.18s; }
+  .switch-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: 0.18s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .switch input:checked + .switch-track { background: var(--green); }
+  .switch input:checked + .switch-track .switch-thumb { transform: translateX(18px); }
 
   /* ===== Confirm ===== */
   .agree-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; font-size: 0.86rem; color: var(--ink); cursor: pointer; line-height: 1.45; }
@@ -234,6 +280,119 @@
   .toast.visible { transform: translateY(0); opacity: 1; }
   #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
 
+  /* ===== Backup sheet ===== */
+  .sheet-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(15,23,42,0.5); align-items: center; justify-content: center; padding: 20px; }
+  .sheet-overlay.visible { display: flex; }
+  .sheet { width: 100%; max-width: 460px; background: var(--surface); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.25); animation: sheet-in 0.22s ease; }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px; border-bottom: 1px solid var(--line); }
+  .sheet-head-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: var(--ink); }
+  .sheet-head-badge { width: 22px; height: 22px; border-radius: 6px; background: #f6c945; color: #7a5a00; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .sheet-icon-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 4px; display: flex; border-radius: 8px; transition: 0.15s; }
+  .sheet-icon-btn:hover { background: #f1f3f6; color: var(--ink); }
+  .sheet-body { padding: 28px 28px 22px; text-align: center; }
+  .sheet-shield { width: 88px; height: 88px; margin: 0 auto 16px; }
+  .sheet-shield svg { width: 100%; height: 100%; display: block; }
+  .sheet-title { font-family: var(--serif); font-size: 1.42rem; font-weight: 700; color: var(--ink); margin: 0 0 12px; line-height: 1.25; }
+  .sheet-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.5; margin: 0 auto; max-width: 380px; }
+  .sheet-divider { height: 1px; background: var(--line); margin: 22px 0; }
+  .sheet-why-label { font-weight: 700; font-size: 0.9rem; color: var(--ink); margin-bottom: 18px; }
+  .sheet-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .sheet-benefit { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+  .sheet-benefit-icon { color: var(--green); display: flex; }
+  .sheet-primary { width: 100%; background: var(--green); color: #fff; border: 0; border-radius: 12px; padding: 15px; font-family: var(--sans); font-size: 0.98rem; font-weight: 700; cursor: pointer; transition: 0.15s; }
+  .sheet-primary:hover { background: var(--green-dark); }
+  .sheet-skip { width: 100%; background: transparent; border: 0; color: var(--ink); font-family: var(--sans); font-size: 0.92rem; font-weight: 700; cursor: pointer; padding: 14px; margin-top: 2px; }
+  .sheet-skip:hover { color: var(--green); }
+  @media (max-width: 560px) {
+    .sheet-overlay { align-items: flex-end; padding: 0; }
+    .sheet { max-width: 100%; border-radius: 18px 18px 0 0; animation: sheet-up 0.24s ease; }
+    .sheet-body { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
+  }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+
+  /* ===== Manage orders screen ===== */
+  .manage-link { margin-top: 12px; background: none; border: 0; color: var(--green); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; padding: 0; }
+  .manage-link:hover { color: var(--green-dark); text-decoration: underline; }
+  .manage-view { display: none; position: fixed; inset: 0; z-index: 2500; background: var(--bg); overflow-y: auto; }
+  .manage-view.visible { display: block; animation: fade-in 0.2s ease; }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .manage-inner { max-width: 880px; margin: 0 auto; padding: 8px 24px 64px; }
+  .manage-head { display: flex; align-items: center; gap: 12px; padding: 14px 0 16px; position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  .manage-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--ink); margin: 0; flex: 1; }
+  .manage-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+  .manage-count { font-weight: 700; font-size: 0.98rem; color: var(--ink); }
+  .hide-canceled { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); cursor: pointer; user-select: none; }
+  .hide-canceled input { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; }
+  .plan-list { display: flex; flex-direction: column; gap: 12px; }
+  .plan { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; transition: 0.15s; }
+  .plan.open { border-color: var(--green-border); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+  .plan-head { width: 100%; display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: none; border: 0; cursor: pointer; text-align: left; font-family: var(--sans); }
+  .plan-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; }
+  .plan-main { flex: 1; min-width: 0; }
+  .plan-name { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+  .plan-meta { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+  .plan-status { flex-shrink: 0; font-size: 0.72rem; font-weight: 700; padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+  .plan-status.active { background: var(--green-soft); color: var(--green); }
+  .plan-status.canceled { background: #f1f3f6; color: var(--faint); }
+  .plan-status.paused { background: #fef3e2; color: #b45309; }
+  .plan-chevron { flex-shrink: 0; color: var(--faint); transition: transform 0.2s; }
+  .plan.open .plan-chevron { transform: rotate(180deg); }
+  .plan-body { display: none; padding: 0 18px 18px; }
+  .plan.open .plan-body { display: block; }
+  .plan-actions { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0 16px; border-top: 1px solid var(--line); margin-top: 2px; padding-top: 16px; }
+  .plan-action { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 9px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.15s; }
+  .plan-action:hover { border-color: var(--green-border); color: var(--green); }
+  .plan-action.danger:hover { border-color: #e2b6b6; color: #c0392b; }
+  .plan-action.accent { border-color: #f0c78a; color: #b45309; background: #fef3e2; }
+  .plan-action.accent:hover { border-color: #e0a94e; color: #92400e; }
+  .skip-flag { display: inline-block; margin-top: 6px; font-size: 0.72rem; font-weight: 600; color: #b45309; background: #fef3e2; border-radius: 999px; padding: 3px 10px; }
+  .plan-flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .plan-flags .skip-flag { margin-top: 0; }
+  .acc-flag { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 3px 10px; }
+  .acc-progress { border: 1px solid var(--green-border); background: var(--green-soft); border-radius: 12px; padding: 14px 16px; margin: 16px 0 4px; }
+  .acc-progress-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+  .acc-progress-val { font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .acc-bar { height: 8px; background: #d7e8dd; border-radius: 999px; overflow: hidden; }
+  .acc-bar span { display: block; height: 100%; background: var(--green); border-radius: 999px; transition: width 0.4s; }
+  .acc-eta { font-size: 0.76rem; color: var(--green); margin-top: 8px; font-weight: 600; }
+  .hist-tabs { display: inline-flex; background: #eef1f4; border-radius: 10px; padding: 3px; margin-bottom: 14px; }
+  .hist-tab { border: 0; background: none; padding: 7px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
+  .hist-tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .hist-panel { display: none; }
+  .hist-panel.active { display: block; }
+  .op-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .op-filter { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 13px; font-size: 0.78rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
+  .op-filter:hover { border-color: var(--green-border); }
+  .op-filter.active { background: var(--green-soft); border-color: var(--green-border); color: var(--green); }
+  .buys-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .buys-title { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+  .buys-export { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
+  .buys-export:hover { border-color: var(--green-border); color: var(--green); }
+  .op { display: flex; gap: 12px; padding: 9px 0; }
+  .op-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; position: relative; }
+  .op:not(:last-child) .op-dot::after { content: ''; position: absolute; left: 50%; top: 13px; transform: translateX(-50%); width: 2px; height: calc(100% + 5px); background: var(--line); }
+  .op-dot.ok { background: var(--green); }
+  .op-dot.info { background: var(--blue); }
+  .op-dot.warn { background: #f59e0b; }
+  .op-dot.cancel { background: #c0392b; }
+  .op-body { flex: 1; }
+  .op-text { font-size: 0.85rem; color: var(--ink); line-height: 1.4; }
+  .op.warn .op-text { color: #b45309; font-weight: 600; }
+  .op-date { font-size: 0.74rem; color: var(--faint); margin-top: 2px; }
+  .buy-row { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .buy-row:last-child { border-bottom: 0; }
+  .buy-q { font-weight: 600; font-size: 0.88rem; color: var(--ink); }
+  .buy-sub { font-size: 0.76rem; color: var(--muted); }
+  .buy-a { font-weight: 700; font-size: 0.92rem; color: var(--ink); text-align: right; font-family: var(--serif); }
+  .buy-status { font-size: 0.76rem; color: var(--green); text-align: right; margin-top: 2px; }
+  .manage-empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: 0.88rem; }
+  .manage-new { margin-top: 18px; width: 100%; background: none; border: 1.5px dashed var(--line-strong); color: var(--green); border-radius: 12px; padding: 15px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: var(--sans); transition: 0.15s; }
+  .manage-new:hover { background: var(--green-soft); border-color: var(--green-border); }
+  html.is-mobile .manage-inner { padding: 8px 16px 80px; }
+  html.is-mobile .manage-title { font-size: 1.3rem; }
+  @media (max-width: 560px) { .manage-inner { padding: 8px 16px 80px; } }
+
   @media (max-width: 960px), (max-device-width: 960px) {
     .sidebar { display: none; }
     .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
@@ -242,7 +401,7 @@
     .main { margin: 0; padding: 18px 16px 90px; max-width: none; width: 100%; }
     .main-head .head-icons { display: none; }
     .main-title { font-size: 1.5rem; }
-    .sub-grid, .two-col, .forecast-grid, .pay-grid { grid-template-columns: 1fr; }
+    .sub-grid, .two-col, .pay-grid { grid-template-columns: 1fr; }
     .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
     .chip-row::-webkit-scrollbar { display: none; }
     .asset-desc { display: none; }
@@ -272,8 +431,6 @@
     .amount-row { gap: 10px; }
     .amount-input { font-size: 1.55rem; min-width: 0; }
     .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
-    .forecast-head { align-items: flex-start; gap: 10px; }
-    .forecast-badge { flex-shrink: 0; }
     .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
     .toast-container { left: 12px; right: 12px; bottom: 82px; }
     .toast { justify-content: center; }
@@ -298,7 +455,6 @@
   html.is-mobile .main-head .head-icons { display: none; }
   html.is-mobile .sub-grid,
   html.is-mobile .two-col,
-  html.is-mobile .forecast-grid,
   html.is-mobile .pay-grid { grid-template-columns: 1fr; }
   html.is-mobile .card { padding: 16px; border-radius: 12px; margin-bottom: 14px; }
   html.is-mobile .sub-card { padding: 15px; }
@@ -318,14 +474,15 @@
   html.is-mobile .amount-row { gap: 10px; }
   html.is-mobile .amount-input { font-size: 1.55rem; min-width: 0; }
   html.is-mobile .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
-  html.is-mobile .forecast-head { align-items: flex-start; gap: 10px; }
-  html.is-mobile .forecast-badge { flex-shrink: 0; }
   html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
   html.is-mobile .confirm-btn { width: 100%; }
   html.is-mobile .first-purchase-actions { flex-direction: column; }
   html.is-mobile .first-purchase-btn { width: 100%; }
   html.is-mobile .toast-container { left: 12px; right: 12px; bottom: 82px; }
   html.is-mobile .toast { justify-content: center; }
+  html.is-mobile .sheet-overlay { align-items: flex-end; padding: 0; }
+  html.is-mobile .sheet { max-width: 100%; border-radius: 18px 18px 0 0; animation: sheet-up 0.24s ease; }
+  html.is-mobile .sheet-body { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
 
 </style>
 </head>
@@ -385,39 +542,50 @@
       </div>
     </div>
 
+    <div class="type-select">
+      <div class="type-select-label">Тип операции</div>
+      <div class="sub-grid">
+        <div class="sub-card" data-sub="investments">
+          <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></div>
+          <div><div class="sub-title">Регулярные инвестиции</div><div class="sub-desc">Автоматическая покупка выбранного инструмента</div></div>
+        </div>
+        <div class="sub-card" data-sub="payments">
+          <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div>
+          <div><div class="sub-title">Регулярные платежи</div><div class="sub-desc">Автоматическое пополнение брокерского счёта</div></div>
+        </div>
+      </div>
+    </div>
+
     <div class="flow-progress">
-      <span id="progress-text">Шаг 2 из 9</span>
+      <span id="progress-text">Выберите тип операции</span>
       <span class="flow-progress-track"><span id="progress-bar" class="flow-progress-bar"></span></span>
     </div>
 
-    <section class="step completed revealed" data-step="1" id="step-1">
-      <button type="button" class="step-head" aria-expanded="false" disabled>
+    <section class="step locked" data-step="1" id="step-1" hidden>
+      <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">1</span>
-        <span class="step-title-wrap"><span class="step-title">Тип операции</span><span class="step-value" id="step-value-1">Регулярные инвестиции</span></span>
+        <span class="step-title-wrap"><span class="step-title">Инструмент</span><span class="step-value" id="step-value-1">Не выбран</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
-        <div class="sub-grid">
-          <div class="sub-card selected" data-sub="investments">
-            <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></div>
-            <div><div class="sub-title">Регулярные инвестиции</div><div class="sub-desc">Автоматическая покупка выбранного инструмента</div></div>
-          </div>
-          <div class="sub-card" data-sub="payments">
-            <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div>
-            <div><div class="sub-title">Регулярные платежи</div><div class="sub-desc">Автоматическое пополнение брокерского счёта</div></div>
-          </div>
+      <div class="inst-mode" id="inst-mode">
+        <button type="button" class="inst-mode-btn active" data-mode="single">Один инструмент</button>
+        <button type="button" class="inst-mode-btn" data-mode="split">Набор из нескольких</button>
+      </div>
+
+      <div class="split-builder" id="split-builder" hidden>
+        <div class="split-name-label">Название набора</div>
+        <input type="text" id="split-name" class="split-name-input" placeholder="Например, Ядро US &amp; Europe" maxlength="40" autocomplete="off">
+        <div class="split-suggest" id="split-suggest"></div>
+        <div class="split-list" id="split-list"></div>
+        <div class="split-empty" id="split-empty">Добавьте 2 и более инструмента из списка ниже — тап добавляет в набор.</div>
+        <div class="split-foot" id="split-foot" hidden>
+          <div class="split-total" id="split-total">Итого 0%</div>
+          <button type="button" class="split-evenly" id="split-evenly">Поровну</button>
         </div>
       </div>
-    </section>
 
-    <section class="step active revealed" data-step="2" id="step-2">
-      <button type="button" class="step-head" aria-expanded="true">
-        <span class="step-number">2</span>
-        <span class="step-title-wrap"><span class="step-title">Инструмент</span><span class="step-value" id="step-value-2">Выберите инструмент</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="step-body">
-      <p class="step-help">Найдите и выберите один инструмент для регулярной покупки.</p>
+      <p class="step-help" id="inst-help">Найдите и выберите один инструмент для регулярной покупки.</p>
       <div class="search-wrap">
         <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
         <input type="text" id="search-input" class="search-input" placeholder="Введите тикер, название или слово по-русски" autocomplete="off">
@@ -430,13 +598,14 @@
       <div class="col-label">Коллекции</div>
       <div class="chip-row" id="chip-row"></div>
       <div class="asset-list" id="asset-list"></div>
+      <button type="button" class="split-done" id="split-done" hidden disabled>Готово — собрать набор</button>
       </div>
     </section>
 
-    <section class="step locked" data-step="3" id="step-3" hidden>
+    <section class="step locked" data-step="2" id="step-2" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">3</span>
-        <span class="step-title-wrap"><span class="step-title">Валюта</span><span class="step-value" id="step-value-3">Не выбрана</span></span>
+        <span class="step-number">2</span>
+        <span class="step-title-wrap"><span class="step-title">Валюта</span><span class="step-value" id="step-value-2">Не выбрана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -449,10 +618,10 @@
       </div>
     </section>
 
-    <section class="step locked" data-step="4" id="step-4" hidden>
+    <section class="step locked" data-step="3" id="step-3" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">4</span>
-        <span class="step-title-wrap"><span class="step-title">Сумма</span><span class="step-value" id="step-value-4">Не указана</span></span>
+        <span class="step-number">3</span>
+        <span class="step-title-wrap"><span class="step-title">Сумма</span><span class="step-value" id="step-value-3">Не указана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -466,14 +635,22 @@
           <button type="button" class="quick-btn" data-add="1000">+1000</button>
         </div>
         <div class="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
+        <div class="accumulate-opt" id="accumulate-opt">
+          <div class="accumulate-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="5"/><path d="M13.5 5.5a5 5 0 1 1 2 9.6"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5"/></svg></div>
+          <div class="accumulate-text">
+            <div class="accumulate-title">Накапливать до целой акции</div>
+            <div class="accumulate-desc">Если суммы не хватает на целую акцию, остаток копится и покупка исполняется, как только средств достаточно. Деньги не простаивают, дробных акций нет.</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="accumulate-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></label>
+        </div>
         <div class="step-actions"><button type="button" class="step-next" id="amount-next" disabled>Продолжить</button></div>
       </div>
     </section>
 
-    <section class="step locked" data-step="5" id="step-5" hidden>
+    <section class="step locked" data-step="4" id="step-4" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">5</span>
-        <span class="step-title-wrap"><span class="step-title">Частота</span><span class="step-value" id="step-value-5">Не выбрана</span></span>
+        <span class="step-number">4</span>
+        <span class="step-title-wrap"><span class="step-title">Частота</span><span class="step-value" id="step-value-4">Не выбрана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -484,30 +661,45 @@
       </div>
     </section>
 
-    <section class="step locked" data-step="6" id="step-6" hidden>
+    <section class="step locked" data-step="5" id="step-5" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">6</span>
-        <span class="step-title-wrap"><span class="step-title">Способ оплаты</span><span class="step-value" id="step-value-6">Не выбран</span></span>
+        <span class="step-number">5</span>
+        <span class="step-title-wrap"><span class="step-title">Способ оплаты</span><span class="step-value" id="step-value-5">Не выбран</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
+      <div class="pay-section-label">Основной источник — автосписание</div>
       <div class="pay-grid">
         <div class="pay-card" id="pay-saved">
           <div class="card-brand"></div>
           <div><div class="card-num">•••• 6619</div><div class="card-issuer">Revolut Ltd</div></div>
+        </div>
+        <div class="pay-card" id="pay-account">
+          <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
+          <div><div class="card-num">Брокерский счёт</div><div class="card-issuer">Баланс · EUR</div></div>
         </div>
         <div class="pay-card pay-add" id="pay-add">
           <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
           Новая карта
         </div>
       </div>
+      <div class="backup-source" id="backup-source" style="display:none">
+        <div class="backup-main">
+          <div class="backup-icon" id="backup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
+          <div class="backup-text">
+            <div class="backup-title" id="backup-title">Резервный источник — брокерский счёт</div>
+            <div class="backup-desc" id="backup-desc">Если списание с карты не пройдёт, покупка оплачивается с баланса брокерского счёта. Снижает число пропущенных пополнений.</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="backup-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></label>
+        </div>
+      </div>
       </div>
     </section>
 
-    <section class="step locked" data-step="7" id="step-7" hidden>
+    <section class="step locked" data-step="6" id="step-6" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">7</span>
-        <span class="step-title-wrap"><span class="step-title">Условия автоплатежей</span><span class="step-value" id="step-value-7">Требуется согласие</span></span>
+        <span class="step-number">6</span>
+        <span class="step-title-wrap"><span class="step-title">Условия автоплатежей</span><span class="step-value" id="step-value-6">Требуется согласие</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -519,10 +711,10 @@
       </div>
     </section>
 
-    <section class="step locked" data-step="8" id="step-8" hidden>
+    <section class="step locked" data-step="7" id="step-7" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">8</span>
-        <span class="step-title-wrap"><span class="step-title">Хранение данных карты</span><span class="step-value" id="step-value-8">Требуется согласие</span></span>
+        <span class="step-number">7</span>
+        <span class="step-title-wrap"><span class="step-title">Хранение данных карты</span><span class="step-value" id="step-value-7">Требуется согласие</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -534,23 +726,14 @@
       </div>
     </section>
 
-    <section class="step locked" data-step="9" id="step-9" hidden>
+    <section class="step locked" data-step="8" id="step-8" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">9</span>
-        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-9">Доступно после заполнения</span></span>
+        <span class="step-number">8</span>
+        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-8">Доступно после заполнения</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
       <div class="review-list" id="review-list"></div>
-      <div class="forecast-head">
-        <div class="card-label" style="margin:0">Прогноз доходности</div>
-        <span class="forecast-badge">+12% годовых</span>
-      </div>
-      <div class="forecast-grid" id="forecast-grid"></div>
-      <div class="forecast-result">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
-        <span id="forecast-result-text"></span>
-      </div>
       <div class="confirm-foot">
         <div>
           <div class="total-label">Общая сумма списания</div>
@@ -577,6 +760,7 @@
               <span id="first-purchase-result-text"></span>
             </div>
           </div>
+          <button type="button" id="open-manage" class="manage-link">Управление поручениями →</button>
         </div>
       </div>
       </div>
@@ -594,11 +778,54 @@
 
 <div class="toast-container"><div id="toast" class="toast"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg><span id="toast-message"></span></div></div>
 
+<div class="manage-view" id="manage-view" aria-hidden="true">
+  <div class="manage-inner">
+    <div class="manage-head">
+      <button type="button" class="sheet-icon-btn" id="manage-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <h1 class="manage-title">Управление поручениями</h1>
+      <button type="button" class="sheet-icon-btn" id="manage-close" aria-label="Закрыть"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="manage-toolbar">
+      <div class="manage-count" id="manage-count">Поручения (0)</div>
+      <label class="hide-canceled"><input type="checkbox" id="hide-canceled"><span>Скрывать отменённые</span></label>
+    </div>
+    <div class="plan-list" id="plan-list"></div>
+    <button type="button" class="manage-new" id="manage-new"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>Создать новое поручение</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="backup-sheet" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="backup-sheet-title">
+    <div class="sheet-head">
+      <button type="button" class="sheet-icon-btn" id="backup-sheet-back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="sheet-head-title"><span class="sheet-head-badge" id="backup-sheet-badge">A</span><span id="backup-sheet-instrument">Повторяющ.</span></div>
+      <button type="button" class="sheet-icon-btn" id="backup-sheet-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="sheet-body">
+      <div class="sheet-shield">
+        <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M48 8 78 20v25c0 21-13 34-30 43-17-9-30-22-30-43V20L48 8Z" fill="#e7f4ec" stroke="#34a06a" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M35 47l9 9 17-19" stroke="#15824a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="sheet-title" id="backup-sheet-title">Резервный источник для ваших платежей</h2>
+      <p class="sheet-desc" id="backup-sheet-desc">Используйте баланс брокерского счёта, чтобы автоматически покрыть платёж, если списание с карты не удастся. Применяется ко всем регулярным поручениям.</p>
+      <div class="sheet-divider"></div>
+      <div class="sheet-why-label">Зачем добавлять резервный источник?</div>
+      <div class="sheet-benefits">
+        <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span><span>Инвестируете без пропусков</span></div>
+        <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span><span>Применяется ко всем поручениям</span></div>
+        <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span>Отключить в любое время</span></div>
+      </div>
+      <button type="button" class="sheet-primary" id="backup-sheet-enable">Включить</button>
+      <button type="button" class="sheet-skip" id="backup-sheet-skip">Пропустить сейчас</button>
+    </div>
+  </div>
+</div>
+
 <script>
-var ASSUMED_RETURN = 0.12;
 var CUR_SYMBOL = { EUR: '€', USD: '$' };
 
-function getLogoUrl(base, market) { return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + base.toLowerCase() + '.' + (market || 'us'); }
 
 // id, base ticker, exchange, name, ru description, price, yoy(%, за год)
 var instruments = [
@@ -688,13 +915,240 @@ function updateSearchPlaceholder(){
     : 'Search ticker, company or keyword';
 }
 
-var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, cardSelected:false, subscription:'investments', searchLang:'ru', currentStep:2, maxStep:2 };
-var firstSchedule = !localStorage.getItem('hasSchedule');
+var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupPrompted:false, accumulate:false, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
+var SPLIT_SUGGEST = ['Ядро US & Europe','Развитые & Развивающиеся','Дивидендный','Технологии', 'Всепогодный'];
+var firstSchedule = true;
 
 var $ = function(id){ return document.getElementById(id); };
 function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 function byId(id){ for (var i=0;i<instruments.length;i++) if (instruments[i].id===id) return instruments[i]; return null; }
 function color(t){ var c=['#15824a','#3b82f6','#8b5cf6','#f59e0b','#0ea5e9','#ec4899','#06b6d4']; var s=0; for(var i=0;i<t.length;i++) s+=t.charCodeAt(i); return c[s%c.length]; }
+
+// ===== Manage orders (transparent history) =====
+var plans = [
+  { id:'AA-95648', seed:'AAPL', badge:'A', name:'AAPL.US · Apple Inc.', amount:'€1,000', interval:'Раз в неделю', next:'05.08.26', planId:'95648', status:'active',
+    ops:[
+      {d:'28.07.26', t:'Поручение создано · основной источник — карта Revolut •••• 6619, резерв — брокерский счёт', kind:'info', cat:'change'},
+      {d:'28.07.26', t:'Списание €1,000 с карты — успешно', kind:'ok', cat:'charge'},
+      {d:'04.08.26', t:'Списание с карты отклонено → оплачено с резерва (брокерский счёт)', kind:'warn', cat:'reserve'},
+      {d:'11.08.26', t:'Списание €1,000 с карты — успешно', kind:'ok', cat:'charge'}
+    ],
+    buys:[
+      {d:'11.08.26', q:'4 AAPL', p:'€243.30', a:'€973.20', s:'Исполнено'},
+      {d:'04.08.26', q:'4 AAPL', p:'€248.75', a:'€995.00', s:'Исполнено'},
+      {d:'28.07.26', q:'4 AAPL', p:'€238.10', a:'€952.40', s:'Исполнено'}
+    ] },
+  { id:'VW-95651', seed:'VWCE', badge:'V', name:'VWCE.DE · FTSE All-World', amount:'€500', interval:'Раз в месяц', next:'01.08.26', planId:'95651', status:'active',
+    ops:[
+      {d:'01.07.26', t:'Поручение создано · основной источник — брокерский счёт', kind:'info', cat:'change'},
+      {d:'01.07.26', t:'Списание €500 со счёта — успешно', kind:'ok', cat:'charge'}
+    ],
+    buys:[
+      {d:'01.07.26', q:'4 VWCE', p:'€113.10', a:'€452.40', s:'Исполнено'}
+    ] },
+  { id:'NV-95655', seed:'NVDA', badge:'N', name:'NVDA.US · NVIDIA', amount:'€50', interval:'Раз в неделю', next:'06.08.26', planId:'95655', status:'active', accumulate:true, _sym:'€', _carry:80, _price:120, _amt:50,
+    ops:[
+      {d:'08.07.26', t:'Поручение создано · основной источник — брокерский счёт', kind:'info', cat:'change'},
+      {d:'08.07.26', t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'},
+      {d:'08.07.26', t:'Списание €50 — успешно. Накоплено €50 (цена акции ~€120), ждём', kind:'info', cat:'change'},
+      {d:'15.07.26', t:'Списание €50 — успешно. Накоплено €100, ждём', kind:'info', cat:'change'},
+      {d:'22.07.26', t:'Списание €50 — успешно. Накоплено €150 → куплена 1 акция, остаток €30 перенесён', kind:'ok', cat:'charge'},
+      {d:'29.07.26', t:'Списание €50 — успешно. Накоплено €80, ждём целой акции', kind:'info', cat:'change'}
+    ],
+    buys:[
+      {d:'22.07.26', q:'1 NVDA', p:'€120.00', a:'€120.00', s:'Исполнено'}
+    ] },
+  { id:'TS-95612', seed:'TSLA', badge:'T', name:'TSLA.US · Tesla Inc.', amount:'€250', interval:'Раз в неделю', next:'—', planId:'95612', status:'canceled', canceledDate:'20.06.26', canceledReason:'отменено по инициативе пользователя',
+    ops:[
+      {d:'02.06.26', t:'Поручение создано', kind:'info', cat:'change'},
+      {d:'09.06.26', t:'Списание €250 — успешно', kind:'ok', cat:'charge'},
+      {d:'20.06.26', t:'Поручение отменено пользователем', kind:'cancel', cat:'change'}
+    ],
+    buys:[
+      {d:'09.06.26', q:'1 TSLA', p:'€212.40', a:'€212.40', s:'Исполнено'}
+    ] }
+];
+var hideCanceled = false;
+var openPlanId = null;
+
+function parseDMY(s){ var p = s.split('.'); return new Date(2000+parseInt(p[2],10), parseInt(p[1],10)-1, parseInt(p[0],10)); }
+function shiftNext(dateStr, interval){ var d = parseDMY(dateStr); if (/недел/i.test(interval)) d.setDate(d.getDate()+7); else d.setMonth(d.getMonth()+1); return fmtDate(d); }
+function skipNext(id){
+  var p = plans.filter(function(x){ return x.id===id; })[0];
+  if (!p || p.status!=='active' || p.nextSkipped || p.next==='—') return;
+  p._nextBefore = p.next;
+  p.next = shiftNext(p.next, p.interval);
+  p.nextSkipped = true;
+  p.ops.push({d:fmtDate(new Date()), t:'Следующий платёж пропущен по запросу клиента · перенесён на '+p.next, kind:'warn', cat:'change'});
+  toast('Следующий платёж пропущен.');
+  openPlanId = id; renderPlans();
+}
+function undoSkip(id){
+  var p = plans.filter(function(x){ return x.id===id; })[0];
+  if (!p || !p.nextSkipped) return;
+  p.next = p._nextBefore;
+  p.nextSkipped = false;
+  p.ops.push({d:fmtDate(new Date()), t:'Пропуск следующего платежа отменён · дата возвращена на '+p.next, kind:'info', cat:'change'});
+  toast('Пропуск отменён.');
+  openPlanId = id; renderPlans();
+}
+
+function curSym(c){ return c === 'USD' ? '$' : '€'; }
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function fmtDate(d){ return pad2(d.getDate()) + '.' + pad2(d.getMonth()+1) + '.' + String(d.getFullYear()).slice(2); }
+function nextDate(freq){ var d = new Date(); if (freq === 'week') d.setDate(d.getDate()+7); else d.setMonth(d.getMonth()+1); return fmtDate(d); }
+function buildPlanFromState(){
+  var sym = curSym(state.currency), amt = parseAmount();
+  var srcMain = state.payMethod === 'account' ? 'брокерский счёт' : 'карта Revolut •••• 6619';
+  var srcTail = state.backupOn ? ', резерв — ' + (backupSource()==='card' ? 'карта Revolut' : 'брокерский счёт') : '';
+  var interval = state.frequency==='week' ? 'Раз в неделю' : 'Раз в месяц';
+  var today = fmtDate(new Date());
+  var accOp = state.accumulate ? [{d:today, t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'}] : [];
+  if (isSplit()){
+    var comp = state.split.items.map(function(x){ var i=byId(x.id); return i.base+'.'+i.ex+' '+x.pct+'%'; }).join(', ');
+    return {
+      id:'NEW-'+Date.now(), seed:splitName(), badge:'Σ',
+      name:'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.',
+      amount:sym+fmt(amt), interval:interval, next:nextDate(state.frequency),
+      planId:String(90000+Math.floor(Math.random()*9999)), status:'active', accumulate:state.accumulate,
+      ops:[
+        {d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'},
+        {d:today, t:'Состав набора: '+comp, kind:'info', cat:'change'}
+      ].concat(accOp),
+      buys:[], _sym:sym, _amt:amt, _carry:0, _split: state.split.items.map(function(x){ var i=byId(x.id); return {base:i.base, price:i.price, pct:x.pct, carry:0}; })
+    };
+  }
+  var inst = state.selected;
+  return {
+    id:'NEW-'+Date.now(), seed:inst.base, badge:inst.base.charAt(0),
+    name:inst.base+'.'+inst.ex+' · '+inst.name,
+    amount:sym+fmt(amt), interval:interval,
+    next:nextDate(state.frequency), planId:String(90000+Math.floor(Math.random()*9999)), status:'active', accumulate:state.accumulate,
+    ops:[{d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'}].concat(accOp),
+    buys:[], _sym:sym, _price:inst.price, _base:inst.base, _amt:amt, _carry:0
+  };
+}
+
+function statusLabel(s){ return s==='active' ? 'Активно' : s==='paused' ? 'Приостановлено' : 'Отменено'; }
+function accProgress(p){
+  if (!p.accumulate || !p._price || p.status!=='active') return null;
+  var carry = p._carry||0, price = p._price;
+  var pct = Math.max(0, Math.min(100, Math.round(carry/price*100)));
+  var remaining = Math.max(0, price - carry);
+  var per = p._amt || 0;
+  var k = (remaining<=0 || per<=0) ? 0 : Math.ceil(remaining/per);
+  var fill = p.next;
+  for (var i=0; i<Math.max(0,k-1); i++) fill = shiftNext(fill, p.interval);
+  return { pct:pct, carry:carry, price:price, fill:fill, ready:remaining<=0, sym:(p._sym||'€') };
+}
+function planCard(p){
+  var col = color(p.seed);
+  var ops = p.ops.map(function(o){
+    return '<div class="op '+o.kind+'" data-cat="'+o.cat+'"><span class="op-dot '+o.kind+'"></span><div class="op-body"><div class="op-text">'+esc(o.t)+'</div><div class="op-date">'+o.d+'</div></div></div>';
+  }).join('');
+  var buys = p.buys.length ? p.buys.map(function(b){
+    return '<div class="buy-row"><div><div class="buy-q">'+esc(b.q)+'</div><div class="buy-sub">'+b.d+' · цена '+b.p+'</div></div><div><div class="buy-a">'+b.a+'</div><div class="buy-status">'+esc(b.s)+'</div></div></div>';
+  }).join('') : '<div class="manage-empty">Покупок пока нет</div>';
+  var actions = p.status==='active'
+    ? '<button type="button" class="plan-action" data-act="edit">Редактировать</button>'+
+      (p.nextSkipped
+        ? '<button type="button" class="plan-action accent" data-act="unskip">Вернуть платёж</button>'
+        : '<button type="button" class="plan-action" data-act="skip">Пропустить следующий</button>')+
+      '<button type="button" class="plan-action" data-act="pause">Приостановить</button><button type="button" class="plan-action danger" data-act="cancel">Отменить</button>'
+    : '<button type="button" class="plan-action" data-act="resume">Возобновить</button>';
+  var statusTip = (p.status==='canceled' && p.canceledReason) ? ' title="'+esc(p.canceledDate + ' · ' + p.canceledReason)+'"' : '';
+  var skipFlag = p.nextSkipped ? '<span class="skip-flag">Следующий платёж пропущен</span>' : '';
+  var accFlag = p.accumulate ? '<span class="acc-flag">Накопление до акции'+((p._carry>0) ? ' · '+(p._sym||'€')+fmt(p._carry) : '')+'</span>' : '';
+  var exportBtn = p.buys.length ? '<button type="button" class="buys-export" data-id="'+p.id+'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Экспорт CSV</button>' : '';
+  return '<div class="plan" data-id="'+p.id+'">'+
+    '<button type="button" class="plan-head">'+
+      '<span class="plan-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(p.badge)+'</span>'+
+      '<div class="plan-main"><div class="plan-name">'+esc(p.name)+'</div><div class="plan-meta">'+esc(p.amount)+' · '+esc(p.interval)+(p.next!=='—'?' · следующее '+p.next:'')+' · ID '+p.planId+'</div>'+((skipFlag||accFlag)?'<div class="plan-flags">'+skipFlag+accFlag+'</div>':'')+'</div>'+
+      '<span class="plan-status '+p.status+'"'+statusTip+'>'+statusLabel(p.status)+'</span>'+
+      '<svg class="plan-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'+
+    '</button>'+
+    '<div class="plan-body">'+
+      (function(){ var ap=accProgress(p); return ap ? '<div class="acc-progress"><div class="acc-progress-top"><span>Накоплено до следующей акции</span><span class="acc-progress-val">'+ap.sym+fmt(ap.carry)+' из '+ap.sym+fmt(ap.price)+' · '+ap.pct+'%</span></div><div class="acc-bar"><span style="width:'+ap.pct+'%"></span></div><div class="acc-eta">'+(ap.ready?'Средств достаточно — покупка исполнится в ближайшее списание':'≈ наберётся к '+ap.fill)+'</div></div>' : ''; })()+
+      '<div class="plan-actions">'+actions+'</div>'+
+      '<div class="hist-tabs"><button type="button" class="hist-tab active" data-tab="ops">Операции</button><button type="button" class="hist-tab" data-tab="buys">Покупки</button></div>'+
+      '<div class="hist-panel active" data-panel="ops">'+
+        '<div class="op-filters">'+
+          '<button type="button" class="op-filter active" data-cat="all">Все</button>'+
+          '<button type="button" class="op-filter" data-cat="charge">Списания</button>'+
+          '<button type="button" class="op-filter" data-cat="reserve">Резерв</button>'+
+          '<button type="button" class="op-filter" data-cat="change">Изменения</button>'+
+        '</div>'+
+        '<div class="op-list">'+ops+'</div>'+
+      '</div>'+
+      '<div class="hist-panel" data-panel="buys">'+
+        (p.buys.length ? '<div class="buys-head"><span class="buys-title">Исполненные покупки</span>'+exportBtn+'</div>' : '')+
+        buys+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+function exportCsv(id){
+  var p = plans.filter(function(x){ return x.id===id; })[0];
+  if (!p) return;
+  var rows = [['Дата','Инструмент','Количество','Цена','Сумма','Статус']];
+  p.buys.forEach(function(b){ rows.push([b.d, p.name, b.q, b.p, b.a, b.s]); });
+  var csv = rows.map(function(r){ return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
+  try {
+    var blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = 'purchases_'+p.planId+'.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 100);
+    toast('CSV с покупками экспортирован.');
+  } catch(e){ toast('Экспорт недоступен в этом окружении.'); }
+}
+function renderPlans(){
+  var list = plans.filter(function(p){ return !(hideCanceled && p.status==='canceled'); });
+  $('plan-list').innerHTML = list.length ? list.map(planCard).join('') : '<div class="manage-empty">Нет активных поручений</div>';
+  $('manage-count').textContent = 'Поручения ('+list.length+')';
+  if (openPlanId){ var el = $('plan-list').querySelector('.plan[data-id="'+openPlanId+'"]'); if (el) el.classList.add('open'); }
+  bindPlans();
+}
+function bindPlans(){
+  document.querySelectorAll('#plan-list .plan-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      var plan = h.closest('.plan'); var wasOpen = plan.classList.contains('open');
+      document.querySelectorAll('#plan-list .plan').forEach(function(p){ p.classList.remove('open'); });
+      if (!wasOpen){ plan.classList.add('open'); openPlanId = plan.dataset.id; } else { openPlanId = null; }
+    });
+  });
+  document.querySelectorAll('#plan-list .hist-tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      var body = t.closest('.plan-body'), tab = t.dataset.tab;
+      body.querySelectorAll('.hist-tab').forEach(function(x){ x.classList.toggle('active', x===t); });
+      body.querySelectorAll('.hist-panel').forEach(function(x){ x.classList.toggle('active', x.dataset.panel===tab); });
+    });
+  });
+  document.querySelectorAll('#plan-list .plan-action').forEach(function(b){
+    b.addEventListener('click', function(){
+      var a = b.dataset.act, id = b.closest('.plan').dataset.id;
+      if (a==='skip'){ skipNext(id); return; }
+      if (a==='unskip'){ undoSkip(id); return; }
+      toast(a==='cancel' ? 'Поручение отменено (демо).' : a==='pause' ? 'Поручение приостановлено (демо).' : a==='resume' ? 'Поручение возобновлено (демо).' : 'Редактирование поручения (демо).');
+    });
+  });
+  document.querySelectorAll('#plan-list .op-filter').forEach(function(f){
+    f.addEventListener('click', function(){
+      var body = f.closest('.hist-panel'), cat = f.dataset.cat;
+      body.querySelectorAll('.op-filter').forEach(function(x){ x.classList.toggle('active', x===f); });
+      body.querySelectorAll('.op').forEach(function(op){ op.style.display = (cat==='all' || op.dataset.cat===cat) ? '' : 'none'; });
+      var any = [].some.call(body.querySelectorAll('.op'), function(op){ return op.style.display !== 'none'; });
+      var empty = body.querySelector('.op-empty');
+      if (!any && !empty){ var e=document.createElement('div'); e.className='op-empty manage-empty'; e.textContent='Событий этого типа нет'; body.querySelector('.op-list').appendChild(e); }
+      else if (empty){ empty.style.display = any ? 'none' : ''; }
+    });
+  });
+  document.querySelectorAll('#plan-list .buys-export').forEach(function(b){
+    b.addEventListener('click', function(){ exportCsv(b.dataset.id); });
+  });
+}
+function openManage(){ renderPlans(); $('manage-view').classList.add('visible'); $('manage-view').setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; $('manage-view').scrollTop=0; }
+function closeManage(){ $('manage-view').classList.remove('visible'); $('manage-view').setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
 function rgba(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
 function fmt(v){ return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function parseAmount(){ var n=parseFloat(($('amount').value||'').replace(/[^\d.]/g,'')); return isNaN(n)?0:n; }
@@ -710,11 +1164,13 @@ function renderChips(){
 
 function curOf(inst){ return inst.ex==='US' ? '$' : '€'; }
 
+function getLogoUrl(base, market) { return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + base.toLowerCase() + '.' + (market || 'us'); }
+
 function assetRow(inst){
   if (!inst) return '';
-  var sel = state.selected && state.selected.id===inst.id;
+  var sel = state.splitMode ? inSplit(inst.id) : (state.selected && state.selected.id===inst.id);
   var pos = inst.yoy>=0, col=color(inst.base);
-  return '<div class="asset-row'+(sel?' selected':'')+'" data-id="'+inst.id+'">'+
+  return '<div class="asset-row'+(sel ? (state.splitMode?' in-split':' selected') : '')+'" data-id="'+inst.id+'">'+
     '<div class="asset-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(inst.base.charAt(0))+
       '<img class="asset-logo" src="'+getLogoUrl(inst.base, inst.ex.toLowerCase())+'" onerror="this.style.display=\'none\'" alt="">'+
     '</div>'+
@@ -743,89 +1199,275 @@ function renderAssets(){
     : '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.88rem">Ничего не найдено. Попробуйте тикер, название или слово вроде «яблоко».</div>';
 }
 
-function renderForecast(){
-  var amt = parseAmount(), cur = state.currency || 'EUR';
-  var y1 = amt*Math.pow(1+ASSUMED_RETURN,1), y3 = amt*Math.pow(1+ASSUMED_RETURN,3), y5 = amt*Math.pow(1+ASSUMED_RETURN,5);
-  var rows = [['Через 1 год',y1],['Через 3 года',y3],['Через 5 лет',y5]];
-  $('forecast-grid').innerHTML = rows.map(function(r){
-    var w = y5>0 ? Math.round(r[1]/y5*100) : 0;
-    return '<div class="forecast-cell"><div class="forecast-period">'+r[0]+'</div><div class="forecast-value">'+fmt(r[1])+' '+cur+'</div><div class="forecast-bar"><span style="width:'+w+'%"></span></div></div>';
-  }).join('');
-  var gain = y5-amt;
-  $('forecast-result-text').innerHTML = 'Ожидаемый результат: <strong>+'+fmt(gain)+' '+cur+'</strong> чистой прибыли за 5 лет при регулярном инвестировании.';
+function renderTotal(){ $('total-value').textContent = fmt(parseAmount())+' '+(state.currency || 'EUR'); }
+var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>';
+var BACKUP_ICON_CARD = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>';
+
+function backupSource(){ return state.payMethod === 'account' ? 'card' : 'account'; }
+function backupShort(){ return backupSource() === 'card' ? 'карта' : 'счёт'; }
+function backupLabel(){ return backupSource() === 'card' ? 'Карта Revolut •••• 6619' : 'Брокерский счёт'; }
+function backupPhrase(){ return backupSource() === 'card' ? 'с карты Revolut' : 'с брокерского счёта'; }
+
+// Card-data consent (step 7) is only relevant when a card is actually used —
+// either as the primary source, or as the reserve when the account is primary.
+function cardInvolved(){ return state.payMethod === 'card' || (state.payMethod === 'account' && state.backupOn); }
+function isSkipped(n){ return n === 7 && !!state.payMethod && !cardInvolved(); }
+function nextStep(n){ var m = n + 1; while (m < 8 && isSkipped(m)) m++; return Math.min(8, m); }
+function totalSteps(){ return isSkipped(7) ? 7 : 8; }
+function stepPosition(n){ var p = 0; for (var i = 1; i <= n; i++) if (!isSkipped(i)) p++; return p; }
+function renumberBadges(){ var k = 0; document.querySelectorAll('.step').forEach(function(step){ var num = parseInt(step.dataset.step); if (isSkipped(num)) return; k++; step.querySelector('.step-number').textContent = k; }); }
+function refreshFlow(){
+  if (state.currentStep >= 1){
+    var target = isSkipped(state.currentStep) ? nextStep(state.currentStep) : state.currentStep;
+    openStep(target, false);
+  } else {
+    renumberBadges();
+  }
+  validate();
 }
 
-function renderTotal(){ $('total-value').textContent = fmt(parseAmount())+' '+(state.currency || 'EUR'); }
+function payValue(){
+  if (!state.payMethod) return 'Не выбран';
+  var main = state.payMethod === 'account' ? 'Брокерский счёт' : 'Revolut •••• 6619';
+  return main + (state.backupOn ? ' · резерв: ' + backupShort() : '');
+}
+function updateBackupBlock(){
+  if (backupSource() === 'card'){
+    $('backup-icon').innerHTML = BACKUP_ICON_CARD;
+    $('backup-title').textContent = 'Резервный источник — карта Revolut •••• 6619';
+    $('backup-desc').textContent = 'Если на брокерском счёте не хватит средств, покупка оплачивается с карты Revolut. Снижает число пропущенных пополнений.';
+  } else {
+    $('backup-icon').innerHTML = BACKUP_ICON_ACCOUNT;
+    $('backup-title').textContent = 'Резервный источник — брокерский счёт';
+    $('backup-desc').textContent = 'Если списание с карты не пройдёт, покупка оплачивается с баланса брокерского счёта. Снижает число пропущенных пополнений.';
+  }
+}
+function selectPay(method){
+  var changed = state.payMethod !== method;
+  state.payMethod = method;
+  if (changed){
+    state.backupOn = false;
+    state.backupPrompted = false;
+    $('backup-toggle').checked = false;
+    $('backup-source').classList.remove('on');
+  }
+  $('pay-saved').classList.toggle('selected', method === 'card');
+  $('pay-account').classList.toggle('selected', method === 'account');
+  updateBackupBlock();
+  $('backup-source').style.display = '';
+  setStepValue(5, payValue());
+  refreshFlow();
+  completeStep(5);
+  if (!state.backupPrompted) openBackupSheet();
+}
+
+function setBackup(on){
+  state.backupOn = on;
+  $('backup-toggle').checked = on;
+  $('backup-source').classList.toggle('on', on);
+  if (state.payMethod) setStepValue(5, payValue());
+  refreshFlow();
+}
+function openBackupSheet(){
+  if (state.selected){
+    $('backup-sheet-badge').textContent = state.selected.base.charAt(0);
+    $('backup-sheet-instrument').textContent = state.selected.base + '.' + state.selected.ex + ' — Повторяющ.';
+  }
+  $('backup-sheet-desc').textContent = backupSource() === 'card'
+    ? 'Используйте карту Revolut •••• 6619, чтобы автоматически покрыть платёж, если на брокерском счёте не хватит средств. Применяется ко всем регулярным поручениям.'
+    : 'Используйте баланс брокерского счёта, чтобы автоматически покрыть платёж, если списание с карты не удастся. Применяется ко всем регулярным поручениям.';
+  $('backup-sheet').classList.add('visible');
+  $('backup-sheet').setAttribute('aria-hidden', 'false');
+}
+function closeBackupSheet(){
+  state.backupPrompted = true;
+  $('backup-sheet').classList.remove('visible');
+  $('backup-sheet').setAttribute('aria-hidden', 'true');
+}
 
 function validate(){
-  var ok = !!state.subscription && parseAmount()>0 && state.selected && !!state.currency && !!state.frequency && state.cardSelected && $('check-tos').checked && $('check-data').checked;
+  var ok = !!state.subscription && parseAmount()>0 && orderValid() && !!state.currency && !!state.frequency && !!state.payMethod && $('check-tos').checked && (!cardInvolved() || $('check-data').checked);
   $('submit-btn').disabled = !ok;
 }
 
 function recompute(){
-  renderForecast();
   renderTotal();
   $('amount-next').disabled = parseAmount() <= 0;
-  if (parseAmount() > 0) $('step-value-4').textContent = fmt(parseAmount())+' '+(state.currency || '');
+  if (parseAmount() > 0) $('step-value-3').textContent = fmt(parseAmount())+' '+(state.currency || '');
   validate();
 }
 
 function stepEl(n){ return $('step-'+n); }
 function setStepValue(n, value){ $('step-value-'+n).textContent = value; }
 function renderProgress(){
-  $('progress-text').textContent = 'Шаг '+state.currentStep+' из 9';
-  $('progress-bar').style.width = (state.currentStep/9*100)+'%';
+  if (state.currentStep < 1){
+    $('progress-text').textContent = 'Выберите тип операции';
+    $('progress-bar').style.width = '0%';
+  } else {
+    $('progress-text').textContent = 'Шаг '+stepPosition(state.currentStep)+' из '+totalSteps();
+    $('progress-bar').style.width = (stepPosition(state.currentStep)/totalSteps()*100)+'%';
+  }
 }
 function openStep(n, scroll){
-  if (n === 1) return;
   if (n > state.maxStep) return;
   state.currentStep = n;
+  renumberBadges();
   document.querySelectorAll('.step').forEach(function(step){
     var num = parseInt(step.dataset.step);
     var active = num === n;
     var revealed = num <= state.maxStep;
-    step.hidden = !revealed;
+    step.hidden = !revealed || isSkipped(num);
     step.classList.toggle('revealed', revealed);
     step.classList.toggle('active', active);
     step.classList.toggle('locked', num > state.maxStep);
     step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
   });
-  if (n === 9) renderReview();
+  if (n === 8) renderReview();
   renderProgress();
   if (scroll !== false) stepEl(n).scrollIntoView({behavior:'smooth', block:'start'});
 }
 function completeStep(n){
   stepEl(n).classList.add('completed');
-  state.maxStep = Math.max(state.maxStep, Math.min(9, n+1));
-  openStep(Math.min(9, n+1));
+  var nxt = nextStep(n);
+  state.maxStep = Math.max(state.maxStep, nxt);
+  openStep(nxt);
 }
 function renderReview(){
   if (!state.selected) return;
   var type = state.subscription === 'investments' ? 'Регулярные инвестиции' : 'Регулярные платежи';
   var period = state.frequency === 'week' ? 'Раз в неделю' : 'Раз в месяц';
+  var amt = parseAmount(), sym = curSym(state.currency);
+  var instRow;
+  if (isSplit()){
+    var sub = state.split.items.map(function(x){
+      var i = byId(x.id), part = Math.round(amt * x.pct / 100);
+      return '<div class="review-sub"><span>'+esc(i.base)+'.'+esc(i.ex)+' · '+x.pct+'%</span><span>'+sym+fmt(part)+'</span></div>';
+    }).join('');
+    instRow = '<div class="review-row"><span>Набор</span><strong>«'+esc(splitName())+'» · '+state.split.items.length+' инстр.</strong></div>'+
+      '<div class="review-split">'+sub+'</div>';
+  } else {
+    instRow = '<div class="review-row"><span>Инструмент</span><strong>'+esc(state.selected.base+'.'+state.selected.ex)+'</strong></div>';
+  }
   $('review-list').innerHTML =
     '<div class="review-row"><span>Тип операции</span><strong>'+type+'</strong></div>'+
-    '<div class="review-row"><span>Инструмент</span><strong>'+esc(state.selected.base+'.'+state.selected.ex)+'</strong></div>'+
-    '<div class="review-row"><span>Сумма</span><strong>'+fmt(parseAmount())+' '+state.currency+'</strong></div>'+
+    instRow+
+    '<div class="review-row"><span>Сумма</span><strong>'+fmt(amt)+' '+state.currency+'</strong></div>'+
     '<div class="review-row"><span>Частота</span><strong>'+period+'</strong></div>'+
-    '<div class="review-row"><span>Способ оплаты</span><strong>Revolut •••• 6619</strong></div>';
-  setStepValue(9, 'Готово к подтверждению');
+    '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>'+
+    '<div class="review-row"><span>Способ оплаты</span><strong>'+(state.payMethod === 'account' ? 'Брокерский счёт' : 'Revolut •••• 6619')+'</strong></div>'+
+    '<div class="review-row"><span>Резервный источник</span><strong>'+(state.backupOn ? backupLabel() : '—')+'</strong></div>';
+  setStepValue(8, 'Готово к подтверждению');
 }
 
 function selectAsset(inst){
+  if (state.splitMode){ toggleSplit(inst); return; }
   state.selected=inst;
   renderAssets();
-  setStepValue(2, inst.base+'.'+inst.ex+' · '+inst.name);
+  setStepValue(1, inst.base+'.'+inst.ex+' · '+inst.name);
   validate();
-  completeStep(2);
+  completeStep(1);
+}
+
+// ===== Split (набор из нескольких инструментов) =====
+function inSplit(id){ return state.split.items.some(function(x){ return x.id===id; }); }
+function splitTotal(){ return state.split.items.reduce(function(s,x){ return s + x.pct; }, 0); }
+function isSplit(){ return state.splitMode && state.split.items.length >= 2; }
+function orderValid(){ return state.splitMode ? (state.split.items.length>=2 && splitTotal()===100) : !!state.selected; }
+function splitName(){ return (state.split.name || '').trim() || 'Без названия'; }
+function splitAvgPrice(){ var s=0; state.split.items.forEach(function(x){ var i=byId(x.id); if(i) s += i.price * x.pct/100; }); return s; }
+function splitStepLabel(){ return 'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.'; }
+
+function toggleSplit(inst){
+  if (inSplit(inst.id)) state.split.items = state.split.items.filter(function(x){ return x.id!==inst.id; });
+  else state.split.items.push({ id:inst.id, pct:0 });
+  splitEvenly();
+  renderAssets();
+  updateSplitUI();
+}
+function splitEvenly(){
+  var n = state.split.items.length; if (!n) return;
+  var base = Math.floor(100/n), rem = 100 - base*n;
+  state.split.items.forEach(function(x,i){ x.pct = base + (i<rem ? 1 : 0); });
+}
+function splitStep(id, delta){
+  var it = state.split.items.filter(function(x){ return x.id===id; })[0]; if (!it) return;
+  it.pct = Math.max(0, Math.min(100, it.pct + delta));
+  updateSplitUI();
+}
+function splitItemRow(x){
+  var i = byId(x.id); if (!i) return '';
+  var col = color(i.base);
+  return '<div class="split-item" data-id="'+i.id+'">'+
+    '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+'</span>'+
+    '<div class="split-item-main"><div class="split-item-tk">'+esc(i.base)+'.'+esc(i.ex)+'</div><div class="split-item-nm">'+esc(i.name)+'</div></div>'+
+    '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><span class="split-pct">'+x.pct+'%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
+    '<button type="button" class="split-remove" aria-label="Убрать"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'+
+  '</div>';
+}
+function updateSplitUI(){
+  var n = state.split.items.length, tot = splitTotal();
+  $('split-list').innerHTML = state.split.items.map(splitItemRow).join('');
+  $('split-empty').style.display = n ? 'none' : '';
+  $('split-foot').hidden = n < 1;
+  $('split-total').textContent = 'Итого '+tot+'%'+(n>=2 && tot!==100 ? ' — должно быть 100%' : '');
+  $('split-total').classList.toggle('off', !(n>=2 && tot===100));
+  $('split-done').disabled = !orderValid();
+  bindSplitItems();
+  // keep downstream in sync if the набор was already confirmed
+  if (state.splitMode && state.maxStep > 1){
+    if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
+    if (state.maxStep >= 8 && orderValid()) renderReview();
+    validate();
+  }
+}
+function bindSplitItems(){
+  document.querySelectorAll('#split-list .split-item').forEach(function(row){
+    var id = parseInt(row.dataset.id);
+    row.querySelector('.split-minus').addEventListener('click', function(){ splitStep(id, -1); });
+    row.querySelector('.split-plus').addEventListener('click', function(){ splitStep(id, 1); });
+    row.querySelector('.split-remove').addEventListener('click', function(){
+      state.split.items = state.split.items.filter(function(x){ return x.id!==id; });
+      splitEvenly();
+      renderAssets(); updateSplitUI();
+    });
+  });
+}
+function setSplitSelected(){
+  state.selected = { id:'__split__', base:splitName(), ex:'SET', name:state.split.items.length+' инстр.', price:splitAvgPrice(), isSplit:true };
+}
+function finalizeSplit(){
+  if (!orderValid()) return;
+  setSplitSelected();
+  setStepValue(1, splitStepLabel());
+  validate();
+  completeStep(1);
+}
+function setInstMode(mode){
+  state.splitMode = (mode === 'split');
+  document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.mode===mode); });
+  $('split-builder').hidden = !state.splitMode;
+  $('split-done').hidden = !state.splitMode;
+  $('inst-help').textContent = state.splitMode
+    ? 'Соберите набор из 2+ инструментов и задайте доли. Сумма распределится пропорционально.'
+    : 'Найдите и выберите один инструмент для регулярной покупки.';
+  // switching mode clears the current step-1 choice; работа над набором сохраняется
+  state.selected = null;
+  setStepValue(1, state.splitMode ? 'Соберите набор' : 'Не выбран');
+  if (state.splitMode) updateSplitUI();
+  renderAssets();
+  validate();
+}
+function renderSplitSuggest(){
+  $('split-suggest').innerHTML = SPLIT_SUGGEST.map(function(s){ return '<button type="button" class="chip" data-name="'+esc(s)+'">'+esc(s)+'</button>'; }).join('');
+  document.querySelectorAll('#split-suggest .chip').forEach(function(c){ c.addEventListener('click', function(){ state.split.name=c.dataset.name; $('split-name').value=c.dataset.name; if(state.maxStep>1&&isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if(state.maxStep>=8) renderReview(); } }); });
 }
 
 function setCollection(id){ state.activeCol=id; state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); }
 function setFrequency(f){
   state.frequency=f;
   document.querySelectorAll('#freq-options .freq-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.freq===f); });
-  setStepValue(5, f==='week' ? 'Раз в неделю' : 'Раз в месяц');
-  completeStep(5);
+  setStepValue(4, f==='week' ? 'Раз в неделю' : 'Раз в месяц');
+  completeStep(4);
 }
 
 function resetFirstPurchaseChoice(){
@@ -840,14 +1482,44 @@ function chooseFirstPurchase(now){
   $('buy-now-btn').disabled = true;
   $('buy-scheduled-btn').disabled = true;
   $('first-purchase-actions').style.display = 'none';
-  var t = state.selected.base+'.'+state.selected.ex;
+  var t = isSplit() ? ('набор «'+splitName()+'»') : (state.selected.base+'.'+state.selected.ex);
+  var pl = state.createdPlan, today = fmtDate(new Date());
   if (now) {
-    $('first-purchase-result-text').textContent = 'Первая покупка '+t+' на '+fmt(parseAmount())+' '+state.currency+' отправлена на исполнение.';
+    $('first-purchase-result-text').textContent = 'Первая покупка ('+t+') на '+fmt(parseAmount())+' '+state.currency+' отправлена на исполнение'+(isSplit()?' — распределена по '+state.split.items.length+' инструментам.':'.');
     toast('Первая покупка отправлена на исполнение.');
+    if (pl && pl._split){
+      pl.ops.push({d:today, t:'Списание '+pl._sym+fmt(pl._amt)+' — успешно, распределено по набору', kind:'ok', cat:'charge'});
+      pl._split.forEach(function(s){
+        var avail = pl._amt * s.pct/100 + (s.carry||0);
+        var qty = Math.floor(avail / s.price);
+        if (qty >= 1){
+          if (pl.accumulate) s.carry = avail - qty*s.price;
+          pl.buys.unshift({d:today, q:qty+' '+s.base, p:pl._sym+s.price.toFixed(2), a:pl._sym+fmt(qty*s.price), s:'Исполнено'});
+        } else if (pl.accumulate){
+          s.carry = avail;
+          pl.ops.push({d:today, t:'По '+s.base+' пока накоплено '+pl._sym+fmt(avail)+' — ждём целой акции', kind:'info', cat:'change'});
+        }
+      });
+      pl._carry = pl._split.reduce(function(a,s){ return a + (s.carry||0); }, 0);
+    } else if (pl){
+      var avail = pl._amt + (pl._carry||0);
+      var qty = Math.floor(avail / pl._price);
+      pl.ops.push({d:today, t:'Списание '+pl._sym+fmt(pl._amt)+' — успешно', kind:'ok', cat:'charge'});
+      if (qty >= 1){
+        if (pl.accumulate) pl._carry = avail - qty*pl._price;
+        pl.buys.unshift({d:today, q:qty+' '+pl._base, p:pl._sym+pl._price.toFixed(2), a:pl._sym+fmt(qty*pl._price), s:'Исполнено'});
+      } else if (pl.accumulate){
+        pl._carry = avail;
+        pl.ops.push({d:today, t:'Средств пока недостаточно на целую акцию — накоплено '+pl._sym+fmt(avail)+', ждём следующего платежа', kind:'info', cat:'change'});
+      } else {
+        pl.ops.push({d:today, t:'Суммы недостаточно на целую акцию — покупка отложена', kind:'warn', cat:'change'});
+      }
+    }
   } else {
     var period = state.frequency==='week' ? 'недельному' : 'месячному';
     $('first-purchase-result-text').textContent = 'Первая покупка будет выполнена по '+period+' расписанию.';
     toast('Первая покупка запланирована.');
+    if (pl) pl.ops.push({d:today, t:'Первая покупка запланирована по расписанию', kind:'info', cat:'change'});
   }
   $('first-purchase-result').classList.add('visible');
 }
@@ -858,12 +1530,19 @@ function handleSubmit(){
   setTimeout(function(){
     $('submit-btn').classList.remove('loading');
     var period = state.frequency==='week' ? 'раз в неделю' : 'раз в месяц';
-    var t = state.selected.base+'.'+state.selected.ex;
-    $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', списание с карты Revolut •••• 6619.';
+    var t = isSplit() ? ('набор «'+splitName()+'» ('+state.split.items.length+' инстр.)') : (state.selected.base+'.'+state.selected.ex);
+    var mainLine = state.payMethod === 'account'
+      ? 'списание с брокерского счёта'
+      : 'списание с карты Revolut •••• 6619';
+    var payLine = mainLine + (state.backupOn ? '; при неудаче — резерв ' + backupPhrase() : '');
+    var accLine = state.accumulate ? ' Остаток накапливается до целой акции.' : '';
+    $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', '+payLine+'.'+accLine;
     resetFirstPurchaseChoice();
+    state.createdPlan = buildPlanFromState();
+    plans.unshift(state.createdPlan);
     $('summary-panel').classList.add('visible');
     $('summary-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
-    if (firstSchedule){ confetti(); localStorage.setItem('hasSchedule','1'); firstSchedule=false; toast('🎉 Первое поручение создано!'); }
+    if (firstSchedule){ confetti(); firstSchedule=false; toast('🎉 Первое поручение создано!'); }
     else { toast('Поручение успешно создано.'); }
   }, 1100);
 }
@@ -872,15 +1551,15 @@ function bind(){
   document.querySelectorAll('.step-head').forEach(function(head){
     head.addEventListener('click', function(){
       var n = parseInt(head.closest('.step').dataset.step);
-      if (n >= 2 && n <= state.maxStep) openStep(n, false);
+      if (n <= state.maxStep) openStep(n, false);
     });
   });
 
   document.querySelectorAll('.sub-card').forEach(function(card){ card.addEventListener('click', function(){
     state.subscription=card.dataset.sub;
     document.querySelectorAll('.sub-card').forEach(function(c){ c.classList.toggle('selected', c===card); });
-    setStepValue(1, card.dataset.sub==='investments' ? 'Регулярные инвестиции' : 'Регулярные платежи');
-    completeStep(1);
+    state.maxStep = Math.max(state.maxStep, 1);
+    openStep(1, true);
   }); });
 
   $('search-input').addEventListener('input', function(e){ state.query=e.target.value.trim(); $('clear-button').classList.toggle('visible', !!state.query); renderChips(); renderAssets(); });
@@ -903,70 +1582,69 @@ function bind(){
       $('currency').value = state.currency;
       $('amount-currency-label').textContent = state.currency;
       document.querySelectorAll('#currency-options .freq-opt').forEach(function(o){ o.classList.toggle('active', o===opt); });
-      setStepValue(3, state.currency);
+      setStepValue(2, state.currency);
       recompute();
-      completeStep(3);
+      completeStep(2);
     });
   });
   $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); });
   $('amount').addEventListener('input', recompute);
   $('amount').addEventListener('blur', function(){ var n=parseAmount(); if (n>0) $('amount').value=fmt(n); recompute(); });
   document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmount()+parseFloat(b.dataset.add)); recompute(); }); });
-  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0){ setStepValue(4, fmt(parseAmount())+' '+state.currency); completeStep(4); } });
+  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0){ setStepValue(3, fmt(parseAmount())+' '+state.currency); completeStep(3); } });
 
   $('freq-options').addEventListener('click', function(e){ var o=e.target.closest('.freq-opt'); if (o) setFrequency(o.dataset.freq); });
 
-  $('pay-saved').addEventListener('click', function(){
-    state.cardSelected=true;
-    $('pay-saved').classList.add('selected');
-    setStepValue(6, 'Revolut •••• 6619');
-    validate();
-    completeStep(6);
-  });
+  $('pay-saved').addEventListener('click', function(){ selectPay('card'); });
+  $('pay-account').addEventListener('click', function(){ selectPay('account'); });
   $('pay-add').addEventListener('click', function(){ toast('Добавление карты (мок).'); });
+  $('backup-toggle').addEventListener('change', function(){ setBackup(this.checked); });
+  $('backup-sheet-enable').addEventListener('click', function(){ setBackup(true); closeBackupSheet(); toast('Резервный источник включён.'); });
+  $('backup-sheet-skip').addEventListener('click', closeBackupSheet);
+  $('backup-sheet-close').addEventListener('click', closeBackupSheet);
+  $('backup-sheet-back').addEventListener('click', closeBackupSheet);
+  $('backup-sheet').addEventListener('click', function(e){ if (e.target === this) closeBackupSheet(); });
   $('check-tos').addEventListener('change', function(){
+    setStepValue(6, this.checked ? 'Принято' : 'Требуется согласие');
+    validate();
+    if (this.checked) completeStep(6);
+  });
+  $('check-data').addEventListener('change', function(){
     setStepValue(7, this.checked ? 'Принято' : 'Требуется согласие');
     validate();
     if (this.checked) completeStep(7);
   });
-  $('check-data').addEventListener('change', function(){
-    setStepValue(8, this.checked ? 'Принято' : 'Требуется согласие');
-    validate();
-    if (this.checked) completeStep(8);
-  });
   $('submit-btn').addEventListener('click', handleSubmit);
   $('buy-now-btn').addEventListener('click', function(){ chooseFirstPurchase(true); });
   $('buy-scheduled-btn').addEventListener('click', function(){ chooseFirstPurchase(false); });
+  $('open-manage').addEventListener('click', openManage);
+  document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.addEventListener('click', function(){ setInstMode(b.dataset.mode); }); });
+  $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=8) renderReview(); } });
+  $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
+  $('split-done').addEventListener('click', finalizeSplit);
+  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); if (state.maxStep >= 8) renderReview(); });
+  $('manage-back').addEventListener('click', closeManage);
+  $('manage-close').addEventListener('click', closeManage);
+  $('hide-canceled').addEventListener('change', function(){ hideCanceled = this.checked; renderPlans(); });
+  $('manage-new').addEventListener('click', function(){ closeManage(); toast('Создание нового поручения (демо).'); });
 }
 
 function init(){
-  state.subscription = 'investments';
-  state.currentStep = 2;
-  state.maxStep = 2;
+  state.currentStep = 0;
+  state.maxStep = 0;
   document.querySelectorAll('.step').forEach(function(step){
-    var num = parseInt(step.dataset.step);
-    var revealed = num <= 2;
-    var active = num === 2;
-    step.hidden = !revealed;
-    step.classList.toggle('revealed', revealed);
-    step.classList.toggle('active', active);
-    step.classList.toggle('locked', num > 2);
-    step.classList.remove('completed');
-    step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
-  });
-  stepEl(1).classList.add('completed');
-  setStepValue(1, 'Регулярные инвестиции');
-  setStepValue(2, 'Выберите инструмент');
-  document.querySelectorAll('.sub-card').forEach(function(card){
-    card.classList.toggle('selected', card.dataset.sub === 'investments');
+    step.hidden = true;
+    step.classList.remove('revealed', 'active', 'completed');
+    step.classList.add('locked');
+    step.querySelector('.step-head').setAttribute('aria-expanded', 'false');
   });
   bind();
   updateSearchPlaceholder();
   renderChips();
+  renderSplitSuggest();
   renderAssets();
   recompute();
   renderProgress();
-  openStep(2, false);
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
