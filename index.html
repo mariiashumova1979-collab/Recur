@@ -404,6 +404,29 @@
   html.is-mobile .manage-title { font-size: 1.3rem; }
   @media (max-width: 560px) { .manage-inner { padding: 8px 16px 80px; } }
 
+  /* ===== Mobile: plan card internals ===== */
+  html.is-mobile .plan-head { padding: 14px 14px; gap: 12px; }
+  html.is-mobile .plan-avatar { width: 36px; height: 36px; font-size: 0.9rem; }
+  html.is-mobile .plan-name { font-size: 0.9rem; }
+  html.is-mobile .plan-meta { font-size: 0.76rem; }
+  html.is-mobile .plan-status { font-size: 0.68rem; padding: 3px 9px; }
+  html.is-mobile .plan-body { padding: 0 14px 14px; }
+  html.is-mobile .plan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 14px; }
+  html.is-mobile .plan-action { padding: 12px 10px; font-size: 0.84rem; text-align: center; border-radius: 10px; }
+  html.is-mobile .plan-action[data-act="edit"],
+  html.is-mobile .plan-action[data-act="skip"],
+  html.is-mobile .plan-action[data-act="unskip"],
+  html.is-mobile .plan-action[data-act="resume"] { grid-column: 1 / -1; }
+  html.is-mobile .hist-tabs { display: flex; width: 100%; margin-bottom: 12px; }
+  html.is-mobile .hist-tab { flex: 1; padding: 9px 0; text-align: center; font-size: 0.86rem; }
+  html.is-mobile .op-filters { gap: 6px; margin-bottom: 10px; }
+  html.is-mobile .op-filter { padding: 6px 12px; font-size: 0.78rem; }
+  html.is-mobile .op { gap: 10px; padding: 8px 0; }
+  html.is-mobile .op-text { font-size: 0.86rem; }
+  html.is-mobile .op-date { font-size: 0.74rem; }
+  html.is-mobile .buy-q, html.is-mobile .buy-a { font-size: 0.86rem; }
+  html.is-mobile .buys-export { padding: 7px 12px; }
+
   @media (max-width: 960px), (max-device-width: 960px) {
     .sidebar { display: none; }
     .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
