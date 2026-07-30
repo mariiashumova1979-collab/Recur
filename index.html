@@ -61,10 +61,10 @@
   .flow-progress-bar { display: block; width: 11.11%; height: 100%; border-radius: inherit; background: var(--green); transition: width .25s ease; }
   .step { min-width: 0; margin-bottom: 12px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
   .step:not(.revealed), .step[hidden] { display: none !important; }
-  .step.active { border-color: var(--green-border); box-shadow: 0 6px 20px rgba(20, 41, 30, .07); animation: reveal-step .28s ease both; }
+  .step.active { border-color: var(--green-border); box-shadow: 0 6px 20px rgba(20, 41, 30, .07); animation: reveal-step .24s ease; }
   @keyframes reveal-step {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { transform: translateY(8px); }
+    to { transform: translateY(0); }
   }
   .step-head { width: 100%; display: flex; align-items: center; gap: 13px; padding: 17px 20px; border: 0; background: transparent; color: var(--ink); text-align: left; font-family: var(--sans); cursor: pointer; }
   .step.locked .step-head { cursor: default; }
@@ -78,6 +78,13 @@
   .step.active .step-chevron { transform: rotate(180deg); }
   .step-body { display: none; padding: 2px 20px 20px 61px; }
   .step.active .step-body { display: block; }
+  /* pagination overrides */
+  .step-head { cursor: default; }
+  .step-chevron, .step-value { display: none; }
+  .step { margin-bottom: 0; }
+  .wizard-nav { text-align: center; margin-top: 16px; position: relative; z-index: 40; }
+  .wizard-back { border: 0; background: none; color: var(--green); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; padding: 12px 24px; border-radius: 10px; position: relative; z-index: 40; }
+  .wizard-back:hover { color: var(--green-dark); background: var(--green-soft); }
   .step-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
   .step-next { min-width: 150px; padding: 11px 18px; border: 0; border-radius: 10px; background: var(--green); color: #fff; font-family: var(--sans); font-weight: 700; cursor: pointer; }
   .step-next:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
@@ -146,6 +153,10 @@
   .split-stepper button { width: 26px; height: 26px; border: 0; background: var(--surface); border-radius: 6px; color: var(--ink); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
   .split-stepper button:hover { color: var(--green); }
   .split-pct { min-width: 42px; text-align: center; font-weight: 700; font-size: 0.85rem; color: var(--ink); }
+  .split-pct-input { width: 34px; text-align: right; font-weight: 700; font-size: 0.85rem; color: var(--ink); border: 0; background: transparent; font-family: var(--sans); padding: 4px 0; -moz-appearance: textfield; }
+  .split-pct-input:focus { outline: none; color: var(--green); }
+  .split-pct-input::-webkit-outer-spin-button, .split-pct-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .split-pct-suffix { font-weight: 700; font-size: 0.85rem; color: var(--muted); }
   .split-remove { flex-shrink: 0; border: 0; background: none; color: var(--faint); cursor: pointer; padding: 4px; display: flex; }
   .split-remove:hover { color: #c0392b; }
   .split-empty { font-size: 0.8rem; color: var(--muted); margin-top: 12px; line-height: 1.4; }
@@ -765,6 +776,7 @@
       </div>
       </div>
     </section>
+    <div class="wizard-nav"><button type="button" class="wizard-back" id="wizard-back" hidden>← Назад</button></div>
   </main>
 </div>
 
@@ -1308,23 +1320,32 @@ function renderProgress(){
     $('progress-bar').style.width = (stepPosition(state.currentStep)/totalSteps()*100)+'%';
   }
 }
+function prevStep(n){ if (n <= 1) return 0; var m = n-1; while (m > 1 && isSkipped(m)) m--; return m; }
 function openStep(n, scroll){
   if (n > state.maxStep) return;
   state.currentStep = n;
   renumberBadges();
-  document.querySelectorAll('.step').forEach(function(step){
-    var num = parseInt(step.dataset.step);
-    var active = num === n;
-    var revealed = num <= state.maxStep;
-    step.hidden = !revealed || isSkipped(num);
-    step.classList.toggle('revealed', revealed);
-    step.classList.toggle('active', active);
-    step.classList.toggle('locked', num > state.maxStep);
-    step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
-  });
-  if (n === 8) renderReview();
+  var typeSel = document.querySelector('.type-select');
+  if (n === 0){
+    if (typeSel) typeSel.hidden = false;
+    document.querySelectorAll('.step').forEach(function(step){ step.hidden = true; step.classList.remove('active'); });
+  } else {
+    if (typeSel) typeSel.hidden = true;
+    document.querySelectorAll('.step').forEach(function(step){
+      var num = parseInt(step.dataset.step);
+      var active = num === n;
+      step.hidden = !active;
+      step.classList.toggle('active', active);
+      step.classList.toggle('revealed', active);
+      step.classList.toggle('locked', !active);
+      step.classList.toggle('completed', num < n);
+      step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
+    });
+    if (n === 8) renderReview();
+  }
+  $('wizard-back').hidden = n <= 1;
   renderProgress();
-  if (scroll !== false) stepEl(n).scrollIntoView({behavior:'smooth', block:'start'});
+  if (scroll !== false){ try { (document.scrollingElement || document.documentElement || document.body).scrollTop = 0; window.scrollTo(0, 0); } catch(e){} }
 }
 function completeStep(n){
   stepEl(n).classList.add('completed');
@@ -1389,10 +1410,62 @@ function splitEvenly(){
   var base = Math.floor(100/n), rem = 100 - base*n;
   state.split.items.forEach(function(x,i){ x.pct = base + (i<rem ? 1 : 0); });
 }
-function splitStep(id, delta){
-  var it = state.split.items.filter(function(x){ return x.id===id; })[0]; if (!it) return;
+function itemById(id){ return state.split.items.filter(function(x){ return x.id===id; })[0]; }
+function syncSplitTotals(){
+  var n = state.split.items.length, tot = splitTotal();
+  $('split-total').textContent = 'Итого '+tot+'%'+(n>=2 && tot!==100 ? ' — должно быть 100%' : '');
+  $('split-total').classList.toggle('off', !(n>=2 && tot===100));
+  $('split-done').disabled = !orderValid();
+  if (state.splitMode && state.maxStep > 1){
+    if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
+    if (state.maxStep >= 8 && orderValid()) renderReview();
+    validate();
+  }
+}
+function splitSetPct(id, val){
+  var it = itemById(id); if (!it) return;
+  var v = parseInt(val, 10); if (isNaN(v)) v = 0;
+  it.pct = Math.max(0, Math.min(100, v));
+  syncSplitTotals();
+}
+var splitEditBaseline = null;
+function snapshotSplit(){ splitEditBaseline = {}; state.split.items.forEach(function(x){ splitEditBaseline[x.id] = x.pct; }); }
+function rebalanceOthers(editedId){
+  var edited = itemById(editedId); if (!edited) return;
+  var others = state.split.items.filter(function(x){ return x.id !== editedId; });
+  if (others.length === 0) return;
+  var remaining = Math.max(0, 100 - edited.pct);
+  if (others.length === 1){ others[0].pct = remaining; return; }
+  var base = splitEditBaseline || {};
+  function bp(x){ return base[x.id] != null ? base[x.id] : x.pct; }
+  var baseSum = others.reduce(function(s,x){ return s + bp(x); }, 0);
+  if (baseSum <= 0){
+    var b = Math.floor(remaining/others.length), r = remaining - b*others.length;
+    others.forEach(function(x,i){ x.pct = b + (i<r ? 1 : 0); });
+    return;
+  }
+  var raw = others.map(function(x){ return bp(x)/baseSum*remaining; });
+  var fl = raw.map(function(v){ return Math.floor(v); });
+  var leftover = remaining - fl.reduce(function(a,b){ return a+b; }, 0);
+  var order = raw.map(function(v,i){ return {i:i, f:v-fl[i]}; }).sort(function(a,b){ return b.f - a.f; });
+  for (var k=0; k<leftover; k++){ fl[order[k % order.length].i]++; }
+  others.forEach(function(x,i){ x.pct = fl[i]; });
+}
+function refreshSplitInputs(exceptId){
+  document.querySelectorAll('#split-list .split-item').forEach(function(r){
+    var rid = parseInt(r.dataset.id);
+    if (rid === exceptId) return;
+    var it = itemById(rid), inp = r.querySelector('.split-pct-input');
+    if (it && inp) inp.value = it.pct;
+  });
+}
+function stepAndRebalance(id, delta){
+  snapshotSplit();
+  var it = itemById(id); if (!it) return;
   it.pct = Math.max(0, Math.min(100, it.pct + delta));
-  updateSplitUI();
+  rebalanceOthers(id);
+  refreshSplitInputs();
+  syncSplitTotals();
 }
 function splitItemRow(x){
   var i = byId(x.id); if (!i) return '';
@@ -1400,7 +1473,7 @@ function splitItemRow(x){
   return '<div class="split-item" data-id="'+i.id+'">'+
     '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+'</span>'+
     '<div class="split-item-main"><div class="split-item-tk">'+esc(i.base)+'.'+esc(i.ex)+'</div><div class="split-item-nm">'+esc(i.name)+'</div></div>'+
-    '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><span class="split-pct">'+x.pct+'%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
+    '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><input type="text" inputmode="numeric" class="split-pct-input" value="'+x.pct+'" maxlength="3" aria-label="Доля в процентах"><span class="split-pct-suffix">%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
     '<button type="button" class="split-remove" aria-label="Убрать"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'+
   '</div>';
 }
@@ -1423,8 +1496,19 @@ function updateSplitUI(){
 function bindSplitItems(){
   document.querySelectorAll('#split-list .split-item').forEach(function(row){
     var id = parseInt(row.dataset.id);
-    row.querySelector('.split-minus').addEventListener('click', function(){ splitStep(id, -1); });
-    row.querySelector('.split-plus').addEventListener('click', function(){ splitStep(id, 1); });
+    var input = row.querySelector('.split-pct-input');
+    row.querySelector('.split-minus').addEventListener('click', function(){ stepAndRebalance(id, -1); var it=itemById(id); if(it) input.value = it.pct; });
+    row.querySelector('.split-plus').addEventListener('click', function(){ stepAndRebalance(id, 1); var it=itemById(id); if(it) input.value = it.pct; });
+    input.addEventListener('focus', function(){ this.select(); snapshotSplit(); });
+    input.addEventListener('input', function(){
+      var d = this.value.replace(/[^0-9]/g,'').slice(0,3); this.value = d;
+      var it = itemById(id); if (!it) return;
+      it.pct = Math.max(0, Math.min(100, d==='' ? 0 : parseInt(d,10)));
+      rebalanceOthers(id);
+      refreshSplitInputs(id);
+      syncSplitTotals();
+    });
+    input.addEventListener('blur', function(){ var it=itemById(id); this.value = it ? it.pct : 0; syncSplitTotals(); });
     row.querySelector('.split-remove').addEventListener('click', function(){
       state.split.items = state.split.items.filter(function(x){ return x.id!==id; });
       splitEvenly();
@@ -1623,6 +1707,7 @@ function bind(){
   $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
   $('split-done').addEventListener('click', finalizeSplit);
   $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); if (state.maxStep >= 8) renderReview(); });
+  $('wizard-back').addEventListener('click', function(){ openStep(prevStep(state.currentStep)); });
   $('manage-back').addEventListener('click', closeManage);
   $('manage-close').addEventListener('click', closeManage);
   $('hide-canceled').addEventListener('change', function(){ hideCanceled = this.checked; renderPlans(); });
@@ -1644,7 +1729,7 @@ function init(){
   renderSplitSuggest();
   renderAssets();
   recompute();
-  renderProgress();
+  openStep(0, false);
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
