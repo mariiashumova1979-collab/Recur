@@ -12,52 +12,99 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/switcher.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/tab.min.js"></script>
 <style>
+  /* Safety net: the native [hidden] attribute must always win over any UIkit v2
+     component class (e.g. .uk-button sets display:inline-block at equal specificity,
+     and — being loaded later in the cascade — would otherwise show a "hidden" element). */
+  [hidden] { display: none !important; }
+
   /* Brand palette applied on top of native UIkit v2 classes — no components invented outside UIkit v2. */
   :root {
-    --bg: #eef0f3;
+    /* Real F24 brand tokens, extracted from Figma (header S component) — replaces earlier approximation. */
+    --bg: #f8f8f8;
     --surface: #ffffff;
-    --ink: #1a2233;
-    --muted: #6b7280;
-    --faint: #9aa3af;
-    --line: #e5e7eb;
-    --line-strong: #d1d5db;
-    --green: #15824a;
-    --green-dark: #10663a;
-    --green-soft: #e7f4ec;
-    --green-border: #34a06a;
+    --ink: #000000;
+    --muted: #999999;
+    --faint: #b3b3b3;
+    --line: #e5e5e5;
+    --line-strong: #d0d0d0;
+    --green: #72bf44;
+    --green-dark: #5da032;
+    --green-soft: #eef7e6;
+    --green-border: #a3d97f;
     --blue: #2563eb;
-    --red: #dc2626;
-    --sidebar-head: #8b93a1;
-    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --red: #cc0e00;
+    --sidebar-head: #999999;
+    --sans: 'Good Pro', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --serif: 'Georgia', 'Times New Roman', serif;
+    --radius-btn: 3px;
+    --radius-field: 3px;
   }
   html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; width: 100%; max-width: 100%; overflow-x: hidden; }
   h1, h2, h3, .main-title { font-family: var(--serif); }
 
   /* uk-button-primary / uk-badge-success / uk-progress-success recolored to brand green */
   .uk-button-primary, .uk-badge-success, .uk-progress-success .uk-progress-bar { background: var(--green) !important; border-color: var(--green) !important; }
-  .uk-button-primary:hover { background: var(--green-dark) !important; }
+  .uk-button-primary:hover { background: #86c960 !important; }
+  .uk-button-primary:active { background: #63af3c !important; }
+  .uk-button-primary[disabled] { background: #e5e5e5 !important; color: #999 !important; }
   .uk-alert-success { background: var(--green-soft) !important; border-color: var(--green-border) !important; color: var(--green-dark) !important; }
   a, .uk-text-primary { color: var(--green); }
   a:hover { color: var(--green-dark); }
   .uk-panel-box.selected, .uk-panel-box.active, .uk-panel-box.in-split { border-color: var(--green) !important; background: var(--green-soft) !important; box-shadow: 0 0 0 1px var(--green) inset; }
   .uk-badge.active { background: var(--green) !important; }
 
-  /* Soften UIkit v2's default visual weight — thinner borders, no heavy shadows,
-     lighter nav headers — to keep the calm, minimalist feel of the rest of the app. */
-  .uk-panel-box { border: 1px solid var(--line); border-radius: 10px; box-shadow: none; padding: 16px 18px; }
-  .uk-button { border-radius: 8px; box-shadow: none; text-shadow: none; font-weight: 600; }
-  .uk-button-primary { border: 0; }
-  .uk-badge { border-radius: 999px; font-weight: 600; box-shadow: none; }
-  .uk-progress { border-radius: 999px; box-shadow: none; background: #e5e7eb; height: 6px; }
-  .uk-progress-bar { border-radius: 999px; box-shadow: none; }
-  .uk-nav-header { color: var(--faint); font-size: .72rem; font-weight: 600; text-transform: none; letter-spacing: 0; }
-  .uk-nav-side > li > a { color: var(--muted); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; }
+  /* Self-sufficient component base styles using exact F24 tokens.
+     These do NOT depend on the external UIkit v2 stylesheet loading —
+     the uk-* class names are kept for semantic/structural clarity, but every
+     visual property a real browser needs (display, padding, colors, borders)
+     is defined here so the app renders correctly even if the CDN is blocked. */
+  .uk-button {
+    display: inline-flex; align-items: center; justify-content: center;
+    box-sizing: border-box; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+    padding: 10px 20px; font-size: .9rem; line-height: 1.3; font-weight: 600; font-family: var(--sans);
+    border-radius: var(--radius-btn); box-shadow: none; text-shadow: none; text-decoration: none;
+    cursor: pointer; transition: background .15s, border-color .15s; white-space: nowrap;
+  }
+  .uk-button-primary { background: var(--green); border-color: var(--green); color: #fff; }
+  .uk-button-primary:hover { background: #86c960; border-color: #86c960; }
+  .uk-button-primary:active { background: #63af3c; border-color: #63af3c; }
+  .uk-button-primary[disabled] { background: #e5e5e5; border-color: #e5e5e5; color: #999; cursor: not-allowed; }
+  .uk-button-link { background: none; border: 0; color: var(--green); padding: 6px 4px; }
+  .uk-button-link:hover { color: var(--green-dark); text-decoration: underline; }
+  .uk-button-small { padding: 7px 14px; font-size: .82rem; }
+  .uk-button-mini { padding: 4px 10px; font-size: .74rem; }
+  .uk-button-large { padding: 14px 24px; font-size: 1rem; }
+  .uk-width-1-1 { width: 100%; }
+
+  .uk-panel-box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: none; padding: 16px 18px; box-sizing: border-box; }
+
+  .uk-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--line); color: var(--muted); font-size: .74rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; box-shadow: none; box-sizing: border-box; }
+
+  .uk-progress { display: block; width: 100%; height: 6px; background: #e5e5e5; border-radius: 999px; overflow: hidden; box-shadow: none; box-sizing: border-box; }
+  .uk-progress-bar { display: block; height: 100%; background: var(--green); border-radius: 999px; box-shadow: none; transition: width .2s; }
+
+  .uk-input { display: block; width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: .95rem; font-family: var(--sans); color: var(--ink); background: var(--surface); }
+
+  .uk-nav-header { color: var(--faint); font-size: .72rem; font-weight: 600; text-transform: none; letter-spacing: 0; padding: 6px 10px; }
+  .uk-nav-side { list-style: none; margin: 0; padding: 0; }
+  .uk-nav-side > li > a { color: var(--muted); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: .85rem; }
   .uk-nav-side > li > a:hover { background: var(--bg); color: var(--ink); }
   .uk-nav-side > li.uk-active > a { background: var(--bg); color: var(--ink); font-weight: 600; box-shadow: none; }
   .uk-nav-side > li.uk-active > a:hover { background: var(--bg); }
-  .uk-checkbox { accent-color: var(--green); }
-  .uk-alert-success { border-radius: 10px; box-shadow: none; }
+  .uk-checkbox { accent-color: var(--green); width: 24px; height: 24px; border-radius: 3px; flex-shrink: 0; }
+  .uk-alert-success { display: block; background: var(--green-soft); border: 1px solid var(--green-border); color: var(--green-dark); border-radius: 10px; padding: 14px 16px; box-shadow: none; }
+  .uk-text-bold { font-weight: 700; }
+  .uk-text-muted { color: var(--muted); }
+  .uk-text-small { font-size: .82rem; }
+  .uk-text-center { text-align: center; }
+  .uk-flex { display: flex; }
+  .uk-flex-middle { align-items: center; }
+  .uk-flex-space-between { justify-content: space-between; }
+  .uk-margin-small-bottom { margin-bottom: 8px; }
+  .uk-margin-small-right { margin-right: 8px; }
+  .uk-margin-top { margin-top: 16px; }
+  .uk-margin-bottom { margin-bottom: 20px; }
+
   .sidebar { padding: 20px 14px; }
   .logo { font-weight: 800; font-size: 1.2rem; color: var(--green); padding: 4px 8px; }
   .logout { display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--muted); font-size: .85rem; text-decoration: none; border-radius: 8px; }
@@ -81,13 +128,15 @@
   .step-chevron { display: none; }
   .step-help { color: var(--muted); font-size: 0.85rem; margin: 0 0 12px; }
 
-  /* switches (no native UIkit v2 equivalent) */
+  /* switches — exact spec from F24 Figma "switcher" component (no UIkit v2 equivalent exists) */
   .switch { display: inline-block; flex-shrink: 0; cursor: pointer; }
   .switch input { display: none; }
-  .switch-track { display: block; width: 42px; height: 24px; border-radius: 999px; background: var(--line-strong); position: relative; transition: 0.18s; }
-  .switch-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: 0.18s; }
+  .switch-track { display: block; width: 44px; height: 24px; padding: 2px; box-sizing: border-box; border-radius: 12px; background: #d0d0d0; position: relative; transition: 0.15s; }
+  .switch:hover .switch-track { background: #e5e5e5; }
+  .switch-thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1); transition: 0.15s; }
   .switch input:checked + .switch-track { background: var(--green); }
-  .switch input:checked + .switch-track .switch-thumb { transform: translateX(18px); }
+  .switch:hover input:checked + .switch-track { background: #63af3c; }
+  .switch input:checked + .switch-track .switch-thumb { transform: translateX(20px); }
 
   /* percentage steppers in the split builder */
   .split-stepper { display: inline-flex; align-items: center; gap: 2px; background: var(--bg); border-radius: 8px; padding: 2px; }
@@ -101,7 +150,23 @@
   .op:not(:last-child) .op-dot::after { content: ''; position: absolute; left: 50%; top: 13px; transform: translateX(-50%); width: 2px; height: calc(100% + 5px); background: var(--line); }
   .op-dot.ok { background: var(--green); } .op-dot.info { background: var(--blue); } .op-dot.warn { background: #f59e0b; } .op-dot.cancel { background: #c0392b; }
   .op { display: flex; gap: 10px; padding: 8px 0; }
-  html.is-mobile .sidebar, html.is-mobile .uk-visible-large { display: none !important; }
+  html.is-mobile .sidebar { display: none !important; }
+  html.is-mobile .main { width: 100% !important; }
+  html.is-mobile .main-head { display: none !important; }
+
+  /* Self-sufficient fallbacks: if the UIkit v2 CDN is blocked or slow to load
+     (this can happen in sandboxed previews), layout and colors must still render
+     correctly — these rules don't depend on the external stylesheet arriving. */
+  .main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .sub-grid, .pay-grid { display: flex; flex-wrap: wrap; gap: 14px; }
+  .sub-grid > div, .pay-grid > div { flex: 1 1 260px; }
+  .uk-panel-box, .sub-card, .pay-card, .backup-source, .split-builder, .plan, .sheet, .summary-panel {
+    background: var(--surface);
+  }
+  .sub-card .uk-flex, .pay-card { display: flex; }
+  .uk-grid { display: flex; flex-wrap: wrap; }
+  .sidebar { flex: 0 0 260px; width: 260px; }
+  .main { flex: 1 1 0; min-width: 0; padding: 28px 36px 64px; box-sizing: border-box; }
   html.is-mobile .mobile-topbar { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
   .mobile-topbar { display: none; }
   .pay-card { align-items: center; gap: 14px; cursor: pointer; }
@@ -151,19 +216,46 @@
   .sub-icon { color: var(--green); }
   .col-label { font-size: .78rem; font-weight: 700; color: var(--faint); text-transform: uppercase; margin: 14px 0 8px; }
   .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .chip { cursor: pointer; }
-  .chip.active { background: var(--green) !important; }
+  .chip {
+    display: inline-flex; align-items: center; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--line-strong); color: var(--muted);
+    font-family: var(--sans); font-size: .82rem; font-weight: 600;
+    padding: 7px 15px; border-radius: 999px; transition: border-color .15s, color .15s, background .15s;
+  }
+  .chip:hover { border-color: var(--green-border); color: var(--ink); }
+  .chip.active { background: var(--green) !important; border-color: var(--green) !important; color: #fff; }
   .search-wrap { position: relative; margin-bottom: 6px; }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--faint); }
-  .search-input { padding-left: 38px !important; }
+  .search-input, .uk-input, .amount-input, .split-name-input { padding-left: 38px !important; border-radius: var(--radius-field) !important; border: 1px solid #ccc !important; }
+  .amount-input, .split-name-input { padding-left: 12px !important; }
+  .search-input:focus, .uk-input:focus, .amount-input:focus, .split-name-input:focus {
+    outline: none; border-color: var(--green) !important; box-shadow: 0 2px 10px rgba(0,0,0,.15) !important;
+  }
+  .uk-checkbox:checked { background-color: var(--green) !important; border-color: var(--green) !important; }
   .clear-button { position: absolute; right: 84px; top: 50%; transform: translateY(-50%); display: none; }
   .clear-button.visible { display: block; }
   .search-lang { position: absolute; right: 4px; top: 4px; display: flex; gap: 2px; }
   .asset-list { display: flex; flex-direction: column; gap: 8px; }
-  .asset-main, .asset-avatar { display: flex; align-items: center; }
-  .asset-avatar { width: 36px; height: 36px; border-radius: 50%; justify-content: center; font-weight: 700; margin-right: 12px; position: relative; overflow: hidden; }
-  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .asset-price { font-weight: 700; text-align: right; }
+  .asset-avatar { display: flex; align-items: center; justify-content: center; }
+  .asset-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .asset-row:hover { border-color: var(--line-strong); }
+  .asset-row.selected, .asset-row.in-split { border-color: var(--green); background: var(--green-soft); }
+  .asset-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; font-weight: 700; font-size: .95rem; position: relative; overflow: hidden; }
+  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; background: #fff; }
+  .asset-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .asset-ticker { font-weight: 700; font-size: .92rem; color: var(--ink); }
+  .asset-name { font-size: .82rem; color: var(--muted); }
+  .asset-desc { font-size: .76rem; color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .asset-right { flex-shrink: 0; text-align: right; }
+  .asset-price { font-weight: 700; font-size: .92rem; color: var(--ink); }
+  .asset-yoy { font-size: .78rem; margin-top: 2px; }
+  .asset-yoy.pos { color: var(--green); }
+  .asset-yoy.neg { color: var(--red); }
   .quick-add { display: flex; gap: 8px; margin: 10px 0; }
   .amount-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .amount-note { font-size: .78rem; color: var(--muted); display: flex; gap: 6px; margin-bottom: 6px; }
@@ -256,7 +348,7 @@
 
 <div class="app uk-grid uk-grid-collapse" data-uk-grid-margin>
   <!-- Sidebar (desktop) -->
-  <aside class="sidebar uk-width-medium-1-5 uk-visible-large">
+  <aside class="sidebar uk-width-medium-1-5">
     <div class="logo uk-margin-small-bottom">InvestGrow</div>
     <ul class="uk-nav uk-nav-side">
       <li class="uk-nav-header">Денежные средства</li>
@@ -281,7 +373,7 @@
   </aside>
 
   <!-- Mobile top bar -->
-  <div class="mobile-topbar uk-hidden-large">
+  <div class="mobile-topbar">
     <span class="mobile-title">Регулярные инвестиции</span>
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
   </div>
