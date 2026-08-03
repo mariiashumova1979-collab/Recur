@@ -91,7 +91,19 @@
   .uk-nav-side > li > a:hover { background: var(--bg); color: var(--ink); }
   .uk-nav-side > li.uk-active > a { background: var(--bg); color: var(--ink); font-weight: 600; box-shadow: none; }
   .uk-nav-side > li.uk-active > a:hover { background: var(--bg); }
-  .uk-checkbox { accent-color: var(--green); width: 24px; height: 24px; border-radius: 3px; flex-shrink: 0; }
+  .uk-checkbox {
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; flex-shrink: 0; margin: 0;
+    background: var(--surface); border: 1.5px solid #ccc; border-radius: 4px;
+    cursor: pointer; position: relative; transition: background .15s, border-color .15s;
+  }
+  .uk-checkbox:hover { border-color: var(--faint); }
+  .uk-checkbox:checked { background: var(--green); border-color: var(--green); }
+  .uk-checkbox:checked::after {
+    content: ''; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px;
+    border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .uk-checkbox:focus-visible { outline: 2px solid var(--green-border); outline-offset: 2px; }
   .uk-alert-success { display: block; background: var(--green-soft); border: 1px solid var(--green-border); color: var(--green-dark); border-radius: 10px; padding: 14px 16px; box-shadow: none; }
   .uk-text-bold { font-weight: 700; }
   .uk-text-muted { color: var(--muted); }
@@ -106,7 +118,10 @@
   .uk-margin-bottom { margin-bottom: 20px; }
 
   .sidebar { padding: 20px 14px; }
-  .logo { font-weight: 800; font-size: 1.2rem; color: var(--green); padding: 4px 8px; }
+  .logo { display: flex; align-items: center; gap: 8px; padding: 4px 8px 0; }
+  .logo-word { font-weight: 800; font-size: 1.05rem; letter-spacing: .02em; color: var(--ink); }
+  .logo-num { color: var(--green); margin-left: 2px; }
+  .logo-tagline { font-size: .68rem; color: var(--faint); padding: 0 8px 6px 34px; }
   .logout { display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--muted); font-size: .85rem; text-decoration: none; border-radius: 8px; }
   .logout:hover { background: var(--bg); color: var(--ink); }
 
@@ -145,7 +160,15 @@
   .split-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
 
   /* misc small helpers not covered by uk-badge/uk-panel spacing defaults */
-  .plan-flags, .backup-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .plan-flags, .backup-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .backup-chip {
+    display: inline-flex; align-items: center; cursor: pointer;
+    background: var(--surface); border: 1.5px solid var(--line-strong); color: var(--ink);
+    font-family: var(--sans); font-size: .84rem; font-weight: 600;
+    padding: 9px 16px; border-radius: 999px; transition: border-color .15s, color .15s, background .15s;
+  }
+  .backup-chip:hover { border-color: var(--green-border); }
+  .backup-chip.active { background: var(--green); border-color: var(--green); color: #fff; }
   .op-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; position: relative; }
   .op:not(:last-child) .op-dot::after { content: ''; position: absolute; left: 50%; top: 13px; transform: translateX(-50%); width: 2px; height: calc(100% + 5px); background: var(--line); }
   .op-dot.ok { background: var(--green); } .op-dot.info { background: var(--blue); } .op-dot.warn { background: #f59e0b; } .op-dot.cancel { background: #c0392b; }
@@ -170,6 +193,8 @@
   html.is-mobile .mobile-topbar { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
   .mobile-topbar { display: none; }
   .pay-card { align-items: center; gap: 14px; cursor: pointer; }
+  .pay-card.pay-disabled { opacity: .4; filter: grayscale(70%); cursor: not-allowed; pointer-events: none; }
+  .pay-currency-note { display: flex; align-items: flex-start; gap: 6px; font-size: .78rem; color: var(--muted); margin: 10px 0 4px; }
   .pay-card.selected { border-color: var(--green) !important; background: var(--green-soft) !important; }
   .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); }
   .card-brand-alt { background: linear-gradient(135deg,#1a2233 0%,#3b4a63 100%); }
@@ -231,7 +256,6 @@
   .search-input:focus, .uk-input:focus, .amount-input:focus, .split-name-input:focus {
     outline: none; border-color: var(--green) !important; box-shadow: 0 2px 10px rgba(0,0,0,.15) !important;
   }
-  .uk-checkbox:checked { background-color: var(--green) !important; border-color: var(--green) !important; }
   .clear-button { position: absolute; right: 84px; top: 50%; transform: translateY(-50%); display: none; }
   .clear-button.visible { display: block; }
   .search-lang { position: absolute; right: 4px; top: 4px; display: flex; gap: 2px; }
@@ -349,7 +373,13 @@
 <div class="app uk-grid uk-grid-collapse" data-uk-grid-margin>
   <!-- Sidebar (desktop) -->
   <aside class="sidebar uk-width-medium-1-5">
-    <div class="logo uk-margin-small-bottom">InvestGrow</div>
+    <div class="logo uk-margin-small-bottom">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" style="flex-shrink:0">
+        <path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>
+      </svg>
+      <span class="logo-word">FREEDOM<span class="logo-num">24</span></span>
+    </div>
+    <div class="logo-tagline uk-margin-small-bottom">by Freedom Finance</div>
     <ul class="uk-nav uk-nav-side">
       <li class="uk-nav-header">Денежные средства</li>
       <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</a></li>
