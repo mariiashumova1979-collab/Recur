@@ -1388,6 +1388,7 @@ function updateAmountStepForSubscription(){
 function openStep(n, scroll){
   if (n > state.maxStep) return;
   state.currentStep = n;
+  if (scroll !== false){ try { (document.scrollingElement || document.documentElement || document.body).scrollTop = 0; window.scrollTo(0, 0); } catch(e){} }
   var typeSel = document.querySelector('.type-select');
   if (n === 0){
     if (typeSel) typeSel.hidden = false;
@@ -1408,7 +1409,6 @@ function openStep(n, scroll){
   }
   $('wizard-back').hidden = isFirstContentStep(n);
   renderProgress();
-  if (scroll !== false){ try { (document.scrollingElement || document.documentElement || document.body).scrollTop = 0; window.scrollTo(0, 0); } catch(e){} }
 }
 function completeStep(n){
   stepEl(n).classList.add('completed');
