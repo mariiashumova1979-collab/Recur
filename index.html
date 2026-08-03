@@ -73,6 +73,22 @@
   .uk-button-link:hover { color: var(--green-dark); text-decoration: underline; }
   .uk-button-small { padding: 7px 14px; font-size: .82rem; }
   .uk-button-mini { padding: 4px 10px; font-size: .74rem; }
+  .plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .plan-action.danger { color: #c0392b; border-color: #e2b6b6; }
+  .plan-action.danger:hover { background: #fdf1f1; border-color: #c0392b; }
+  .plan-action.accent { color: #b45309; border-color: #f0c78a; background: #fef3e2; }
+  .plan-action.accent:hover { border-color: #e0a94e; }
+  .first-purchase-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .first-purchase-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 11px 22px; font-size: .88rem; font-weight: 600; font-family: var(--sans);
+    border-radius: var(--radius-btn); cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  .first-purchase-btn.primary { background: var(--green); border: 1px solid var(--green); color: #fff; }
+  .first-purchase-btn.primary:hover { background: #86c960; border-color: #86c960; }
+  .first-purchase-btn.secondary { background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink); }
+  .first-purchase-btn.secondary:hover { border-color: var(--green-border); color: var(--green); }
+  .first-purchase-btn[disabled] { opacity: .5; cursor: not-allowed; }
   .uk-button-large { padding: 14px 24px; font-size: 1rem; }
   .uk-width-1-1 { width: 100%; }
 
@@ -189,7 +205,8 @@
   .sub-card .uk-flex, .pay-card { display: flex; }
   .uk-grid { display: flex; flex-wrap: wrap; }
   .sidebar { flex: 0 0 260px; width: 260px; }
-  .main { flex: 1 1 0; min-width: 0; padding: 28px 36px 64px; box-sizing: border-box; }
+  .app { display: flex; width: 100%; max-width: 100%; overflow-x: hidden; min-height: 100vh; }
+  .main { flex: 1 1 0; min-width: 0; max-width: 100%; padding: 28px 36px 64px; box-sizing: border-box; overflow-x: hidden; }
   html.is-mobile .mobile-topbar { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
   .mobile-topbar { display: none; }
   .pay-card { align-items: center; gap: 14px; cursor: pointer; }
@@ -326,7 +343,6 @@
   .plan-meta { font-size: .78rem; color: var(--muted); }
   .plan-body { display: none; padding: 0 16px 16px; }
   .plan.open .plan-body { display: block; }
-  .plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
   .plan-pay { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 8px; }
   .plan-pay-label { font-size: .74rem; color: var(--faint); font-weight: 700; text-transform: uppercase; }
   .plan-pay-main { font-weight: 700; margin: 4px 0 10px; }
@@ -1010,9 +1026,9 @@ function planCard(p){
   var actions = p.status==='active'
     ? '<button type="button" class="plan-action uk-button uk-button-small" data-act="edit">Редактировать</button>'+
       (p.nextSkipped
-        ? '<button type="button" class="plan-action accent" data-act="unskip">Вернуть платёж</button>'
+        ? '<button type="button" class="plan-action accent uk-button uk-button-small" data-act="unskip">Вернуть платёж</button>'
         : '<button type="button" class="plan-action uk-button uk-button-small" data-act="skip">Пропустить следующий</button>')+
-      '<button type="button" class="plan-action uk-button uk-button-small" data-act="pause">Приостановить</button><button type="button" class="plan-action danger" data-act="cancel">Отменить</button>'
+      '<button type="button" class="plan-action uk-button uk-button-small" data-act="pause">Приостановить</button><button type="button" class="plan-action danger uk-button uk-button-small" data-act="cancel">Отменить</button>'
     : '<button type="button" class="plan-action uk-button uk-button-small" data-act="resume">Возобновить</button>';
   var statusTip = (p.status==='canceled' && p.canceledReason) ? ' title="'+esc(p.canceledDate + ' · ' + p.canceledReason)+'"' : '';
   var skipFlag = p.nextSkipped ? '<span class="skip-flag">Следующий платёж пропущен</span>' : '';
@@ -1680,7 +1696,6 @@ function handleSubmit(){
     state.createdPlan = buildPlanFromState();
     plans.unshift(state.createdPlan);
     $('summary-panel').classList.add('visible');
-    $('summary-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
     if (firstSchedule){ confetti(); firstSchedule=false; toast('🎉 Первое поручение создано!'); }
     else { toast('Поручение успешно создано.'); }
   }, 1100);
