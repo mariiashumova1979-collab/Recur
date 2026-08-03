@@ -4,7 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Регулярные инвестиции</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/css/uikit.almost-flat.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/uikit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/accordion.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/modal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/notify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/switcher.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/tab.min.js"></script>
 <style>
+  /* Brand palette applied on top of native UIkit v2 classes — no components invented outside UIkit v2. */
   :root {
     --bg: #eef0f3;
     --surface: #ffffff;
@@ -23,501 +31,212 @@
     --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --serif: 'Georgia', 'Times New Roman', serif;
   }
-  * { box-sizing: border-box; }
-  html { width: 100%; max-width: 100%; overflow-x: hidden; }
-  body { margin: 0; width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; width: 100%; max-width: 100%; overflow-x: hidden; }
+  h1, h2, h3, .main-title { font-family: var(--serif); }
 
-  .app { display: flex; min-height: 100vh; width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; }
+  /* uk-button-primary / uk-badge-success / uk-progress-success recolored to brand green */
+  .uk-button-primary, .uk-badge-success, .uk-progress-success .uk-progress-bar { background: var(--green) !important; border-color: var(--green) !important; }
+  .uk-button-primary:hover { background: var(--green-dark) !important; }
+  .uk-alert-success { background: var(--green-soft) !important; border-color: var(--green-border) !important; color: var(--green-dark) !important; }
+  a, .uk-text-primary { color: var(--green); }
+  a:hover { color: var(--green-dark); }
+  .uk-panel-box.selected, .uk-panel-box.active, .uk-panel-box.in-split { border-color: var(--green) !important; background: var(--green-soft) !important; box-shadow: 0 0 0 1px var(--green) inset; }
+  .uk-badge.active { background: var(--green) !important; }
 
-  /* ===== Sidebar ===== */
-  .sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--line); padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
-  .logo { font-weight: 800; font-size: 1.35rem; color: var(--green); padding: 4px 8px 8px; }
-  .user-card { display: flex; align-items: center; gap: 12px; background: #eef4ff; border-radius: 12px; padding: 12px; }
-  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; }
-  .user-name { font-weight: 600; font-size: 0.9rem; }
-  .user-role { font-size: 0.72rem; color: var(--muted); }
-  .nav-head { background: var(--sidebar-head); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 7px 12px; border-radius: 8px; margin-top: 6px; }
-  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 8px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
-  .nav-item:hover { background: var(--bg); color: var(--ink); }
-  .nav-item.active { background: #eef0f3; color: var(--ink); font-weight: 600; }
-  .nav-item svg { flex-shrink: 0; color: var(--faint); }
-  .new-order-btn { margin-top: 10px; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 13px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
-  .new-order-btn:hover { background: var(--green-dark); }
-  .logout { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
+  /* Soften UIkit v2's default visual weight — thinner borders, no heavy shadows,
+     lighter nav headers — to keep the calm, minimalist feel of the rest of the app. */
+  .uk-panel-box { border: 1px solid var(--line); border-radius: 10px; box-shadow: none; padding: 16px 18px; }
+  .uk-button { border-radius: 8px; box-shadow: none; text-shadow: none; font-weight: 600; }
+  .uk-button-primary { border: 0; }
+  .uk-badge { border-radius: 999px; font-weight: 600; box-shadow: none; }
+  .uk-progress { border-radius: 999px; box-shadow: none; background: #e5e7eb; height: 6px; }
+  .uk-progress-bar { border-radius: 999px; box-shadow: none; }
+  .uk-nav-header { color: var(--faint); font-size: .72rem; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .uk-nav-side > li > a { color: var(--muted); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; }
+  .uk-nav-side > li > a:hover { background: var(--bg); color: var(--ink); }
+  .uk-nav-side > li.uk-active > a { background: var(--bg); color: var(--ink); font-weight: 600; box-shadow: none; }
+  .uk-nav-side > li.uk-active > a:hover { background: var(--bg); }
+  .uk-checkbox { accent-color: var(--green); }
+  .uk-alert-success { border-radius: 10px; box-shadow: none; }
+  .sidebar { padding: 20px 14px; }
+  .logo { font-weight: 800; font-size: 1.2rem; color: var(--green); padding: 4px 8px; }
+  .logout { display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--muted); font-size: .85rem; text-decoration: none; border-radius: 8px; }
+  .logout:hover { background: var(--bg); color: var(--ink); }
 
-  /* ===== Main ===== */
-  .main { flex: 1; width: 100%; min-width: 0; padding: 28px 36px 64px; max-width: 1180px; margin: 0 auto; }
-  .main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
-  .main-title { font-family: var(--serif); font-size: 2rem; font-weight: 700; margin: 0; }
-  .head-icons { display: flex; gap: 18px; color: var(--muted); }
-  .head-icons svg { cursor: pointer; }
-
-  .card { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px; }
-  .card-label { font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
-
-  /* ===== Sequential accordion ===== */
-  .flow-progress { display: flex; align-items: center; gap: 12px; margin: -10px 0 20px; color: var(--muted); font-size: 0.82rem; }
-  .flow-progress-track { flex: 1; height: 6px; overflow: hidden; border-radius: 999px; background: #dfe3e8; }
-  .flow-progress-bar { display: block; width: 11.11%; height: 100%; border-radius: inherit; background: var(--green); transition: width .25s ease; }
-  .step { min-width: 0; margin-bottom: 12px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
-  .step:not(.revealed), .step[hidden] { display: none !important; }
-  .step.active { border-color: var(--green-border); box-shadow: 0 6px 20px rgba(20, 41, 30, .07); animation: reveal-step .24s ease; }
-  @keyframes reveal-step {
-    from { transform: translateY(8px); }
-    to { transform: translateY(0); }
-  }
-  .step-head { width: 100%; display: flex; align-items: center; gap: 13px; padding: 17px 20px; border: 0; background: transparent; color: var(--ink); text-align: left; font-family: var(--sans); cursor: pointer; }
-  .step.locked .step-head { cursor: default; }
-  .step-number { width: 28px; height: 28px; flex: 0 0 28px; display: grid; place-items: center; border-radius: 50%; background: #eef0f3; color: var(--muted); font-size: .78rem; font-weight: 800; }
-  .step.active .step-number { background: var(--green); color: #fff; }
-  .step.completed .step-number { background: var(--green-soft); color: var(--green); }
+  /* ============================================================
+     Supplementary layer: UIkit v2 (2014-era) ships no component
+     for iOS-style switches, percentage steppers, or a locked
+     linear wizard — these are built on top of uk-form/uk-panel
+     primitives. Everything else in this file uses native UIkit v2
+     classes (uk-button, uk-panel-box, uk-grid, uk-badge, uk-form,
+     uk-progress, uk-modal, uk-tab, uk-alert).
+     ============================================================ */
+  .step[hidden] { display: none; }
+  .step-body { padding: 4px 4px 4px 4px; }
+  .step-head { cursor: default; background: none; border: 0; width: 100%; text-align: left; display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; font: inherit; }
+  .step-number { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #fff; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
   .step-title-wrap { flex: 1; min-width: 0; }
-  .step-title { font-size: .95rem; font-weight: 700; }
-  .step-value { margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: .78rem; }
-  .step-chevron { color: var(--faint); transition: transform .2s; }
-  .step.active .step-chevron { transform: rotate(180deg); }
-  .step-body { display: none; padding: 2px 20px 20px 61px; }
-  .step.active .step-body { display: block; }
-  /* pagination overrides */
-  .step-head { cursor: default; }
-  .step-chevron, .step-value { display: none; }
-  .step { margin-bottom: 0; }
-  .wizard-nav { text-align: center; margin-top: 16px; position: relative; z-index: 40; }
-  .wizard-back { border: 0; background: none; color: var(--green); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; padding: 12px 24px; border-radius: 10px; position: relative; z-index: 40; }
-  .wizard-back:hover { color: var(--green-dark); background: var(--green-soft); }
-  .step-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
-  .step-next { min-width: 150px; padding: 11px 18px; border: 0; border-radius: 10px; background: var(--green); color: #fff; font-family: var(--sans); font-weight: 700; cursor: pointer; }
-  .step-next:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
-  .step-help { margin: 0 0 14px; color: var(--muted); font-size: .8rem; line-height: 1.45; }
-  .review-list { display: grid; gap: 0; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-  .review-row { display: flex; justify-content: space-between; gap: 20px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: .84rem; }
-  .review-split { padding: 4px 14px 8px; }
-  .review-sub { display: flex; justify-content: space-between; gap: 20px; padding: 5px 0; font-size: 0.8rem; color: var(--muted); }
-  .review-sub span:last-child { font-weight: 600; color: var(--ink); }
-  .review-row:last-child { border-bottom: 0; }
-  .review-row span { color: var(--muted); }
-  .review-row strong { text-align: right; }
+  .step-title { font-weight: 700; }
+  .step-value { display: block; font-size: 0.8rem; color: var(--muted); }
+  .step-chevron { display: none; }
+  .step-help { color: var(--muted); font-size: 0.85rem; margin: 0 0 12px; }
 
-  /* ===== Type selector (step 0) ===== */
-  .type-select { margin-bottom: 20px; }
-  .type-select-label { font-size: 0.92rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
-  .type-select .sub-grid { margin-bottom: 0; }
-  /* ===== Subscription ===== */
-  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
-  .sub-card { position: relative; display: flex; gap: 14px; align-items: flex-start; min-width: 0; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
-  .sub-card:hover { border-color: var(--line-strong); }
-  .sub-card.selected { border-color: var(--green); background: var(--green-soft); }
-  .sub-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #eef2f7; color: var(--muted); }
-  .sub-card.selected .sub-icon { background: var(--green); color: #fff; }
-  .sub-title { font-weight: 600; font-size: 0.95rem; }
-  .sub-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.4; }
-
-  /* ===== Finder ===== */
-  .search-wrap { position: relative; display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; padding: 13px 16px; }
-  .search-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
-  .search-wrap .search-icon { color: var(--faint); }
-  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-size: 0.95rem; color: var(--ink); outline: none; font-family: var(--sans); }
-  .search-input::placeholder { color: var(--faint); }
-
-  .search-lang { display: inline-flex; flex-shrink: 0; padding: 2px; background: #f4f6f8; border: 1px solid var(--line); border-radius: 999px; }
-  .lang-btn { border: none; background: transparent; color: var(--muted); border-radius: 999px; padding: 5px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: var(--sans); }
-  .lang-btn.active { background: var(--green); color: #fff; }
-  .mobile-title { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; color: var(--ink); }
-  .clear-button { display: none; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; background: #eef2f7; border: none; border-radius: 50%; color: var(--muted); cursor: pointer; }
-  .clear-button.visible { display: flex; }
-
-  .col-label { font-size: 0.85rem; color: var(--muted); margin: 18px 0 12px; }
-  .chip-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .chip { padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: #f4f6f8; font-size: 0.83rem; color: var(--muted); cursor: pointer; transition: 0.15s; white-space: nowrap; }
-  .chip:hover { border-color: var(--line-strong); color: var(--ink); }
-  .chip.active { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
-
-  .asset-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
-  .inst-mode { display: inline-flex; background: #eef1f4; border-radius: 10px; padding: 3px; margin-bottom: 16px; }
-  .inst-mode-btn { border: 0; background: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
-  .inst-mode-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .split-builder { border: 1px solid var(--green-border); background: var(--green-soft); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; }
-  .split-name-label { font-size: 0.8rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-  .split-name-input { width: 100%; box-sizing: border-box; border: 1px solid var(--line-strong); border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; font-family: var(--sans); background: var(--surface); color: var(--ink); }
-  .split-name-input:focus { outline: none; border-color: var(--green); }
-  .split-suggest { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .split-suggest .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; font-weight: 600; color: var(--green); cursor: pointer; font-family: var(--sans); }
-  .split-suggest .chip:hover { border-color: var(--green-border); }
-  .split-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-  .split-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-  .split-item-av { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
-  .split-item-main { flex: 1; min-width: 0; }
-  .split-item-tk { font-weight: 600; font-size: 0.85rem; color: var(--ink); }
-  .split-item-nm { font-size: 0.74rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .split-stepper { display: flex; align-items: center; gap: 2px; background: #eef1f4; border-radius: 8px; padding: 2px; }
-  .split-stepper button { width: 26px; height: 26px; border: 0; background: var(--surface); border-radius: 6px; color: var(--ink); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .split-stepper button:hover { color: var(--green); }
-  .split-pct { min-width: 42px; text-align: center; font-weight: 700; font-size: 0.85rem; color: var(--ink); }
-  .split-pct-input { width: 34px; text-align: right; font-weight: 700; font-size: 0.85rem; color: var(--ink); border: 0; background: transparent; font-family: var(--sans); padding: 4px 0; -moz-appearance: textfield; }
-  .split-pct-input:focus { outline: none; color: var(--green); }
-  .split-pct-input::-webkit-outer-spin-button, .split-pct-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .split-pct-suffix { font-weight: 700; font-size: 0.85rem; color: var(--muted); }
-  .split-remove { flex-shrink: 0; border: 0; background: none; color: var(--faint); cursor: pointer; padding: 4px; display: flex; }
-  .split-remove:hover { color: #c0392b; }
-  .split-empty { font-size: 0.8rem; color: var(--muted); margin-top: 12px; line-height: 1.4; }
-  .split-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
-  .split-total { font-weight: 700; font-size: 0.9rem; color: var(--green); }
-  .split-total.off { color: #b45309; }
-  .split-evenly { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 9px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
-  .split-evenly:hover { border-color: var(--green-border); color: var(--green); }
-  .split-done { width: 100%; margin-top: 14px; background: var(--green); color: #fff; border: 0; border-radius: 12px; padding: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--sans); transition: 0.15s; }
-  .split-done:hover:not(:disabled) { background: var(--green-dark); }
-  .split-done:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
-  .asset-row.in-split { border-color: var(--green); background: var(--green-soft); }
-  .asset-row { display: flex; align-items: center; gap: 16px; padding: 14px 16px; background: #fbfcfd; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: 0.15s; }
-  .asset-row:hover { border-color: var(--line-strong); }
-  .asset-row.selected { border-color: var(--green); background: var(--green-soft); }
-  .asset-avatar { position: relative; overflow: hidden; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; }
-  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: contain; background: #fff; }
-  .asset-main { flex: 1; min-width: 0; }
-  .asset-ticker { font-weight: 700; font-size: 0.92rem; }
-  .asset-name { font-size: 0.82rem; color: var(--muted); }
-  .asset-desc { font-size: 0.8rem; color: var(--green); margin-top: 3px; }
-  .asset-right { text-align: right; flex-shrink: 0; }
-  .asset-price { font-weight: 700; font-size: 0.95rem; }
-  .asset-yoy { font-size: 0.8rem; font-weight: 600; margin-top: 2px; }
-  .asset-yoy.pos { color: var(--green); }
-  .asset-yoy.neg { color: var(--red); }
-
-  /* ===== Amount + frequency ===== */
-  .two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 18px; }
-  .amount-row { display: flex; align-items: center; gap: 14px; }
-  .cur-select-wrap { position: relative; }
-  .cur-select { appearance: none; -webkit-appearance: none; border: 1px solid var(--line); border-radius: 8px; background: #f4f6f8; padding: 8px 26px 8px 12px; font-weight: 700; font-size: 0.85rem; color: var(--green); cursor: pointer; font-family: var(--sans); }
-  .cur-select-wrap .cc { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--faint); }
-  .amount-input { flex: 1; min-width: 0; border: none; border-bottom: 1.5px solid var(--line); background: transparent; font-size: 2rem; font-weight: 700; color: var(--ink); outline: none; padding: 4px 0; font-family: var(--sans); }
-  .amount-input:focus { border-color: var(--green); }
-  .amount-note { display: flex; align-items: flex-start; gap: 6px; font-size: 0.78rem; color: var(--muted); margin-top: 14px; line-height: 1.4; }
-  .amount-note svg { flex-shrink: 0; margin-top: 1px; color: var(--faint); }
-  .quick-add { display: flex; gap: 8px; margin-top: 14px; }
-  .quick-btn { flex: 1; padding: 9px; background: #eef4ff; border: none; border-radius: 8px; color: var(--blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .quick-btn:hover { background: #e0eaff; }
-
-  .freq-options { display: flex; flex-direction: column; gap: 10px; }
-  .freq-opt { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
-  .freq-opt:hover { border-color: var(--line-strong); }
-  .freq-opt.active { border-color: var(--green); background: var(--green-soft); font-weight: 600; }
-  .freq-opt .check { color: var(--line-strong); display: flex; }
-  .freq-opt.active .check { color: var(--green); }
-
-  /* ===== Payment ===== */
-  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .pay-card { position: relative; display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; min-height: 96px; transition: 0.15s; }
-  .pay-card:hover { border-color: var(--line-strong); }
-  .pay-card.selected { border-color: var(--green); background: var(--green-soft); }
-  .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); display: flex; }
-  .card-num { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; }
-  .card-issuer { font-size: 0.68rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
-  .acct-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
-  .pay-card.selected .acct-icon { background: var(--green); color: #fff; }
-  .pay-add { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 10px; min-height: 0; padding: 13px 18px; border: 1.5px dashed var(--line-strong); background: #f7f9fb; color: var(--muted); font-size: 0.85rem; }
-  .pay-add .plus { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
-  .pay-section-label { font-size: 0.74rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
-  .backup-source { margin-top: 16px; border: 1.5px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--surface); transition: 0.15s; }
-  .accumulate-opt { display: flex; align-items: flex-start; gap: 14px; margin-top: 16px; border: 1.5px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--surface); transition: 0.15s; }
-  .accumulate-opt.on { border-color: var(--green-border); background: var(--green-soft); }
-  .accumulate-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
-  .accumulate-opt.on .accumulate-icon { background: var(--green); color: #fff; }
-  .accumulate-text { flex: 1; min-width: 0; }
-  .accumulate-title { font-weight: 600; font-size: 0.9rem; }
-  .accumulate-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.45; }
-  .backup-source.on { border-color: var(--green-border); background: var(--green-soft); }
-  .backup-main { display: flex; align-items: flex-start; gap: 14px; }
-  .backup-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
-  .backup-source.on .backup-icon { background: var(--green); color: #fff; }
-  .backup-text { flex: 1; min-width: 0; }
-  .backup-title { font-weight: 600; font-size: 0.9rem; }
-  .backup-desc { color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.45; }
-  .switch { flex-shrink: 0; cursor: pointer; margin-top: 2px; }
+  /* switches (no native UIkit v2 equivalent) */
+  .switch { display: inline-block; flex-shrink: 0; cursor: pointer; }
   .switch input { display: none; }
   .switch-track { display: block; width: 42px; height: 24px; border-radius: 999px; background: var(--line-strong); position: relative; transition: 0.18s; }
-  .switch-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: 0.18s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .switch-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: 0.18s; }
   .switch input:checked + .switch-track { background: var(--green); }
   .switch input:checked + .switch-track .switch-thumb { transform: translateX(18px); }
 
-  /* ===== Confirm ===== */
-  .agree-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; font-size: 0.86rem; color: var(--ink); cursor: pointer; line-height: 1.45; }
-  .agree-row input { display: none; }
-  .cbx { flex-shrink: 0; width: 20px; height: 20px; border: 2px solid var(--line-strong); border-radius: 5px; display: flex; align-items: center; justify-content: center; background: #fff; transition: 0.15s; }
-  .agree-row input:checked + .cbx { background: var(--blue); border-color: var(--blue); }
-  .cbx svg { display: none; color: #fff; }
-  .agree-row input:checked + .cbx svg { display: block; }
-  .agree-row a { color: var(--green); text-decoration: none; }
+  /* percentage steppers in the split builder */
+  .split-stepper { display: inline-flex; align-items: center; gap: 2px; background: var(--bg); border-radius: 8px; padding: 2px; }
+  .split-stepper button { width: 26px; height: 26px; border: 0; background: var(--surface); border-radius: 6px; cursor: pointer; }
+  .split-pct-input { width: 34px; text-align: right; font-weight: 700; border: 0; background: transparent; font-family: var(--sans); }
+  .split-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
 
-  .confirm-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 22px; flex-wrap: wrap; }
-  .total-label { font-size: 0.8rem; color: var(--muted); }
-  .total-value { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; margin-top: 4px; }
-  .confirm-btn { background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 16px 40px; font-size: 0.95rem; font-weight: 700; cursor: pointer; position: relative; transition: 0.15s; font-family: var(--sans); }
-  .confirm-btn:hover:not(:disabled) { background: var(--green-dark); }
-  .confirm-btn:disabled { background: #d7dbe0; color: #9aa3af; cursor: not-allowed; }
-  .confirm-btn.loading .btn-text { opacity: 0; }
-  .confirm-btn .spinner { display: none; position: absolute; top: 50%; left: 50%; margin: -10px 0 0 -10px; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  .confirm-btn.loading .spinner { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .summary-panel { display: none; margin-top: 18px; padding: 14px 18px; background: var(--green-soft); border: 1px solid var(--green); border-radius: 12px; align-items: flex-start; gap: 10px; }
-  .summary-panel.visible { display: flex; }
-  .summary-panel svg { flex-shrink: 0; color: var(--green); }
-  .summary-panel p { margin: 0; font-size: 0.88rem; line-height: 1.5; }
-  .summary-content { flex: 1; min-width: 0; }
-  .first-purchase { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(21,130,74,0.22); }
-  .first-purchase-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
-  .first-purchase-desc { margin-top: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--muted); }
-  .first-purchase-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .first-purchase-btn { border-radius: 9px; padding: 10px 16px; font-family: var(--sans); font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: 0.15s; }
-  .first-purchase-btn.primary { border: 1px solid var(--green); background: var(--green); color: #fff; }
-  .first-purchase-btn.primary:hover { background: var(--green-dark); }
-  .first-purchase-btn.secondary { border: 1px solid var(--green); background: #fff; color: var(--green); }
-  .first-purchase-btn.secondary:hover { background: var(--green-soft); }
-  .first-purchase-btn:disabled { opacity: 0.55; cursor: default; }
-  .first-purchase-result { display: none; align-items: center; gap: 7px; margin-top: 12px; color: var(--green); font-size: 0.82rem; font-weight: 600; }
-  .first-purchase-result.visible { display: flex; }
-
-  /* ===== Mobile chrome ===== */
-  .mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
-  .mobile-topbar .m-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; }
-  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 8px 0 10px; justify-content: space-around; z-index: 50; }
-  .bn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.65rem; color: var(--faint); }
-  .bn-item.active { color: var(--blue); }
-  .bn-item .bn-ic { width: 32px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-  .bn-item.active .bn-ic { background: var(--blue); color: #fff; }
-
-  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
-  .toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--ink); border-radius: 12px; color: #fff; font-size: 0.85rem; transform: translateY(140px); opacity: 0; transition: 0.3s; }
-  .toast.visible { transform: translateY(0); opacity: 1; }
-  #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
-
-  /* ===== Backup sheet ===== */
-  .sheet-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(15,23,42,0.5); align-items: center; justify-content: center; padding: 20px; }
-  .sheet-overlay.visible { display: flex; }
-  .sheet { width: 100%; max-width: 460px; background: var(--surface); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.25); animation: sheet-in 0.22s ease; }
-  @keyframes sheet-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
-  .sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px; border-bottom: 1px solid var(--line); }
-  .sheet-head-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: var(--ink); }
-  .sheet-head-badge { width: 22px; height: 22px; border-radius: 6px; background: #f6c945; color: #7a5a00; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
-  .sheet-icon-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 4px; display: flex; border-radius: 8px; transition: 0.15s; }
-  .sheet-icon-btn:hover { background: #f1f3f6; color: var(--ink); }
-  .sheet-body { padding: 28px 28px 22px; text-align: center; }
-  .sheet-shield { width: 88px; height: 88px; margin: 0 auto 16px; }
-  .sheet-shield svg { width: 100%; height: 100%; display: block; }
-  .sheet-title { font-family: var(--serif); font-size: 1.42rem; font-weight: 700; color: var(--ink); margin: 0 0 12px; line-height: 1.25; }
-  .sheet-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.5; margin: 0 auto; max-width: 380px; }
-  .sheet-divider { height: 1px; background: var(--line); margin: 22px 0; }
-  .sheet-why-label { font-weight: 700; font-size: 0.9rem; color: var(--ink); margin-bottom: 18px; }
-  .sheet-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-  .sheet-benefit { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
-  .sheet-benefit-icon { color: var(--green); display: flex; }
-  .sheet-primary { width: 100%; background: var(--green); color: #fff; border: 0; border-radius: 12px; padding: 15px; font-family: var(--sans); font-size: 0.98rem; font-weight: 700; cursor: pointer; transition: 0.15s; }
-  .sheet-primary:hover { background: var(--green-dark); }
-  .sheet-skip { width: 100%; background: transparent; border: 0; color: var(--ink); font-family: var(--sans); font-size: 0.92rem; font-weight: 700; cursor: pointer; padding: 14px; margin-top: 2px; }
-  .sheet-skip:hover { color: var(--green); }
-  @media (max-width: 560px) {
-    .sheet-overlay { align-items: flex-end; padding: 0; }
-    .sheet { max-width: 100%; border-radius: 18px 18px 0 0; animation: sheet-up 0.24s ease; }
-    .sheet-body { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
-  }
-  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
-
-  /* ===== Manage orders screen ===== */
-  .manage-link { margin-top: 12px; background: none; border: 0; color: var(--green); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; padding: 0; }
-  .manage-link:hover { color: var(--green-dark); text-decoration: underline; }
-  .manage-view { display: none; position: fixed; inset: 0; z-index: 2500; background: var(--bg); overflow-y: auto; }
-  .manage-view.visible { display: block; animation: fade-in 0.2s ease; }
-  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-  .manage-inner { max-width: 880px; margin: 0 auto; padding: 8px 24px 64px; }
-  .manage-head { display: flex; align-items: center; gap: 12px; padding: 14px 0 16px; position: sticky; top: 0; background: var(--bg); z-index: 2; }
-  .manage-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--ink); margin: 0; flex: 1; }
-  .manage-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
-  .manage-count { font-weight: 700; font-size: 0.98rem; color: var(--ink); }
-  .hide-canceled { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); cursor: pointer; user-select: none; }
-  .hide-canceled input { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; }
-  .plan-list { display: flex; flex-direction: column; gap: 12px; }
-  .plan { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; transition: 0.15s; }
-  .plan.open { border-color: var(--green-border); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-  .plan-head { width: 100%; display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: none; border: 0; cursor: pointer; text-align: left; font-family: var(--sans); }
-  .plan-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; }
-  .plan-main { flex: 1; min-width: 0; }
-  .plan-name { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
-  .plan-meta { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
-  .plan-status { flex-shrink: 0; font-size: 0.72rem; font-weight: 700; padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
-  .plan-status.active { background: var(--green-soft); color: var(--green); }
-  .plan-status.canceled { background: #f1f3f6; color: var(--faint); }
-  .plan-status.paused { background: #fef3e2; color: #b45309; }
-  .plan-chevron { flex-shrink: 0; color: var(--faint); transition: transform 0.2s; }
-  .plan.open .plan-chevron { transform: rotate(180deg); }
-  .plan-body { display: none; padding: 0 18px 18px; }
-  .plan.open .plan-body { display: block; }
-  .plan-actions { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0 16px; border-top: 1px solid var(--line); margin-top: 2px; padding-top: 16px; }
-  .plan-action { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 9px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.15s; }
-  .plan-action:hover { border-color: var(--green-border); color: var(--green); }
-  .plan-action.danger:hover { border-color: #e2b6b6; color: #c0392b; }
-  .plan-action.accent { border-color: #f0c78a; color: #b45309; background: #fef3e2; }
-  .plan-action.accent:hover { border-color: #e0a94e; color: #92400e; }
-  .skip-flag { display: inline-block; margin-top: 6px; font-size: 0.72rem; font-weight: 600; color: #b45309; background: #fef3e2; border-radius: 999px; padding: 3px 10px; }
-  .plan-flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-  .plan-flags .skip-flag { margin-top: 0; }
-  .acc-flag { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 3px 10px; }
-  .acc-progress { border: 1px solid var(--green-border); background: var(--green-soft); border-radius: 12px; padding: 14px 16px; margin: 16px 0 4px; }
-  .acc-progress-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
-  .acc-progress-val { font-weight: 700; color: var(--ink); white-space: nowrap; }
-  .acc-bar { height: 8px; background: #d7e8dd; border-radius: 999px; overflow: hidden; }
-  .acc-bar span { display: block; height: 100%; background: var(--green); border-radius: 999px; transition: width 0.4s; }
-  .acc-eta { font-size: 0.76rem; color: var(--green); margin-top: 8px; font-weight: 600; }
-  .hist-tabs { display: inline-flex; background: #eef1f4; border-radius: 10px; padding: 3px; margin-bottom: 14px; }
-  .hist-tab { border: 0; background: none; padding: 7px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
-  .hist-tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .hist-panel { display: none; }
-  .hist-panel.active { display: block; }
-  .op-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .op-filter { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 13px; font-size: 0.78rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
-  .op-filter:hover { border-color: var(--green-border); }
-  .op-filter.active { background: var(--green-soft); border-color: var(--green-border); color: var(--green); }
-  .buys-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .buys-title { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
-  .buys-export { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; color: var(--ink); cursor: pointer; font-family: var(--sans); transition: 0.12s; }
-  .buys-export:hover { border-color: var(--green-border); color: var(--green); }
-  .op { display: flex; gap: 12px; padding: 9px 0; }
+  /* misc small helpers not covered by uk-badge/uk-panel spacing defaults */
+  .plan-flags, .backup-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
   .op-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; position: relative; }
   .op:not(:last-child) .op-dot::after { content: ''; position: absolute; left: 50%; top: 13px; transform: translateX(-50%); width: 2px; height: calc(100% + 5px); background: var(--line); }
-  .op-dot.ok { background: var(--green); }
-  .op-dot.info { background: var(--blue); }
-  .op-dot.warn { background: #f59e0b; }
-  .op-dot.cancel { background: #c0392b; }
-  .op-body { flex: 1; }
-  .op-text { font-size: 0.85rem; color: var(--ink); line-height: 1.4; }
-  .op.warn .op-text { color: #b45309; font-weight: 600; }
-  .op-date { font-size: 0.74rem; color: var(--faint); margin-top: 2px; }
-  .buy-row { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
-  .buy-row:last-child { border-bottom: 0; }
-  .buy-q { font-weight: 600; font-size: 0.88rem; color: var(--ink); }
-  .buy-sub { font-size: 0.76rem; color: var(--muted); }
-  .buy-a { font-weight: 700; font-size: 0.92rem; color: var(--ink); text-align: right; font-family: var(--serif); }
-  .buy-status { font-size: 0.76rem; color: var(--green); text-align: right; margin-top: 2px; }
-  .manage-empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: 0.88rem; }
-  .manage-new { margin-top: 18px; width: 100%; background: none; border: 1.5px dashed var(--line-strong); color: var(--green); border-radius: 12px; padding: 15px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: var(--sans); transition: 0.15s; }
-  .manage-new:hover { background: var(--green-soft); border-color: var(--green-border); }
-  html.is-mobile .manage-inner { padding: 8px 16px 80px; }
-  html.is-mobile .manage-title { font-size: 1.3rem; }
-  @media (max-width: 560px) { .manage-inner { padding: 8px 16px 80px; } }
+  .op-dot.ok { background: var(--green); } .op-dot.info { background: var(--blue); } .op-dot.warn { background: #f59e0b; } .op-dot.cancel { background: #c0392b; }
+  .op { display: flex; gap: 10px; padding: 8px 0; }
+  html.is-mobile .sidebar, html.is-mobile .uk-visible-large { display: none !important; }
+  html.is-mobile .mobile-topbar { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .mobile-topbar { display: none; }
+  .pay-card { align-items: center; gap: 14px; cursor: pointer; }
+  .pay-card.selected { border-color: var(--green) !important; background: var(--green-soft) !important; }
+  .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); }
+  .card-brand-alt { background: linear-gradient(135deg,#1a2233 0%,#3b4a63 100%); }
+  .acct-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .card-num { font-weight: 700; }
+  .card-issuer { font-size: 0.72rem; color: var(--faint); text-transform: uppercase; }
+  .accumulate-opt, .backup-main { display: flex; align-items: flex-start; gap: 14px; cursor: pointer; }
+  .accumulate-icon, .backup-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .backup-title { font-weight: 600; }
+  .backup-desc, .accumulate-desc { font-size: 0.8rem; color: var(--muted); }
+  .agree-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
 
-  /* ===== Mobile: plan card internals ===== */
-  html.is-mobile .plan-head { padding: 14px 14px; gap: 12px; }
-  html.is-mobile .plan-avatar { width: 36px; height: 36px; font-size: 0.9rem; }
-  html.is-mobile .plan-name { font-size: 0.9rem; }
-  html.is-mobile .plan-meta { font-size: 0.76rem; }
-  html.is-mobile .plan-status { font-size: 0.68rem; padding: 3px 9px; }
-  html.is-mobile .plan-body { padding: 0 14px 14px; }
-  html.is-mobile .plan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 14px; }
-  html.is-mobile .plan-action { padding: 12px 10px; font-size: 0.84rem; text-align: center; border-radius: 10px; }
-  html.is-mobile .plan-action[data-act="edit"],
-  html.is-mobile .plan-action[data-act="skip"],
-  html.is-mobile .plan-action[data-act="unskip"],
-  html.is-mobile .plan-action[data-act="resume"] { grid-column: 1 / -1; }
-  html.is-mobile .hist-tabs { display: flex; width: 100%; margin-bottom: 12px; }
-  html.is-mobile .hist-tab { flex: 1; padding: 9px 0; text-align: center; font-size: 0.86rem; }
-  html.is-mobile .op-filters { gap: 6px; margin-bottom: 10px; }
-  html.is-mobile .op-filter { padding: 6px 12px; font-size: 0.78rem; }
-  html.is-mobile .op { gap: 10px; padding: 8px 0; }
-  html.is-mobile .op-text { font-size: 0.86rem; }
-  html.is-mobile .op-date { font-size: 0.74rem; }
-  html.is-mobile .buy-q, html.is-mobile .buy-a { font-size: 0.86rem; }
-  html.is-mobile .buys-export { padding: 7px 12px; }
+  /* Overlays (backup sheet, full-screen manage view) — positioned per UIkit v2's uk-modal conventions;
+     shown/hidden by our own JS via .visible, since the app drives a locked linear flow, not a generic modal. */
+  .sheet-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(15,23,42,.5); align-items: center; justify-content: center; padding: 20px; }
+  .sheet-overlay.visible { display: flex; }
+  .sheet { width: 100%; max-width: 440px; background: var(--surface); border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,.3); max-height: 90vh; overflow-y: auto; }
+  .sheet-head, .manage-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--line); }
+  .sheet-head-title { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .sheet-head-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: .7rem; display: flex; align-items: center; justify-content: center; }
+  .sheet-icon-btn { border: 0; background: none; cursor: pointer; padding: 4px; color: var(--muted); }
+  .sheet-body { padding: 24px; text-align: center; }
+  .sheet-shield { width: 72px; margin: 0 auto 14px; }
+  .sheet-title { font-family: var(--serif); }
+  .sheet-desc { color: var(--muted); font-size: .88rem; }
+  .sheet-benefits { display: flex; justify-content: space-around; margin: 18px 0; }
+  .sheet-benefit { font-size: .74rem; color: var(--muted); max-width: 90px; }
+  .sheet-benefit-icon { color: var(--green); display: block; margin: 0 auto 6px; }
 
-  @media (max-width: 960px), (max-device-width: 960px) {
-    .sidebar { display: none; }
-    .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
-    .bottom-nav { display: flex; }
-    .app { display: block; width: 100%; max-width: 100%; }
-    .main { margin: 0; padding: 18px 16px 90px; max-width: none; width: 100%; }
-    .main-head .head-icons { display: none; }
-    .main-title { font-size: 1.5rem; }
-    .sub-grid, .two-col, .pay-grid { grid-template-columns: 1fr; }
-    .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-    .chip-row::-webkit-scrollbar { display: none; }
-    .asset-desc { display: none; }
-    .confirm-foot { flex-direction: column; align-items: stretch; }
-    .confirm-btn { width: 100%; }
-    .first-purchase-actions { flex-direction: column; }
-    .first-purchase-btn { width: 100%; }
-  }
+  .manage-view { display: none; position: fixed; inset: 0; z-index: 2500; background: var(--bg); overflow-y: auto; }
+  .manage-view.visible { display: block; }
+  .manage-inner { max-width: 860px; margin: 0 auto; padding: 8px 24px 60px; }
+  .manage-title { font-family: var(--serif); flex: 1; text-align: center; }
+  .manage-toolbar { display: flex; align-items: center; justify-content: space-between; margin: 16px 0; }
+  html.is-mobile .manage-inner { padding: 8px 14px 60px; }
 
-  @media (max-width: 640px), (max-device-width: 640px) {
-    body { background: #f6f7f9; }
-    .main { padding: 14px 12px 92px; }
-    .main-head { margin-bottom: 14px; }
-    .main-title { display: none; }
-    .card { padding: 16px; border-radius: 12px; margin-bottom: 14px; }
-    .sub-card { padding: 15px; }
-    .search-wrap { flex-wrap: wrap; padding: 11px 12px; }
-    .search-icon { order: 1; }
-    .search-input { order: 2; min-width: calc(100% - 76px); font-size: 0.9rem; }
-    .clear-button { order: 3; }
-    .search-lang { order: 4; width: 100%; justify-content: center; margin-top: 8px; }
-    .lang-btn { flex: 1; padding: 7px 10px; }
-    .asset-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 13px; }
-    .asset-right { grid-column: 2; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .asset-price { font-size: 0.9rem; }
-    .asset-yoy { margin-top: 0; white-space: nowrap; }
-    .amount-row { gap: 10px; }
-    .amount-input { font-size: 1.55rem; min-width: 0; }
-    .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
-    .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-    .toast-container { left: 12px; right: 12px; bottom: 82px; }
-    .toast { justify-content: center; }
-    .step-head { padding: 15px 14px; }
-    .step-body { padding: 0 14px 16px; }
-    .step-actions, .step-next { width: 100%; }
-    .review-row { align-items: flex-start; }
-  }
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 3000; }
+  .toast { display: none; align-items: center; gap: 8px; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,.3); }
+  .toast.visible { display: flex; }
 
+  /* Remaining structural layout not covered by native UIkit v2 utility classes */
+  .type-select-label { font-weight: 700; }
+  .sub-card { cursor: pointer; }
+  .sub-icon { color: var(--green); }
+  .col-label { font-size: .78rem; font-weight: 700; color: var(--faint); text-transform: uppercase; margin: 14px 0 8px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .chip { cursor: pointer; }
+  .chip.active { background: var(--green) !important; }
+  .search-wrap { position: relative; margin-bottom: 6px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--faint); }
+  .search-input { padding-left: 38px !important; }
+  .clear-button { position: absolute; right: 84px; top: 50%; transform: translateY(-50%); display: none; }
+  .clear-button.visible { display: block; }
+  .search-lang { position: absolute; right: 4px; top: 4px; display: flex; gap: 2px; }
+  .asset-list { display: flex; flex-direction: column; gap: 8px; }
+  .asset-main, .asset-avatar { display: flex; align-items: center; }
+  .asset-avatar { width: 36px; height: 36px; border-radius: 50%; justify-content: center; font-weight: 700; margin-right: 12px; position: relative; overflow: hidden; }
+  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .asset-price { font-weight: 700; text-align: right; }
+  .quick-add { display: flex; gap: 8px; margin: 10px 0; }
+  .amount-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .amount-note { font-size: .78rem; color: var(--muted); display: flex; gap: 6px; margin-bottom: 6px; }
+  .freq-options { display: flex; flex-direction: column; gap: 10px; }
+  .freq-opt { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
+  .freq-opt.active { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+  .freq-opt .check { color: transparent; }
+  .freq-opt.active .check { color: var(--green); }
+  .step-actions { margin-top: 16px; }
 
-  /* JS fallback for mobile browsers that open the page with desktop CSS viewport */
-  html.is-mobile,
-  html.is-mobile body { width: 100%; max-width: 100%; overflow-x: hidden; }
-  html.is-mobile body { background: #f6f7f9; }
-  html.is-mobile .sidebar { display: none !important; }
-  html.is-mobile .app { display: block !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; overflow-x: hidden; }
-  html.is-mobile .mobile-topbar { display: flex; position: sticky; top: 0; z-index: 60; }
-  html.is-mobile .bottom-nav { display: flex; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-  html.is-mobile .main { margin: 0 !important; width: 100% !important; max-width: none !important; min-width: 0 !important; padding: 14px 12px 92px; }
-  html.is-mobile .main-head { margin-bottom: 14px; }
-  html.is-mobile .main-title { display: none; }
-  html.is-mobile .main-head .head-icons { display: none; }
-  html.is-mobile .sub-grid,
-  html.is-mobile .two-col,
-  html.is-mobile .pay-grid { grid-template-columns: 1fr; }
-  html.is-mobile .card { padding: 16px; border-radius: 12px; margin-bottom: 14px; }
-  html.is-mobile .sub-card { padding: 15px; }
-  html.is-mobile .search-wrap { flex-wrap: wrap; padding: 11px 12px; }
-  html.is-mobile .search-icon { order: 1; }
-  html.is-mobile .search-input { order: 2; min-width: calc(100% - 76px); font-size: 0.9rem; }
-  html.is-mobile .clear-button { order: 3; }
-  html.is-mobile .search-lang { order: 4; width: 100%; justify-content: center; margin-top: 8px; }
-  html.is-mobile .lang-btn { flex: 1; padding: 7px 10px; }
-  html.is-mobile .chip-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-  html.is-mobile .chip-row::-webkit-scrollbar { display: none; }
-  html.is-mobile .asset-desc { display: none; }
-  html.is-mobile .asset-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 13px; }
-  html.is-mobile .asset-right { grid-column: 2; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  html.is-mobile .asset-price { font-size: 0.9rem; }
-  html.is-mobile .asset-yoy { margin-top: 0; white-space: nowrap; }
-  html.is-mobile .amount-row { gap: 10px; }
-  html.is-mobile .amount-input { font-size: 1.55rem; min-width: 0; }
-  html.is-mobile .quick-add { display: grid; grid-template-columns: repeat(3, 1fr); }
-  html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
-  html.is-mobile .confirm-btn { width: 100%; }
-  html.is-mobile .first-purchase-actions { flex-direction: column; }
-  html.is-mobile .first-purchase-btn { width: 100%; }
-  html.is-mobile .toast-container { left: 12px; right: 12px; bottom: 82px; }
-  html.is-mobile .toast { justify-content: center; }
-  html.is-mobile .sheet-overlay { align-items: flex-end; padding: 0; }
-  html.is-mobile .sheet { max-width: 100%; border-radius: 18px 18px 0 0; animation: sheet-up 0.24s ease; }
-  html.is-mobile .sheet-body { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
+  .split-name-label, .backup-options-label, .pay-section-label { font-size: .78rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+  .split-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .split-item { border-bottom: 1px solid var(--line); }
+  .split-item-tk { font-weight: 700; } .split-item-nm { font-size: .76rem; color: var(--muted); }
+  .split-item-av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; margin-right: 10px; }
+  .split-item-main { flex: 1; }
+  .split-remove { border: 0; background: none; color: var(--faint); cursor: pointer; }
+  .split-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .split-total { font-weight: 700; color: var(--green); }
+  .split-total.off { color: #b45309; }
+  .split-empty { font-size: .8rem; color: var(--muted); }
+  .in-split { border-color: var(--green) !important; background: var(--green-soft) !important; }
 
+  .review-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .88rem; }
+  .review-sub { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); padding: 3px 0 3px 12px; }
+  .confirm-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; gap: 16px; }
+  .total-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; }
+  .confirm-btn .spinner { display: none; }
+
+  .summary-panel { display: none; background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 8px; padding: 16px; margin-top: 16px; }
+  .summary-panel.visible { display: block; }
+  .first-purchase { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--green-border); }
+  .first-purchase-title { font-weight: 700; }
+  .first-purchase-desc { font-size: .82rem; color: var(--muted); margin-bottom: 10px; }
+  .first-purchase-actions { display: flex; gap: 8px; }
+  .first-purchase-result { display: none; align-items: center; gap: 8px; color: var(--green); font-weight: 600; }
+  .first-purchase-result.visible { display: flex; }
+
+  .plan { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 10px; background: var(--surface); }
+  .plan-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 0; background: none; cursor: pointer; text-align: left; }
+  .plan-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .plan-main { flex: 1; }
+  .plan-name { font-weight: 700; }
+  .plan-meta { font-size: .78rem; color: var(--muted); }
+  .plan-body { display: none; padding: 0 16px 16px; }
+  .plan.open .plan-body { display: block; }
+  .plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .plan-pay { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 8px; }
+  .plan-pay-label { font-size: .74rem; color: var(--faint); font-weight: 700; text-transform: uppercase; }
+  .plan-pay-main { font-weight: 700; margin: 4px 0 10px; }
+  .plan-backup-row { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; padding: 10px 0; border-top: 1px solid var(--line); }
+  .hist-tabs { display: flex; gap: 6px; margin: 10px 0; }
+  .hist-panel { display: none; }
+  .hist-panel.active { display: block; }
+  .op-filters { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .op-text { font-size: .86rem; }
+  .op-date { font-size: .74rem; color: var(--faint); }
+  .buy-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .buy-q { font-weight: 700; } .buy-sub { font-size: .76rem; color: var(--muted); }
+  .buy-a { font-weight: 700; text-align: right; } .buy-status { font-size: .76rem; color: var(--green); text-align: right; }
+  .buys-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .manage-empty { text-align: center; color: var(--muted); padding: 20px 0; font-size: .86rem; }
+  .skip-flag, .acc-flag { font-size: .72rem; font-weight: 600; border-radius: 999px; padding: 3px 10px; display: inline-block; margin-top: 4px; }
+  .skip-flag { color: #b45309; background: #fef3e2; } .acc-flag { color: var(--green); background: var(--green-soft); }
+  .acc-progress { background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+  .acc-progress-top { display: flex; justify-content: space-between; font-size: .8rem; }
+  .acc-bar { height: 6px; background: #d7e8dd; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+  .acc-bar span { display: block; height: 100%; background: var(--green); }
+  .acc-eta { font-size: .74rem; color: var(--green); margin-top: 6px; }
+  .bottom-nav { display: none; }
+  html.is-mobile .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); justify-content: space-around; padding: 8px 0; z-index: 100; }
+  .bn-item { display: flex; flex-direction: column; align-items: center; font-size: .68rem; color: var(--faint); }
+  .bn-item.active { color: var(--green); }
 </style>
 </head>
 <body>
@@ -535,110 +254,117 @@
 </script>
 <canvas id="confetti-canvas"></canvas>
 
-<div class="app">
+<div class="app uk-grid uk-grid-collapse" data-uk-grid-margin>
   <!-- Sidebar (desktop) -->
-  <aside class="sidebar">
-    <div class="nav-head">Денежные средства</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Вывод денег</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Пополнить счет</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Конвертация валюты</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Пакетный перевод активов</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 16l-4-4 4-4"/><path d="M17 8l4 4-4 4"/><path d="M3 12h18"/></svg>Перевод между счетами</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>Долгосрочное размещение денег</div>
-    <div class="nav-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>Рекурренты</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Подтверждение источника средств</div>
-
-    <div class="nav-head">Персональные данные</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>Смена Email</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Смена номера телефона</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Тест на инвестиционный опыт</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Форма W-8BEN</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Изменение сведений</div>
-
-    <button class="new-order-btn">New Order</button>
-    <div class="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Logout</div>
+  <aside class="sidebar uk-width-medium-1-5 uk-visible-large">
+    <div class="logo uk-margin-small-bottom">InvestGrow</div>
+    <ul class="uk-nav uk-nav-side">
+      <li class="uk-nav-header">Денежные средства</li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Вывод денег</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Пополнить счет</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Конвертация валюты</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Пакетный перевод активов</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 16l-4-4 4-4"/><path d="M17 8l4 4-4 4"/><path d="M3 12h18"/></svg>Перевод между счетами</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>Долгосрочное размещение денег</a></li>
+      <li class="uk-active"><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>Рекурренты</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Подтверждение источника средств</a></li>
+      <li class="uk-nav-header">Персональные данные</li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>Смена Email</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Смена номера телефона</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Тест на инвестиционный опыт</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Форма W-8BEN</a></li>
+      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Изменение сведений</a></li>
+    </ul>
+    <button class="new-order-btn uk-button uk-button-primary uk-width-1-1 uk-margin-top">New Order</button>
+    <a href="#" class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Logout</a>
   </aside>
 
   <!-- Mobile top bar -->
-  <div class="mobile-topbar">
+  <div class="mobile-topbar uk-hidden-large">
     <span class="mobile-title">Регулярные инвестиции</span>
-    <span style="color:var(--blue)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
   </div>
 
   <!-- Main -->
-  <main class="main">
-    <div class="main-head">
+  <main class="main uk-width-medium-4-5">
+    <div class="main-head uk-flex uk-flex-middle uk-flex-space-between">
       <h1 class="main-title">Регулярные инвестиции</h1>
       <div class="head-icons">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </div>
     </div>
 
     <div class="type-select">
-      <div class="type-select-label">Тип операции</div>
-      <div class="sub-grid">
-        <div class="sub-card" data-sub="investments">
-          <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></div>
-          <div><div class="sub-title">Регулярные инвестиции</div><div class="sub-desc">Автоматическая покупка выбранного инструмента</div></div>
+      <div class="type-select-label uk-text-bold uk-margin-small-bottom">Тип операции</div>
+      <div class="sub-grid uk-grid uk-grid-small" data-uk-grid-margin>
+        <div class="uk-width-medium-1-2">
+          <div class="uk-panel uk-panel-box sub-card" data-sub="investments">
+            <div class="uk-flex"><span class="sub-icon uk-margin-small-right"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>
+            <div><div class="sub-title uk-text-bold">Регулярные инвестиции</div><div class="sub-desc uk-text-muted uk-text-small">Автоматическая покупка выбранного инструмента</div></div></div>
+          </div>
         </div>
-        <div class="sub-card" data-sub="payments">
-          <div class="sub-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div>
-          <div><div class="sub-title">Регулярные платежи</div><div class="sub-desc">Автоматическое пополнение брокерского счёта</div></div>
+        <div class="uk-width-medium-1-2">
+          <div class="uk-panel uk-panel-box sub-card" data-sub="payments">
+            <div class="uk-flex"><span class="sub-icon uk-margin-small-right"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span>
+            <div><div class="sub-title uk-text-bold">Регулярные платежи</div><div class="sub-desc uk-text-muted uk-text-small">Автоматическое пополнение брокерского счёта</div></div></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="flow-progress">
-      <span id="progress-text">Выберите тип операции</span>
-      <span class="flow-progress-track"><span id="progress-bar" class="flow-progress-bar"></span></span>
+    <div class="flow-progress uk-margin-bottom">
+      <span id="progress-text" class="uk-text-small uk-text-muted">Выберите тип операции</span>
+      <div class="uk-progress uk-progress-success uk-progress-mini uk-margin-small-top">
+        <div id="progress-bar" class="uk-progress-bar" style="width:0%"></div>
+      </div>
     </div>
 
     <section class="step locked" data-step="1" id="step-1" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">1</span>
+        <span class="step-number">2</span>
         <span class="step-title-wrap"><span class="step-title">Инструмент</span><span class="step-value" id="step-value-1">Не выбран</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
       <div class="inst-mode" id="inst-mode">
-        <button type="button" class="inst-mode-btn active" data-mode="single">Один инструмент</button>
-        <button type="button" class="inst-mode-btn" data-mode="split">Набор из нескольких</button>
+        <button type="button" class="inst-mode-btn active uk-button uk-button-small uk-button-primary" data-mode="single">Один инструмент</button>
+        <button type="button" class="inst-mode-btn uk-button uk-button-small" data-mode="split">Набор из нескольких</button>
       </div>
 
-      <div class="split-builder" id="split-builder" hidden>
+      <div class="split-builder uk-panel uk-panel-box uk-alert-success" id="split-builder" hidden>
         <div class="split-name-label">Название набора</div>
-        <input type="text" id="split-name" class="split-name-input" placeholder="Например, Ядро US &amp; Europe" maxlength="40" autocomplete="off">
+        <input type="text" id="split-name" class="split-name-input uk-input uk-form-width-large" placeholder="Например, Ядро US &amp; Europe" maxlength="40" autocomplete="off">
         <div class="split-suggest" id="split-suggest"></div>
         <div class="split-list" id="split-list"></div>
         <div class="split-empty" id="split-empty">Добавьте 2 и более инструмента из списка ниже — тап добавляет в набор.</div>
         <div class="split-foot" id="split-foot" hidden>
           <div class="split-total" id="split-total">Итого 0%</div>
-          <button type="button" class="split-evenly" id="split-evenly">Поровну</button>
+          <button type="button" class="split-evenly uk-button uk-button-small" id="split-evenly">Поровну</button>
         </div>
       </div>
 
       <p class="step-help" id="inst-help">Найдите и выберите один инструмент для регулярной покупки.</p>
       <div class="search-wrap">
         <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
-        <input type="text" id="search-input" class="search-input" placeholder="Введите тикер, название или слово по-русски" autocomplete="off">
-        <button type="button" id="clear-button" class="clear-button" aria-label="Очистить поиск"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
+        <input type="text" id="search-input" class="search-input uk-input" placeholder="Введите тикер, название или слово по-русски" autocomplete="off">
+        <button type="button" id="clear-button" class="clear-button uk-button uk-button-mini uk-button-link" aria-label="Очистить поиск"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
         <div class="search-lang" role="group" aria-label="Язык поиска">
-          <button type="button" class="lang-btn active" data-lang="ru">RU</button>
-          <button type="button" class="lang-btn" data-lang="en">EN</button>
+          <button type="button" class="lang-btn active uk-button uk-button-small uk-button-primary" data-lang="ru">RU</button>
+          <button type="button" class="lang-btn uk-button uk-button-small" data-lang="en">EN</button>
         </div>
       </div>
       <div class="col-label">Коллекции</div>
       <div class="chip-row" id="chip-row"></div>
       <div class="asset-list" id="asset-list"></div>
-      <button type="button" class="split-done" id="split-done" hidden disabled>Готово — собрать набор</button>
+      <button type="button" class="split-done uk-button uk-button-primary uk-width-1-1" id="split-done" hidden disabled>Готово — собрать набор</button>
       </div>
     </section>
 
     <section class="step locked" data-step="2" id="step-2" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">2</span>
+        <span class="step-number">3</span>
         <span class="step-title-wrap"><span class="step-title">Валюта</span><span class="step-value" id="step-value-2">Не выбрана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
@@ -647,43 +373,44 @@
         <div class="freq-options" id="currency-options">
           <div class="freq-opt" data-currency="EUR"><span>EUR</span><span class="check">€</span></div>
           <div class="freq-opt" data-currency="USD"><span>USD</span><span class="check">$</span></div>
+          <div class="freq-opt" data-currency="PLN"><span>PLN</span><span class="check">zł</span></div>
         </div>
-        <select id="currency" class="cur-select" hidden><option value="EUR">EUR</option><option value="USD">USD</option></select>
+        <select id="currency" class="cur-select" hidden><option value="EUR">EUR</option><option value="USD">USD</option><option value="PLN">PLN</option></select>
       </div>
     </section>
 
     <section class="step locked" data-step="3" id="step-3" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">3</span>
+        <span class="step-number">4</span>
         <span class="step-title-wrap"><span class="step-title">Сумма</span><span class="step-value" id="step-value-3">Не указана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
         <div class="amount-row">
-          <input type="text" id="amount" class="amount-input" inputmode="decimal" placeholder="0.00" value="">
+          <input type="text" id="amount" class="amount-input uk-input" inputmode="decimal" placeholder="0.00" value="">
           <strong id="amount-currency-label">EUR</strong>
         </div>
         <div class="quick-add">
-          <button type="button" class="quick-btn" data-add="100">+100</button>
-          <button type="button" class="quick-btn" data-add="500">+500</button>
-          <button type="button" class="quick-btn" data-add="1000">+1000</button>
+          <button type="button" class="quick-btn uk-button uk-button-small" data-add="100">+100</button>
+          <button type="button" class="quick-btn uk-button uk-button-small" data-add="500">+500</button>
+          <button type="button" class="quick-btn uk-button uk-button-small" data-add="1000">+1000</button>
         </div>
-        <div class="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
-        <div class="accumulate-opt" id="accumulate-opt">
+        <div class="amount-note" id="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
+        <label class="accumulate-opt" id="accumulate-opt">
           <div class="accumulate-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="5"/><path d="M13.5 5.5a5 5 0 1 1 2 9.6"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5"/></svg></div>
           <div class="accumulate-text">
             <div class="accumulate-title">Накапливать до целой акции</div>
             <div class="accumulate-desc">Если суммы не хватает на целую акцию, остаток копится и покупка исполняется, как только средств достаточно. Деньги не простаивают, дробных акций нет.</div>
           </div>
-          <label class="switch"><input type="checkbox" id="accumulate-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></label>
-        </div>
-        <div class="step-actions"><button type="button" class="step-next" id="amount-next" disabled>Продолжить</button></div>
+          <span class="switch"><input type="checkbox" id="accumulate-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></span>
+        </label>
+        <div class="step-actions"><button type="button" class="step-next uk-button uk-button-primary uk-width-1-1" id="amount-next" disabled>Продолжить</button></div>
       </div>
     </section>
 
     <section class="step locked" data-step="4" id="step-4" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">4</span>
+        <span class="step-number">5</span>
         <span class="step-title-wrap"><span class="step-title">Частота</span><span class="step-value" id="step-value-4">Не выбрана</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
@@ -697,73 +424,70 @@
 
     <section class="step locked" data-step="5" id="step-5" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">5</span>
+        <span class="step-number">6</span>
         <span class="step-title-wrap"><span class="step-title">Способ оплаты</span><span class="step-value" id="step-value-5">Не выбран</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
-      <div class="pay-section-label">Основной источник — автосписание</div>
-      <div class="pay-grid">
-        <div class="pay-card" id="pay-saved">
+      <div class="pay-section-label uk-text-small uk-text-muted uk-text-uppercase">Основной источник — автосписание</div>
+      <div class="pay-grid uk-grid uk-grid-small" data-uk-grid-margin>
+        <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-saved">
           <div class="card-brand"></div>
           <div><div class="card-num">•••• 6619</div><div class="card-issuer">Revolut Ltd</div></div>
-        </div>
-        <div class="pay-card" id="pay-account">
+        </div></div>
+        <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-card2">
+          <div class="card-brand card-brand-alt"></div>
+          <div><div class="card-num">•••• 4477</div><div class="card-issuer">N26 Bank</div></div>
+        </div></div>
+        <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-account">
           <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
           <div><div class="card-num">Брокерский счёт</div><div class="card-issuer">Баланс · EUR</div></div>
-        </div>
-        <div class="pay-card pay-add" id="pay-add">
+        </div></div>
+        <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-blik">
+          <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M6 5.5h12"/><path d="M6 18h12"/><path d="M10 21h4"/></svg></div>
+          <div><div class="card-num">BLIK</div><div class="card-issuer">+48 •• ••• 67 89</div></div>
+        </div></div>
+        <div class="uk-width-1-1"><div class="pay-card pay-add uk-panel uk-panel-box uk-text-center" id="pay-add">
           <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
           Новая карта
-        </div>
+        </div></div>
       </div>
-      <div class="backup-source" id="backup-source" style="display:none">
-        <div class="backup-main">
+      <div class="pay-currency-note" id="pay-currency-note" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        Для PLN доступны только BLIK и брокерский счёт — карты работают в EUR/USD.
+      </div>
+      <div class="backup-source uk-panel uk-panel-box uk-margin-top" id="backup-source" style="display:none">
+        <label class="backup-main">
           <div class="backup-icon" id="backup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
           <div class="backup-text">
-            <div class="backup-title" id="backup-title">Резервный источник — брокерский счёт</div>
-            <div class="backup-desc" id="backup-desc">Если списание с карты не пройдёт, покупка оплачивается с баланса брокерского счёта. Снижает число пропущенных пополнений.</div>
+            <div class="backup-title" id="backup-title">Резервный источник</div>
+            <div class="backup-desc" id="backup-desc">Если списание с основного источника не пройдёт, поручение будет оплачено из резерва.</div>
           </div>
-          <label class="switch"><input type="checkbox" id="backup-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></label>
+          <span class="switch"><input type="checkbox" id="backup-toggle"><span class="switch-track"><span class="switch-thumb"></span></span></span>
+        </label>
+        <div class="backup-options" id="backup-options" hidden>
+          <div class="backup-options-label">Выберите резерв</div>
+          <div class="backup-chip-row" id="backup-chip-row"></div>
         </div>
       </div>
+      <div class="pay-consents" id="pay-consents">
+        <label class="agree-row">
+          <input type="checkbox" id="check-tos" class="uk-checkbox">
+                    <span>Я соглашаюсь настроить автоматические повторяющиеся платежи в соответствии с <a href="#">условиями предоставления услуг</a></span>
+        </label>
+        <label class="agree-row" id="check-data-row" style="display:none">
+          <input type="checkbox" id="check-data" class="uk-checkbox">
+                    <span>Я принимаю соглашение о хранении данных карты.</span>
+        </label>
+      </div>
+      <div class="step-actions"><button type="button" class="step-next uk-button uk-button-primary uk-width-1-1" id="pay-next" disabled>Продолжить</button></div>
       </div>
     </section>
 
     <section class="step locked" data-step="6" id="step-6" hidden>
       <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">6</span>
-        <span class="step-title-wrap"><span class="step-title">Условия автоплатежей</span><span class="step-value" id="step-value-6">Требуется согласие</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="step-body">
-      <label class="agree-row">
-        <input type="checkbox" id="check-tos">
-        <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-        <span>Я соглашаюсь настроить автоматические повторяющиеся платежи в соответствии с <a href="#">условиями предоставления услуг</a></span>
-      </label>
-      </div>
-    </section>
-
-    <section class="step locked" data-step="7" id="step-7" hidden>
-      <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">7</span>
-        <span class="step-title-wrap"><span class="step-title">Хранение данных карты</span><span class="step-value" id="step-value-7">Требуется согласие</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="step-body">
-      <label class="agree-row">
-        <input type="checkbox" id="check-data">
-        <span class="cbx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-        <span>Я принимаю соглашение о хранении данных карты.</span>
-      </label>
-      </div>
-    </section>
-
-    <section class="step locked" data-step="8" id="step-8" hidden>
-      <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">8</span>
-        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-8">Доступно после заполнения</span></span>
+        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-6">Доступно после заполнения</span></span>
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
@@ -773,7 +497,7 @@
           <div class="total-label">Общая сумма списания</div>
           <div class="total-value" id="total-value">1,000.00 EUR</div>
         </div>
-        <button type="button" id="submit-btn" class="confirm-btn" disabled>
+        <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large uk-width-1-1" disabled>
           <span class="btn-text">Подтвердить поручение</span>
           <div class="spinner"></div>
         </button>
@@ -794,12 +518,12 @@
               <span id="first-purchase-result-text"></span>
             </div>
           </div>
-          <button type="button" id="open-manage" class="manage-link">Управление поручениями →</button>
+          <button type="button" id="open-manage" class="manage-link uk-button uk-button-link">Управление поручениями →</button>
         </div>
       </div>
       </div>
     </section>
-    <div class="wizard-nav"><button type="button" class="wizard-back" id="wizard-back" hidden>← Назад</button></div>
+    <div class="wizard-nav"><button type="button" class="wizard-back uk-button uk-button-link" id="wizard-back" hidden>← Назад</button></div>
   </main>
 </div>
 
@@ -825,7 +549,7 @@
       <label class="hide-canceled"><input type="checkbox" id="hide-canceled"><span>Скрывать отменённые</span></label>
     </div>
     <div class="plan-list" id="plan-list"></div>
-    <button type="button" class="manage-new" id="manage-new"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>Создать новое поручение</button>
+    <button type="button" class="manage-new uk-button uk-button-primary uk-width-1-1" id="manage-new"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>Создать новое поручение</button>
   </div>
 </div>
 
@@ -852,8 +576,8 @@
         <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span><span>Применяется ко всем поручениям</span></div>
         <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span>Отключить в любое время</span></div>
       </div>
-      <button type="button" class="sheet-primary" id="backup-sheet-enable">Включить</button>
-      <button type="button" class="sheet-skip" id="backup-sheet-skip">Пропустить сейчас</button>
+      <button type="button" class="sheet-primary uk-button uk-button-primary uk-width-1-1" id="backup-sheet-enable">Включить</button>
+      <button type="button" class="sheet-skip uk-button uk-button-link uk-width-1-1" id="backup-sheet-skip">Пропустить сейчас</button>
     </div>
   </div>
 </div>
@@ -887,11 +611,20 @@ var instruments = [
   {id:21,base:'CCJ',  ex:'US', name:'Cameco',              price:52.30,  yoy:64.8, desc:'Крупнейший добытчик урана'},
   {id:22,base:'URA',  ex:'US', name:'Global X Uranium ETF',price:31.40,  yoy:38.2, isETF:true, desc:'ETF на урановую отрасль'},
   {id:23,base:'NLR',  ex:'US', name:'VanEck Uranium+Nuclear ETF',price:92.10,yoy:29.5,isETF:true, desc:'Атомная энергетика и уран'},
-  {id:24,base:'BWXT', ex:'US', name:'BWX Technologies',    price:105.60, yoy:33.1, desc:'Ядерные технологии и оборона'}
+  {id:24,base:'BWXT', ex:'US', name:'BWX Technologies',    price:105.60, yoy:33.1, desc:'Ядерные технологии и оборона'},
+  {id:25,base:'PKO',  ex:'PL', name:'PKO Bank Polski',      price:72.40,  yoy:18.3, desc:'Крупнейший банк Польши'},
+  {id:26,base:'PKN',  ex:'PL', name:'PKN Orlen',            price:68.90,  yoy:-4.2, desc:'Нефтегазовый концерн Польши'},
+  {id:27,base:'KGH',  ex:'PL', name:'KGHM Polska Miedź',    price:148.50, yoy:22.7, desc:'Крупный производитель меди и серебра'},
+  {id:28,base:'CDR',  ex:'PL', name:'CD Projekt',           price:245.80, yoy:15.4, desc:'Разработчик видеоигр (Cyberpunk, Ведьмак)'},
+  {id:29,base:'ALE',  ex:'PL', name:'Allegro.eu',           price:38.20,  yoy:9.1,  desc:'Крупнейшая e-commerce платформа Польши'},
+  {id:30,base:'DNP',  ex:'PL', name:'Dino Polska',          price:412.60, yoy:11.8, desc:'Сеть продуктовых супермаркетов'},
+  {id:31,base:'LPP',  ex:'PL', name:'LPP S.A.',             price:17420.00, yoy:14.6, desc:'Крупнейший польский производитель одежды (Reserved, Cropp)'},
+  {id:32,base:'W20TR',ex:'PL', name:'Beta ETF WIG20TR',     price:284.90, yoy:16.9, isETF:true, desc:'ETF на индекс 20 крупнейших компаний Польши'}
 ];
 
 var collections = [
   {id:'popular',   title:'Популярные',        items:[1,2,3,4]},
+  {id:'poland',    title:'Польша (GPW)',      items:[25,26,27,28,29,30,31,32]},
   {id:'topetf',    title:'ТОП ETF',           items:[5,6,7]},
   {id:'euetf',     title:'Европейские ETF',   items:[8,9,10,11,5]},
   {id:'semis',     title:'Полупроводники',    items:[2,12,13,14]},
@@ -924,7 +657,15 @@ var searchAliases = {
   CCJ:  {ru:['уран','атомная энергия','ядерная энергетика'], en:['cameco','uranium','nuclear energy']},
   URA:  {ru:['уран etf','атомная энергия','ядерная энергетика'], en:['uranium etf','nuclear energy','global x uranium']},
   NLR:  {ru:['атомная энергетика','уран','ядерный etf'], en:['nuclear etf','uranium','nuclear energy']},
-  BWXT: {ru:['ядерные технологии','атомная энергетика','оборона'], en:['nuclear technologies','defense','bwxt']}
+  BWXT: {ru:['ядерные технологии','атомная энергетика','оборона'], en:['nuclear technologies','defense','bwxt']},
+  PKO:  {ru:['пко','банк польши','польский банк','польша','варшава','gpw'], en:['pko bank polski','polish bank','poland','warsaw','gpw']},
+  PKN:  {ru:['орлен','нефть','польша','варшава','gpw'], en:['orlen','oil','poland','warsaw','gpw']},
+  KGH:  {ru:['кгхм','медь','серебро','польша','варшава','gpw'], en:['kghm','copper','silver','poland','warsaw','gpw']},
+  CDR:  {ru:['cd projekt','ведьмак','киберпанк','игры','видеоигры','польша'], en:['cd projekt','witcher','cyberpunk','video games','poland']},
+  ALE:  {ru:['аллегро','маркетплейс','экоммерс','польша','варшава'], en:['allegro','marketplace','ecommerce','poland','warsaw']},
+  DNP:  {ru:['дино','супермаркеты','ритейл','польша','варшава'], en:['dino polska','supermarkets','retail','poland','warsaw']},
+  LPP:  {ru:['лпп','одежда','ретейл','reserved','кропп','польша','варшава'], en:['lpp','clothing','apparel','retail','reserved','poland','warsaw']},
+  W20TR:{ru:['виг20','wig20','индекс польши','широкий рынок','этф польша','польша'], en:['wig20','poland index','broad market','poland etf']}
 };
 
 function normalizeSearchText(t){
@@ -950,7 +691,7 @@ function updateSearchPlaceholder(){
     : 'Search ticker, company or keyword';
 }
 
-var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupPrompted:false, accumulate:false, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
+var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupMethod:null, backupPrompted:false, accumulate:false, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
 var SPLIT_SUGGEST = ['Ядро US & Europe','Развитые & Развивающиеся','Дивидендный','Технологии', 'Всепогодный'];
 var firstSchedule = true;
 
@@ -961,7 +702,7 @@ function color(t){ var c=['#15824a','#3b82f6','#8b5cf6','#f59e0b','#0ea5e9','#ec
 
 // ===== Manage orders (transparent history) =====
 var plans = [
-  { id:'AA-95648', seed:'AAPL', badge:'A', name:'AAPL.US · Apple Inc.', amount:'€1,000', interval:'Раз в неделю', next:'05.08.26', planId:'95648', status:'active',
+  { id:'AA-95648', seed:'AAPL', badge:'A', name:'AAPL.US · Apple Inc.', amount:'€1,000', interval:'Раз в неделю', next:'05.08.26', planId:'95648', status:'active', pay:'card', backupOn:true, backupMethod:'account',
     ops:[
       {d:'28.07.26', t:'Поручение создано · основной источник — карта Revolut •••• 6619, резерв — брокерский счёт', kind:'info', cat:'change'},
       {d:'28.07.26', t:'Списание €1,000 с карты — успешно', kind:'ok', cat:'charge'},
@@ -973,7 +714,7 @@ var plans = [
       {d:'04.08.26', q:'4 AAPL', p:'€248.75', a:'€995.00', s:'Исполнено'},
       {d:'28.07.26', q:'4 AAPL', p:'€238.10', a:'€952.40', s:'Исполнено'}
     ] },
-  { id:'VW-95651', seed:'VWCE', badge:'V', name:'VWCE.DE · FTSE All-World', amount:'€500', interval:'Раз в месяц', next:'01.08.26', planId:'95651', status:'active',
+  { id:'VW-95651', seed:'VWCE', badge:'V', name:'VWCE.DE · FTSE All-World', amount:'€500', interval:'Раз в месяц', next:'01.08.26', planId:'95651', status:'active', pay:'account', backupOn:false, backupMethod:null,
     ops:[
       {d:'01.07.26', t:'Поручение создано · основной источник — брокерский счёт', kind:'info', cat:'change'},
       {d:'01.07.26', t:'Списание €500 со счёта — успешно', kind:'ok', cat:'charge'}
@@ -981,7 +722,7 @@ var plans = [
     buys:[
       {d:'01.07.26', q:'4 VWCE', p:'€113.10', a:'€452.40', s:'Исполнено'}
     ] },
-  { id:'NV-95655', seed:'NVDA', badge:'N', name:'NVDA.US · NVIDIA', amount:'€50', interval:'Раз в неделю', next:'06.08.26', planId:'95655', status:'active', accumulate:true, _sym:'€', _carry:80, _price:120, _amt:50,
+  { id:'NV-95655', seed:'NVDA', badge:'N', name:'NVDA.US · NVIDIA', amount:'€50', interval:'Раз в неделю', next:'06.08.26', planId:'95655', status:'active', pay:'account', backupOn:false, backupMethod:null, accumulate:true, _sym:'€', _carry:80, _price:120, _amt:50,
     ops:[
       {d:'08.07.26', t:'Поручение создано · основной источник — брокерский счёт', kind:'info', cat:'change'},
       {d:'08.07.26', t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'},
@@ -993,7 +734,7 @@ var plans = [
     buys:[
       {d:'22.07.26', q:'1 NVDA', p:'€120.00', a:'€120.00', s:'Исполнено'}
     ] },
-  { id:'TS-95612', seed:'TSLA', badge:'T', name:'TSLA.US · Tesla Inc.', amount:'€250', interval:'Раз в неделю', next:'—', planId:'95612', status:'canceled', canceledDate:'20.06.26', canceledReason:'отменено по инициативе пользователя',
+  { id:'TS-95612', seed:'TSLA', badge:'T', name:'TSLA.US · Tesla Inc.', amount:'€250', interval:'Раз в неделю', next:'—', planId:'95612', status:'canceled', canceledDate:'20.06.26', canceledReason:'отменено по инициативе пользователя', pay:'card', backupOn:false, backupMethod:null,
     ops:[
       {d:'02.06.26', t:'Поручение создано', kind:'info', cat:'change'},
       {d:'09.06.26', t:'Списание €250 — успешно', kind:'ok', cat:'charge'},
@@ -1027,18 +768,54 @@ function undoSkip(id){
   toast('Пропуск отменён.');
   openPlanId = id; renderPlans();
 }
+function planBackupCandidates(p){
+  // В карточке «Управления» резервом могут быть только счёт и BLIK — карты как резерв не предлагаются.
+  return PAY_METHOD_ORDER.filter(function(m){
+    if (m === p.pay) return false;
+    if (isCardMethod(m)) return false;
+    return true;
+  });
+}
+function setPlanBackupOn(id, on){
+  var p = plans.filter(function(x){ return x.id===id; })[0];
+  if (!p || p.status!=='active' || !p.pay) return;
+  p.backupOn = on;
+  if (on && !p.backupMethod) p.backupMethod = planBackupCandidates(p)[0] || null;
+  p.ops.push({d:fmtDate(new Date()), t: on ? ('Резервный источник включён — '+payMainLabel(p.backupMethod)) : 'Резервный источник выключен', kind:'info', cat:'change'});
+  toast(on ? 'Резервный источник включён.' : 'Резервный источник выключен.');
+  openPlanId = id; renderPlans();
+}
+function setPlanBackupMethod(id, method){
+  var p = plans.filter(function(x){ return x.id===id; })[0];
+  if (!p || p.status!=='active' || !p.pay || method === p.pay) return;
+  p.backupMethod = method;
+  p.ops.push({d:fmtDate(new Date()), t:'Резервный источник изменён на «'+payMainLabel(method)+'»', kind:'info', cat:'change'});
+  toast('Резервный источник обновлён.');
+  openPlanId = id; renderPlans();
+}
 
-function curSym(c){ return c === 'USD' ? '$' : '€'; }
+function curSym(c){ return c === 'USD' ? '$' : c === 'PLN' ? 'zł' : '€'; }
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function fmtDate(d){ return pad2(d.getDate()) + '.' + pad2(d.getMonth()+1) + '.' + String(d.getFullYear()).slice(2); }
 function nextDate(freq){ var d = new Date(); if (freq === 'week') d.setDate(d.getDate()+7); else d.setMonth(d.getMonth()+1); return fmtDate(d); }
 function buildPlanFromState(){
   var sym = curSym(state.currency), amt = parseAmount();
-  var srcMain = state.payMethod === 'account' ? 'брокерский счёт' : 'карта Revolut •••• 6619';
-  var srcTail = state.backupOn ? ', резерв — ' + (backupSource()==='card' ? 'карта Revolut' : 'брокерский счёт') : '';
+  var srcMain = payMainSrc(state.payMethod);
+  var srcTail = (state.backupOn && state.backupMethod) ? ', резерв — ' + payMainLabel(state.backupMethod) : '';
   var interval = state.frequency==='week' ? 'Раз в неделю' : 'Раз в месяц';
   var today = fmtDate(new Date());
   var accOp = state.accumulate ? [{d:today, t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'}] : [];
+  if (state.subscription === 'payments'){
+    return {
+      id:'NEW-'+Date.now(), seed:'CASH-'+state.currency, badge:'П',
+      name:'Регулярное пополнение · '+state.currency,
+      amount:sym+fmt(amt), interval:interval, next:nextDate(state.frequency),
+      planId:String(90000+Math.floor(Math.random()*9999)), status:'active',
+      pay:state.payMethod, backupOn:state.backupOn, backupMethod:state.backupMethod,
+      ops:[{d:today, t:'Регулярное пополнение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'}],
+      buys:[], _sym:sym, _amt:amt, _carry:0
+    };
+  }
   if (isSplit()){
     var comp = state.split.items.map(function(x){ var i=byId(x.id); return i.base+'.'+i.ex+' '+x.pct+'%'; }).join(', ');
     return {
@@ -1046,6 +823,7 @@ function buildPlanFromState(){
       name:'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.',
       amount:sym+fmt(amt), interval:interval, next:nextDate(state.frequency),
       planId:String(90000+Math.floor(Math.random()*9999)), status:'active', accumulate:state.accumulate,
+      pay:state.payMethod, backupOn:state.backupOn, backupMethod:state.backupMethod,
       ops:[
         {d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'},
         {d:today, t:'Состав набора: '+comp, kind:'info', cat:'change'}
@@ -1059,6 +837,7 @@ function buildPlanFromState(){
     name:inst.base+'.'+inst.ex+' · '+inst.name,
     amount:sym+fmt(amt), interval:interval,
     next:nextDate(state.frequency), planId:String(90000+Math.floor(Math.random()*9999)), status:'active', accumulate:state.accumulate,
+    pay:state.payMethod, backupOn:state.backupOn, backupMethod:state.backupMethod,
     ops:[{d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'}].concat(accOp),
     buys:[], _sym:sym, _price:inst.price, _base:inst.base, _amt:amt, _carry:0
   };
@@ -1076,6 +855,28 @@ function accProgress(p){
   for (var i=0; i<Math.max(0,k-1); i++) fill = shiftNext(fill, p.interval);
   return { pct:pct, carry:carry, price:price, fill:fill, ready:remaining<=0, sym:(p._sym||'€') };
 }
+function planPay(p){
+  var cands = planBackupCandidates(p);
+  var chips = cands.map(function(m){
+    return '<button type="button" class="backup-chip'+(p.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+'</button>';
+  }).join('');
+  var backupTitle = (p.backupOn && p.backupMethod) ? 'Резерв — '+esc(payMainLabel(p.backupMethod)) : 'Резервный источник выключен';
+  return '<div class="plan-pay" data-id="'+p.id+'">'+
+    '<div class="plan-pay-label">Способ оплаты</div>'+
+    '<div class="plan-pay-main">'+esc(payMainLabel(p.pay))+'</div>'+
+    '<label class="plan-backup-row'+(p.backupOn?' on':'')+'">'+
+      '<div class="backup-text">'+
+        '<div class="backup-title">'+backupTitle+'</div>'+
+        '<div class="backup-desc">Если списание с основного источника не пройдёт, поручение оплатится из резерва.</div>'+
+      '</div>'+
+      '<span class="switch"><input type="checkbox" class="plan-backup-toggle"'+(p.backupOn?' checked':'')+'><span class="switch-track"><span class="switch-thumb"></span></span></span>'+
+    '</label>'+
+    '<div class="backup-options"'+(p.backupOn?'':' hidden')+'>'+
+      '<div class="backup-options-label">Выберите резерв</div>'+
+      '<div class="backup-chip-row">'+chips+'</div>'+
+    '</div>'+
+  '</div>';
+}
 function planCard(p){
   var col = color(p.seed);
   var ops = p.ops.map(function(o){
@@ -1085,16 +886,17 @@ function planCard(p){
     return '<div class="buy-row"><div><div class="buy-q">'+esc(b.q)+'</div><div class="buy-sub">'+b.d+' · цена '+b.p+'</div></div><div><div class="buy-a">'+b.a+'</div><div class="buy-status">'+esc(b.s)+'</div></div></div>';
   }).join('') : '<div class="manage-empty">Покупок пока нет</div>';
   var actions = p.status==='active'
-    ? '<button type="button" class="plan-action" data-act="edit">Редактировать</button>'+
+    ? '<button type="button" class="plan-action uk-button uk-button-small" data-act="edit">Редактировать</button>'+
       (p.nextSkipped
         ? '<button type="button" class="plan-action accent" data-act="unskip">Вернуть платёж</button>'
-        : '<button type="button" class="plan-action" data-act="skip">Пропустить следующий</button>')+
-      '<button type="button" class="plan-action" data-act="pause">Приостановить</button><button type="button" class="plan-action danger" data-act="cancel">Отменить</button>'
-    : '<button type="button" class="plan-action" data-act="resume">Возобновить</button>';
+        : '<button type="button" class="plan-action uk-button uk-button-small" data-act="skip">Пропустить следующий</button>')+
+      '<button type="button" class="plan-action uk-button uk-button-small" data-act="pause">Приостановить</button><button type="button" class="plan-action danger" data-act="cancel">Отменить</button>'
+    : '<button type="button" class="plan-action uk-button uk-button-small" data-act="resume">Возобновить</button>';
   var statusTip = (p.status==='canceled' && p.canceledReason) ? ' title="'+esc(p.canceledDate + ' · ' + p.canceledReason)+'"' : '';
   var skipFlag = p.nextSkipped ? '<span class="skip-flag">Следующий платёж пропущен</span>' : '';
   var accFlag = p.accumulate ? '<span class="acc-flag">Накопление до акции'+((p._carry>0) ? ' · '+(p._sym||'€')+fmt(p._carry) : '')+'</span>' : '';
-  var exportBtn = p.buys.length ? '<button type="button" class="buys-export" data-id="'+p.id+'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Экспорт CSV</button>' : '';
+  var exportBtn = p.buys.length ? '<button type="button" class="buys-export uk-button uk-button-small" data-id="'+p.id+'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Экспорт CSV</button>' : '';
+  var payBlock = (p.status==='active' && p.pay && PAY_METHODS[p.pay]) ? planPay(p) : '';
   return '<div class="plan" data-id="'+p.id+'">'+
     '<button type="button" class="plan-head">'+
       '<span class="plan-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(p.badge)+'</span>'+
@@ -1104,14 +906,15 @@ function planCard(p){
     '</button>'+
     '<div class="plan-body">'+
       (function(){ var ap=accProgress(p); return ap ? '<div class="acc-progress"><div class="acc-progress-top"><span>Накоплено до следующей акции</span><span class="acc-progress-val">'+ap.sym+fmt(ap.carry)+' из '+ap.sym+fmt(ap.price)+' · '+ap.pct+'%</span></div><div class="acc-bar"><span style="width:'+ap.pct+'%"></span></div><div class="acc-eta">'+(ap.ready?'Средств достаточно — покупка исполнится в ближайшее списание':'≈ наберётся к '+ap.fill)+'</div></div>' : ''; })()+
+      payBlock+
       '<div class="plan-actions">'+actions+'</div>'+
-      '<div class="hist-tabs"><button type="button" class="hist-tab active" data-tab="ops">Операции</button><button type="button" class="hist-tab" data-tab="buys">Покупки</button></div>'+
+      '<div class="hist-tabs"><button type="button" class="hist-tab active uk-button uk-button-small uk-button-primary" data-tab="ops">Операции</button><button type="button" class="hist-tab uk-button uk-button-small" data-tab="buys">Покупки</button></div>'+
       '<div class="hist-panel active" data-panel="ops">'+
         '<div class="op-filters">'+
-          '<button type="button" class="op-filter active" data-cat="all">Все</button>'+
-          '<button type="button" class="op-filter" data-cat="charge">Списания</button>'+
-          '<button type="button" class="op-filter" data-cat="reserve">Резерв</button>'+
-          '<button type="button" class="op-filter" data-cat="change">Изменения</button>'+
+          '<button type="button" class="op-filter active uk-button uk-button-mini uk-button-primary" data-cat="all">Все</button>'+
+          '<button type="button" class="op-filter uk-button uk-button-mini" data-cat="charge">Списания</button>'+
+          '<button type="button" class="op-filter uk-button uk-button-mini" data-cat="reserve">Резерв</button>'+
+          '<button type="button" class="op-filter uk-button uk-button-mini" data-cat="change">Изменения</button>'+
         '</div>'+
         '<div class="op-list">'+ops+'</div>'+
       '</div>'+
@@ -1181,6 +984,14 @@ function bindPlans(){
   document.querySelectorAll('#plan-list .buys-export').forEach(function(b){
     b.addEventListener('click', function(){ exportCsv(b.dataset.id); });
   });
+  document.querySelectorAll('#plan-list .plan-pay').forEach(function(el){
+    var id = el.dataset.id;
+    var toggle = el.querySelector('.plan-backup-toggle');
+    toggle.addEventListener('change', function(){ setPlanBackupOn(id, this.checked); });
+    el.querySelectorAll('.backup-chip').forEach(function(btn){
+      btn.addEventListener('click', function(){ setPlanBackupMethod(id, btn.dataset.method); });
+    });
+  });
 }
 function openManage(){ renderPlans(); $('manage-view').classList.add('visible'); $('manage-view').setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; $('manage-view').scrollTop=0; }
 function closeManage(){ $('manage-view').classList.remove('visible'); $('manage-view').setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
@@ -1197,7 +1008,7 @@ function renderChips(){
   }).join('');
 }
 
-function curOf(inst){ return inst.ex==='US' ? '$' : '€'; }
+function curOf(inst){ return inst.ex==='US' ? '$' : inst.ex==='PL' ? 'zł' : '€'; }
 
 function getLogoUrl(base, market) { return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + base.toLowerCase() + '.' + (market || 'us'); }
 
@@ -1237,62 +1048,131 @@ function renderAssets(){
 function renderTotal(){ $('total-value').textContent = fmt(parseAmount())+' '+(state.currency || 'EUR'); }
 var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>';
 var BACKUP_ICON_CARD = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>';
+var BACKUP_ICON_BLIK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M6 5.5h12"/><path d="M6 18h12"/><path d="M10 21h4"/></svg>';
 
-function backupSource(){ return state.payMethod === 'account' ? 'card' : 'account'; }
-function backupShort(){ return backupSource() === 'card' ? 'карта' : 'счёт'; }
-function backupLabel(){ return backupSource() === 'card' ? 'Карта Revolut •••• 6619' : 'Брокерский счёт'; }
-function backupPhrase(){ return backupSource() === 'card' ? 'с карты Revolut' : 'с брокерского счёта'; }
+// Единый реестр способов оплаты: любой способ может резервировать любой другой
+// (карта резервирует счёт, счёт резервирует BLIK, одна карта резервирует другую и т.д.)
+var PAY_METHODS = {
+  card:    { label:'Revolut •••• 6619',       src:'карта Revolut •••• 6619',    phrase:'списание с карты Revolut •••• 6619', short:'Revolut', resPhrase:'с карты Revolut',      icon:BACKUP_ICON_CARD },
+  card2:   { label:'N26 •••• 4477',           src:'карта N26 •••• 4477',        phrase:'списание с карты N26 •••• 4477',     short:'N26',     resPhrase:'с карты N26',          icon:BACKUP_ICON_CARD },
+  account: { label:'Брокерский счёт',         src:'брокерский счёт',            phrase:'списание с брокерского счёта',       short:'счёт',    resPhrase:'с брокерского счёта',  icon:BACKUP_ICON_ACCOUNT },
+  blik:    { label:'BLIK · +48 •• ••• 67 89', src:'BLIK',                       phrase:'оплата через BLIK',                  short:'BLIK',    resPhrase:'через BLIK',           icon:BACKUP_ICON_BLIK }
+};
+var PAY_METHOD_ORDER = ['card','card2','account','blik'];
 
-// Card-data consent (step 7) is only relevant when a card is actually used —
-// either as the primary source, or as the reserve when the account is primary.
-function cardInvolved(){ return state.payMethod === 'card' || (state.payMethod === 'account' && state.backupOn); }
-function isSkipped(n){ return n === 7 && !!state.payMethod && !cardInvolved(); }
-function nextStep(n){ var m = n + 1; while (m < 8 && isSkipped(m)) m++; return Math.min(8, m); }
-function totalSteps(){ return isSkipped(7) ? 7 : 8; }
-function stepPosition(n){ var p = 0; for (var i = 1; i <= n; i++) if (!isSkipped(i)) p++; return p; }
-function renumberBadges(){ var k = 0; document.querySelectorAll('.step').forEach(function(step){ var num = parseInt(step.dataset.step); if (isSkipped(num)) return; k++; step.querySelector('.step-number').textContent = k; }); }
-function refreshFlow(){
-  if (state.currentStep >= 1){
-    var target = isSkipped(state.currentStep) ? nextStep(state.currentStep) : state.currentStep;
-    openStep(target, false);
-  } else {
-    renumberBadges();
-  }
-  validate();
+function isCardMethod(m){ return m === 'card' || m === 'card2'; }
+function currencyAllowsCard(){ return state.currency !== 'PLN'; }
+function payMainLabel(m){ return PAY_METHODS[m] ? PAY_METHODS[m].label : 'Не выбран'; }
+function payMainSrc(m){ return PAY_METHODS[m] ? PAY_METHODS[m].src : ''; }
+function payMainPhrase(m){ return PAY_METHODS[m] ? PAY_METHODS[m].phrase : ''; }
+function backupCandidates(){
+  return PAY_METHOD_ORDER.filter(function(m){
+    if (m === state.payMethod) return false;
+    if (!currencyAllowsCard() && isCardMethod(m)) return false;
+    if (state.payMethod === 'blik' && isCardMethod(m)) return false; // резерв для BLIK — только счёт, без карт
+    return true;
+  });
 }
+function defaultBackupFor(primary){
+  if (!currencyAllowsCard()) return primary === 'account' ? 'blik' : 'account';
+  return primary === 'account' ? 'card' : 'account';
+}
+
+// Согласие на хранение данных карты нужно, если карта (любая) участвует —
+// либо как основной источник, либо как выбранный резерв.
+function cardInvolved(){ return isCardMethod(state.payMethod) || (state.backupOn && isCardMethod(state.backupMethod)); }
 
 function payValue(){
   if (!state.payMethod) return 'Не выбран';
-  var main = state.payMethod === 'account' ? 'Брокерский счёт' : 'Revolut •••• 6619';
-  return main + (state.backupOn ? ' · резерв: ' + backupShort() : '');
+  var res = (state.backupOn && state.backupMethod) ? ' · резерв: ' + PAY_METHODS[state.backupMethod].short : '';
+  return payMainLabel(state.payMethod) + res;
+}
+function backupLabel(){ return state.backupMethod ? payMainLabel(state.backupMethod) : '—'; }
+function backupPhrase(){ return state.backupMethod ? PAY_METHODS[state.backupMethod].resPhrase : ''; }
+
+function renderBackupOptions(){
+  var cands = backupCandidates();
+  $('backup-chip-row').innerHTML = cands.map(function(m){
+    return '<button type="button" class="backup-chip'+(state.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+'</button>';
+  }).join('');
+  document.querySelectorAll('#backup-chip-row .backup-chip').forEach(function(btn){
+    btn.addEventListener('click', function(){ setBackupMethod(btn.dataset.method); });
+  });
 }
 function updateBackupBlock(){
-  if (backupSource() === 'card'){
-    $('backup-icon').innerHTML = BACKUP_ICON_CARD;
-    $('backup-title').textContent = 'Резервный источник — карта Revolut •••• 6619';
-    $('backup-desc').textContent = 'Если на брокерском счёте не хватит средств, покупка оплачивается с карты Revolut. Снижает число пропущенных пополнений.';
+  var m = state.backupMethod;
+  if (m && PAY_METHODS[m]){
+    $('backup-icon').innerHTML = PAY_METHODS[m].icon;
+    $('backup-title').textContent = 'Резервный источник — ' + payMainLabel(m);
+    $('backup-desc').textContent = 'Если «'+payMainLabel(state.payMethod)+'» не сработает, поручение оплачивается из резерва. Снижает число пропущенных пополнений.';
   } else {
     $('backup-icon').innerHTML = BACKUP_ICON_ACCOUNT;
-    $('backup-title').textContent = 'Резервный источник — брокерский счёт';
-    $('backup-desc').textContent = 'Если списание с карты не пройдёт, покупка оплачивается с баланса брокерского счёта. Снижает число пропущенных пополнений.';
+    $('backup-title').textContent = 'Резервный источник';
+    $('backup-desc').textContent = 'Если списание с основного источника не пройдёт, поручение будет оплачено из резерва.';
+  }
+  renderBackupOptions();
+}
+function setBackupMethod(m){
+  state.backupMethod = m;
+  updateBackupBlock();
+  if (state.payMethod) setStepValue(5, payValue());
+  updatePayStepUI();
+}
+function updatePayStepUI(){
+  var involved = cardInvolved();
+  $('check-data-row').style.display = involved ? '' : 'none';
+  var ok = !!state.payMethod && $('check-tos').checked && (!involved || $('check-data').checked);
+  $('pay-next').disabled = !ok;
+  if (state.maxStep >= 6 && orderValid()) renderReview();
+  validate();
+}
+function updatePayAvailability(){
+  var allow = currencyAllowsCard();
+  ['pay-saved','pay-card2','pay-add'].forEach(function(id){ $(id).classList.toggle('pay-disabled', !allow); });
+  $('pay-currency-note').style.display = allow ? 'none' : '';
+  if (!allow && isCardMethod(state.payMethod)){
+    state.payMethod = null;
+    state.backupOn = false;
+    state.backupMethod = null;
+    $('pay-saved').classList.remove('selected');
+    $('pay-card2').classList.remove('selected');
+    $('backup-source').style.display = 'none';
+    $('backup-toggle').checked = false;
+    setStepValue(5, 'Не выбран');
+    updatePayStepUI();
+    toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.');
+    return;
+  }
+  if (!allow && state.backupMethod && isCardMethod(state.backupMethod)){
+    state.backupMethod = defaultBackupFor(state.payMethod);
+    updateBackupBlock();
+    if (state.payMethod) setStepValue(5, payValue());
+    updatePayStepUI();
   }
 }
 function selectPay(method){
+  if (isCardMethod(method) && !currencyAllowsCard()){
+    toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.');
+    return;
+  }
   var changed = state.payMethod !== method;
   state.payMethod = method;
   if (changed){
     state.backupOn = false;
+    state.backupMethod = defaultBackupFor(method);
     state.backupPrompted = false;
     $('backup-toggle').checked = false;
     $('backup-source').classList.remove('on');
+    $('backup-options').hidden = true;
   }
   $('pay-saved').classList.toggle('selected', method === 'card');
+  $('pay-card2').classList.toggle('selected', method === 'card2');
   $('pay-account').classList.toggle('selected', method === 'account');
+  $('pay-blik').classList.toggle('selected', method === 'blik');
   updateBackupBlock();
   $('backup-source').style.display = '';
   setStepValue(5, payValue());
-  refreshFlow();
-  completeStep(5);
+  updatePayStepUI();
   if (!state.backupPrompted) openBackupSheet();
 }
 
@@ -1300,17 +1180,18 @@ function setBackup(on){
   state.backupOn = on;
   $('backup-toggle').checked = on;
   $('backup-source').classList.toggle('on', on);
+  $('backup-options').hidden = !on;
+  if (on && !state.backupMethod) state.backupMethod = defaultBackupFor(state.payMethod);
+  if (on) updateBackupBlock();
   if (state.payMethod) setStepValue(5, payValue());
-  refreshFlow();
+  updatePayStepUI();
 }
 function openBackupSheet(){
   if (state.selected){
     $('backup-sheet-badge').textContent = state.selected.base.charAt(0);
     $('backup-sheet-instrument').textContent = state.selected.base + '.' + state.selected.ex + ' — Повторяющ.';
   }
-  $('backup-sheet-desc').textContent = backupSource() === 'card'
-    ? 'Используйте карту Revolut •••• 6619, чтобы автоматически покрыть платёж, если на брокерском счёте не хватит средств. Применяется ко всем регулярным поручениям.'
-    : 'Используйте баланс брокерского счёта, чтобы автоматически покрыть платёж, если списание с карты не удастся. Применяется ко всем регулярным поручениям.';
+  $('backup-sheet-desc').textContent = 'Если списание через «'+payMainLabel(state.payMethod)+'» не пройдёт, поручение будет оплачено из резерва. Вы сами выбираете, что послужит резервом — карту, счёт или BLIK, — и можете изменить это в любой момент.';
   $('backup-sheet').classList.add('visible');
   $('backup-sheet').setAttribute('aria-hidden', 'false');
 }
@@ -1334,20 +1215,41 @@ function recompute(){
 
 function stepEl(n){ return $('step-'+n); }
 function setStepValue(n, value){ $('step-value-'+n).textContent = value; }
+function totalStepsCount(){ return state.subscription === 'payments' ? 6 : 7; } // Тип операции + шаги мастера (для платежей — без шага «Инструмент»)
 function renderProgress(){
-  if (state.currentStep < 1){
-    $('progress-text').textContent = 'Выберите тип операции';
-    $('progress-bar').style.width = '0%';
-  } else {
-    $('progress-text').textContent = 'Шаг '+stepPosition(state.currentStep)+' из '+totalSteps();
-    $('progress-bar').style.width = (stepPosition(state.currentStep)/totalSteps()*100)+'%';
+  var pos = state.currentStep < 1 ? 1 : (state.subscription === 'payments' ? state.currentStep : state.currentStep + 1);
+  var total = totalStepsCount();
+  $('progress-text').textContent = 'Шаг '+pos+' из '+total;
+  $('progress-bar').style.width = (pos/total*100)+'%';
+}
+function isFirstContentStep(n){ return state.subscription === 'payments' ? n <= 2 : n <= 1; }
+function prevStep(n){
+  if (state.subscription === 'payments' && n === 2) return 0;
+  return n <= 1 ? 0 : n-1;
+}
+function updateStepBadges(){
+  var offset = state.subscription === 'payments' ? 0 : 1;
+  document.querySelectorAll('.step').forEach(function(step){
+    var n = parseInt(step.dataset.step);
+    var badge = step.querySelector('.step-number');
+    if (badge) badge.textContent = n + offset;
+  });
+}
+function updateAmountStepForSubscription(){
+  var isPayments = state.subscription === 'payments';
+  var note = $('amount-note');
+  if (note) note.style.display = isPayments ? 'none' : '';
+  var accOpt = $('accumulate-opt');
+  if (accOpt) accOpt.style.display = isPayments ? 'none' : '';
+  if (isPayments){
+    state.accumulate = false;
+    var accToggle = $('accumulate-toggle');
+    if (accToggle) accToggle.checked = false;
   }
 }
-function prevStep(n){ if (n <= 1) return 0; var m = n-1; while (m > 1 && isSkipped(m)) m--; return m; }
 function openStep(n, scroll){
   if (n > state.maxStep) return;
   state.currentStep = n;
-  renumberBadges();
   var typeSel = document.querySelector('.type-select');
   if (n === 0){
     if (typeSel) typeSel.hidden = false;
@@ -1364,43 +1266,47 @@ function openStep(n, scroll){
       step.classList.toggle('completed', num < n);
       step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
     });
-    if (n === 8) renderReview();
+    if (n === 6) renderReview();
   }
-  $('wizard-back').hidden = n <= 1;
+  $('wizard-back').hidden = isFirstContentStep(n);
   renderProgress();
   if (scroll !== false){ try { (document.scrollingElement || document.documentElement || document.body).scrollTop = 0; window.scrollTo(0, 0); } catch(e){} }
 }
 function completeStep(n){
   stepEl(n).classList.add('completed');
-  var nxt = nextStep(n);
+  var nxt = Math.min(6, n+1);
   state.maxStep = Math.max(state.maxStep, nxt);
   openStep(nxt);
 }
 function renderReview(){
-  if (!state.selected) return;
+  if (state.subscription !== 'payments' && !state.selected) return;
   var type = state.subscription === 'investments' ? 'Регулярные инвестиции' : 'Регулярные платежи';
   var period = state.frequency === 'week' ? 'Раз в неделю' : 'Раз в месяц';
   var amt = parseAmount(), sym = curSym(state.currency);
-  var instRow;
-  if (isSplit()){
+  var instRow = '', accRow = '';
+  if (state.subscription === 'payments'){
+    // Пополнение — без инструмента и без накопления до целой акции
+  } else if (isSplit()){
     var sub = state.split.items.map(function(x){
       var i = byId(x.id), part = Math.round(amt * x.pct / 100);
       return '<div class="review-sub"><span>'+esc(i.base)+'.'+esc(i.ex)+' · '+x.pct+'%</span><span>'+sym+fmt(part)+'</span></div>';
     }).join('');
     instRow = '<div class="review-row"><span>Набор</span><strong>«'+esc(splitName())+'» · '+state.split.items.length+' инстр.</strong></div>'+
       '<div class="review-split">'+sub+'</div>';
+    accRow = '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>';
   } else {
     instRow = '<div class="review-row"><span>Инструмент</span><strong>'+esc(state.selected.base+'.'+state.selected.ex)+'</strong></div>';
+    accRow = '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>';
   }
   $('review-list').innerHTML =
     '<div class="review-row"><span>Тип операции</span><strong>'+type+'</strong></div>'+
     instRow+
     '<div class="review-row"><span>Сумма</span><strong>'+fmt(amt)+' '+state.currency+'</strong></div>'+
     '<div class="review-row"><span>Частота</span><strong>'+period+'</strong></div>'+
-    '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>'+
-    '<div class="review-row"><span>Способ оплаты</span><strong>'+(state.payMethod === 'account' ? 'Брокерский счёт' : 'Revolut •••• 6619')+'</strong></div>'+
+    accRow+
+    '<div class="review-row"><span>Способ оплаты</span><strong>'+payMainLabel(state.payMethod)+'</strong></div>'+
     '<div class="review-row"><span>Резервный источник</span><strong>'+(state.backupOn ? backupLabel() : '—')+'</strong></div>';
-  setStepValue(8, 'Готово к подтверждению');
+  setStepValue(6, 'Готово к подтверждению');
 }
 
 function selectAsset(inst){
@@ -1416,7 +1322,7 @@ function selectAsset(inst){
 function inSplit(id){ return state.split.items.some(function(x){ return x.id===id; }); }
 function splitTotal(){ return state.split.items.reduce(function(s,x){ return s + x.pct; }, 0); }
 function isSplit(){ return state.splitMode && state.split.items.length >= 2; }
-function orderValid(){ return state.splitMode ? (state.split.items.length>=2 && splitTotal()===100) : !!state.selected; }
+function orderValid(){ if (state.subscription === 'payments') return true; return state.splitMode ? (state.split.items.length>=2 && splitTotal()===100) : !!state.selected; }
 function splitName(){ return (state.split.name || '').trim() || 'Без названия'; }
 function splitAvgPrice(){ var s=0; state.split.items.forEach(function(x){ var i=byId(x.id); if(i) s += i.price * x.pct/100; }); return s; }
 function splitStepLabel(){ return 'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.'; }
@@ -1441,7 +1347,7 @@ function syncSplitTotals(){
   $('split-done').disabled = !orderValid();
   if (state.splitMode && state.maxStep > 1){
     if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
-    if (state.maxStep >= 8 && orderValid()) renderReview();
+    if (state.maxStep >= 6 && orderValid()) renderReview();
     validate();
   }
 }
@@ -1512,7 +1418,7 @@ function updateSplitUI(){
   // keep downstream in sync if the набор was already confirmed
   if (state.splitMode && state.maxStep > 1){
     if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
-    if (state.maxStep >= 8 && orderValid()) renderReview();
+    if (state.maxStep >= 6 && orderValid()) renderReview();
     validate();
   }
 }
@@ -1566,7 +1472,7 @@ function setInstMode(mode){
 }
 function renderSplitSuggest(){
   $('split-suggest').innerHTML = SPLIT_SUGGEST.map(function(s){ return '<button type="button" class="chip" data-name="'+esc(s)+'">'+esc(s)+'</button>'; }).join('');
-  document.querySelectorAll('#split-suggest .chip').forEach(function(c){ c.addEventListener('click', function(){ state.split.name=c.dataset.name; $('split-name').value=c.dataset.name; if(state.maxStep>1&&isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if(state.maxStep>=8) renderReview(); } }); });
+  document.querySelectorAll('#split-suggest .chip').forEach(function(c){ c.addEventListener('click', function(){ state.split.name=c.dataset.name; $('split-name').value=c.dataset.name; if(state.maxStep>1&&isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if(state.maxStep>=6) renderReview(); } }); });
 }
 
 function setCollection(id){ state.activeCol=id; state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); }
@@ -1637,14 +1543,18 @@ function handleSubmit(){
   setTimeout(function(){
     $('submit-btn').classList.remove('loading');
     var period = state.frequency==='week' ? 'раз в неделю' : 'раз в месяц';
-    var t = isSplit() ? ('набор «'+splitName()+'» ('+state.split.items.length+' инстр.)') : (state.selected.base+'.'+state.selected.ex);
-    var mainLine = state.payMethod === 'account'
-      ? 'списание с брокерского счёта'
-      : 'списание с карты Revolut •••• 6619';
+    var mainLine = payMainPhrase(state.payMethod);
     var payLine = mainLine + (state.backupOn ? '; при неудаче — резерв ' + backupPhrase() : '');
-    var accLine = state.accumulate ? ' Остаток накапливается до целой акции.' : '';
-    $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', '+payLine+'.'+accLine;
-    resetFirstPurchaseChoice();
+    if (state.subscription === 'payments'){
+      $('summary-text').innerHTML = 'Регулярное пополнение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> '+period+', '+payLine+'.';
+      $('first-purchase').style.display = 'none';
+    } else {
+      var t = isSplit() ? ('набор «'+splitName()+'» ('+state.split.items.length+' инстр.)') : (state.selected.base+'.'+state.selected.ex);
+      var accLine = state.accumulate ? ' Остаток накапливается до целой акции.' : '';
+      $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', '+payLine+'.'+accLine;
+      $('first-purchase').style.display = '';
+      resetFirstPurchaseChoice();
+    }
     state.createdPlan = buildPlanFromState();
     plans.unshift(state.createdPlan);
     $('summary-panel').classList.add('visible');
@@ -1665,8 +1575,17 @@ function bind(){
   document.querySelectorAll('.sub-card').forEach(function(card){ card.addEventListener('click', function(){
     state.subscription=card.dataset.sub;
     document.querySelectorAll('.sub-card').forEach(function(c){ c.classList.toggle('selected', c===card); });
-    state.maxStep = Math.max(state.maxStep, 1);
-    openStep(1, true);
+    updateStepBadges();
+    updateAmountStepForSubscription();
+    if (state.subscription === 'payments'){
+      // Регулярные платежи — это пополнение счёта, без выбора инструмента
+      state.selected = null;
+      state.maxStep = Math.max(state.maxStep, 2);
+      openStep(2, true);
+    } else {
+      state.maxStep = Math.max(state.maxStep, 1);
+      openStep(1, true);
+    }
   }); });
 
   $('search-input').addEventListener('input', function(e){ state.query=e.target.value.trim(); $('clear-button').classList.toggle('visible', !!state.query); renderChips(); renderAssets(); });
@@ -1691,10 +1610,11 @@ function bind(){
       document.querySelectorAll('#currency-options .freq-opt').forEach(function(o){ o.classList.toggle('active', o===opt); });
       setStepValue(2, state.currency);
       recompute();
+      updatePayAvailability();
       completeStep(2);
     });
   });
-  $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); });
+  $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); updatePayAvailability(); });
   $('amount').addEventListener('input', recompute);
   $('amount').addEventListener('blur', function(){ var n=parseAmount(); if (n>0) $('amount').value=fmt(n); recompute(); });
   document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmount()+parseFloat(b.dataset.add)); recompute(); }); });
@@ -1703,33 +1623,31 @@ function bind(){
   $('freq-options').addEventListener('click', function(e){ var o=e.target.closest('.freq-opt'); if (o) setFrequency(o.dataset.freq); });
 
   $('pay-saved').addEventListener('click', function(){ selectPay('card'); });
+  $('pay-card2').addEventListener('click', function(){ selectPay('card2'); });
   $('pay-account').addEventListener('click', function(){ selectPay('account'); });
-  $('pay-add').addEventListener('click', function(){ toast('Добавление карты (мок).'); });
+  $('pay-blik').addEventListener('click', function(){ selectPay('blik'); });
+  $('pay-add').addEventListener('click', function(){
+    if (!currencyAllowsCard()){ toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.'); return; }
+    toast('Добавление карты (мок).');
+  });
   $('backup-toggle').addEventListener('change', function(){ setBackup(this.checked); });
   $('backup-sheet-enable').addEventListener('click', function(){ setBackup(true); closeBackupSheet(); toast('Резервный источник включён.'); });
   $('backup-sheet-skip').addEventListener('click', closeBackupSheet);
   $('backup-sheet-close').addEventListener('click', closeBackupSheet);
   $('backup-sheet-back').addEventListener('click', closeBackupSheet);
   $('backup-sheet').addEventListener('click', function(e){ if (e.target === this) closeBackupSheet(); });
-  $('check-tos').addEventListener('change', function(){
-    setStepValue(6, this.checked ? 'Принято' : 'Требуется согласие');
-    validate();
-    if (this.checked) completeStep(6);
-  });
-  $('check-data').addEventListener('change', function(){
-    setStepValue(7, this.checked ? 'Принято' : 'Требуется согласие');
-    validate();
-    if (this.checked) completeStep(7);
-  });
+  $('check-tos').addEventListener('change', updatePayStepUI);
+  $('check-data').addEventListener('change', updatePayStepUI);
+  $('pay-next').addEventListener('click', function(){ if (!$('pay-next').disabled) completeStep(5); });
   $('submit-btn').addEventListener('click', handleSubmit);
   $('buy-now-btn').addEventListener('click', function(){ chooseFirstPurchase(true); });
   $('buy-scheduled-btn').addEventListener('click', function(){ chooseFirstPurchase(false); });
   $('open-manage').addEventListener('click', openManage);
   document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.addEventListener('click', function(){ setInstMode(b.dataset.mode); }); });
-  $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=8) renderReview(); } });
+  $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=6) renderReview(); } });
   $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
   $('split-done').addEventListener('click', finalizeSplit);
-  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); if (state.maxStep >= 8) renderReview(); });
+  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); if (state.maxStep >= 6) renderReview(); });
   $('wizard-back').addEventListener('click', function(){ openStep(prevStep(state.currentStep)); });
   $('manage-back').addEventListener('click', closeManage);
   $('manage-close').addEventListener('click', closeManage);
