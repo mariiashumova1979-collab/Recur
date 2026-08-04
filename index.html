@@ -212,6 +212,10 @@
   .pay-card { align-items: center; gap: 14px; cursor: pointer; }
   .pay-card.pay-disabled { opacity: .4; filter: grayscale(70%); cursor: not-allowed; pointer-events: none; }
   .pay-currency-note { display: flex; align-items: flex-start; gap: 6px; font-size: .78rem; color: var(--muted); margin: 10px 0 4px; }
+  /* Маркер конвертации: способ оплаты работает не в валюте поручения. */
+  .pay-fx-note { margin: 14px 0 0; }
+  .pay-fx { margin-left: auto; flex: 0 0 auto; padding: 2px 6px; border: 1px solid #f0d69a; border-radius: 2px; background: #fff8e6; color: #8a6200; font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
+  .chip-fx { margin-left: 6px; padding: 1px 4px; border: 1px solid currentColor; border-radius: 2px; font-size: .62rem; font-weight: 700; text-transform: uppercase; opacity: .7; }
   .pay-card.selected { border-color: var(--green) !important; background: var(--green-soft) !important; }
   .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); }
   .card-brand-alt { background: linear-gradient(135deg,#1a2233 0%,#3b4a63 100%); }
@@ -287,7 +291,10 @@
   .asset-row:hover { border-color: var(--line-strong); }
   .asset-row.selected, .asset-row.in-split { border-color: var(--green); background: var(--green-soft); }
   .asset-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; font-weight: 700; font-size: .95rem; position: relative; overflow: hidden; }
-  .asset-logo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; background: #fff; }
+  .asset-logo, .inst-logo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; background: #fff; }
+  /* Слоты аватара: буква — фолбэк под логотипом, логотип перекрывает её при успешной загрузке. */
+  .split-item-av, .plan-avatar, .sheet-head-badge { position: relative; overflow: hidden; }
+  .sheet-head-badge .inst-logo { background: #fff; }
   .asset-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .asset-ticker { font-weight: 700; font-size: .92rem; color: var(--ink); }
   .asset-name { font-size: .82rem; color: var(--muted); }
@@ -300,6 +307,17 @@
   .quick-add { display: flex; gap: 8px; margin: 10px 0; }
   .amount-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .amount-note { font-size: .78rem; color: var(--muted); display: flex; gap: 6px; margin-bottom: 6px; }
+
+  /* --- Валидация суммы, достаточность средств и раскрытие комиссии --- */
+  .field-msg { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; margin: 0 0 12px; border: 1px solid; border-radius: var(--radius-field); font-size: .82rem; line-height: 1.45; }
+  .field-msg svg { flex: 0 0 auto; margin-top: 2px; }
+  .field-msg.is-error { background: #fdecea; border-color: #f0b3ac; color: var(--red); }
+  .field-msg.is-warn  { background: #fff8e6; border-color: #f0d69a; color: #8a6200; }
+  .field-msg.is-info  { background: var(--green-soft); border-color: var(--green-border); color: var(--green-dark); }
+  .field-msg .msg-action { display: inline-block; margin-top: 6px; padding: 0; border: 0; background: none; font: inherit; font-weight: 700; color: inherit; text-decoration: underline; cursor: pointer; }
+  .amount-input.has-error { border-color: var(--red) !important; box-shadow: 0 0 0 2px rgba(204,14,0,.10) !important; }
+  .pay-funds-note { margin: 14px 0 0; }
+  .total-breakdown { font-size: .76rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
   .freq-options { display: flex; flex-direction: column; gap: 10px; }
   .freq-opt { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
   .freq-opt.active { border-color: var(--green); background: var(--green-soft); color: var(--green); }
@@ -356,7 +374,7 @@
   .review-sub { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); padding: 3px 0 3px 12px; }
   .confirm-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; gap: 16px; }
   .total-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; }
-  .confirm-btn { position: relative; }
+  .confirm-btn { position: relative; min-width: 220px; flex-shrink: 0; }
   .confirm-btn .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
   .confirm-btn.loading { pointer-events: none; opacity: .85; }
   .confirm-btn.loading .btn-text { display: none; }
@@ -404,6 +422,8 @@
   .acc-eta { font-size: .74rem; color: var(--green); margin-top: 6px; }
   .bottom-nav { display: none; }
   html.is-mobile .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); justify-content: space-around; padding: 8px 0; z-index: 100; }
+  html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
+  html.is-mobile .confirm-btn { width: 100%; min-width: 0; }
   .bn-item { display: flex; flex-direction: column; align-items: center; font-size: .68rem; color: var(--faint); }
   .bn-item.active { color: var(--green); }
 </style>
@@ -421,7 +441,7 @@
   window.addEventListener('orientationchange', applyMobileClass);
 })();
 </script>
-<canvas id="confetti-canvas"></canvas>
+<canvas id="confetti-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999"></canvas>
 
 <div class="app uk-grid uk-grid-collapse" data-uk-grid-margin>
   <!-- Sidebar (desktop) -->
@@ -565,6 +585,7 @@
           <input type="text" id="amount" class="amount-input uk-input" inputmode="decimal" placeholder="0.00" value="">
           <strong id="amount-currency-label">EUR</strong>
         </div>
+        <div class="field-msg" id="amount-feedback" hidden></div>
         <div class="quick-add">
           <button type="button" class="quick-btn uk-button uk-button-small" data-add="100">+100</button>
           <button type="button" class="quick-btn uk-button uk-button-small" data-add="500">+500</button>
@@ -609,28 +630,30 @@
         <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-saved">
           <div class="card-brand"></div>
           <div><div class="card-num">•••• 6619</div><div class="card-issuer">Revolut Ltd</div></div>
+          <span class="pay-fx" id="fx-card" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-card2">
           <div class="card-brand card-brand-alt"></div>
           <div><div class="card-num">•••• 4477</div><div class="card-issuer">N26 Bank</div></div>
+          <span class="pay-fx" id="fx-card2" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-account">
           <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
-          <div><div class="card-num">Брокерский счёт</div><div class="card-issuer">Баланс · EUR</div></div>
+          <div><div class="card-num">Брокерский счёт</div><div class="card-issuer" id="pay-account-balance">Баланс · EUR</div></div>
+          <span class="pay-fx" id="fx-account" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-blik">
           <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M6 5.5h12"/><path d="M6 18h12"/><path d="M10 21h4"/></svg></div>
           <div><div class="card-num">BLIK</div><div class="card-issuer">+48 •• ••• 67 89</div></div>
+          <span class="pay-fx" id="fx-blik" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-1-1"><div class="pay-card pay-add uk-panel uk-panel-box uk-text-center" id="pay-add">
           <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
           Новая карта
         </div></div>
       </div>
-      <div class="pay-currency-note" id="pay-currency-note" style="display:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        Для PLN доступны только BLIK и брокерский счёт — карты работают в EUR/USD.
-      </div>
+      <div class="field-msg pay-fx-note" id="pay-currency-note" data-cls="pay-fx-note" hidden></div>
+      <div class="field-msg pay-funds-note" id="pay-funds-note" data-cls="pay-funds-note" hidden></div>
       <div class="backup-source uk-panel uk-panel-box uk-margin-top" id="backup-source" style="display:none">
         <label class="backup-main">
           <div class="backup-icon" id="backup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
@@ -671,8 +694,9 @@
         <div>
           <div class="total-label">Общая сумма списания</div>
           <div class="total-value" id="total-value">1,000.00 EUR</div>
+          <div class="total-breakdown" id="total-breakdown"></div>
         </div>
-        <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large uk-width-1-1" disabled>
+        <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large" disabled>
           <span class="btn-text">Подтвердить поручение</span>
           <div class="spinner"></div>
         </button>
@@ -943,13 +967,16 @@ function undoSkip(id){
   toast('Пропуск отменён.');
   openPlanId = id; renderPlans();
 }
+// Валюта поручения — по символу суммы; нужна, чтобы пометить резервы с конвертацией.
+function planCurrency(p){
+  var s = String((p && (p._sym || p.amount)) || '');
+  if (s.indexOf('zl') > -1 || s.indexOf('z\u0142') > -1) return 'PLN';
+  if (s.indexOf('$') > -1) return 'USD';
+  return 'EUR';
+}
 function planBackupCandidates(p){
-  // В карточке «Управления» резервом могут быть только счёт и BLIK — карты как резерв не предлагаются.
-  return PAY_METHOD_ORDER.filter(function(m){
-    if (m === p.pay) return false;
-    if (isCardMethod(m)) return false;
-    return true;
-  });
+  // Резервом может быть любой способ, кроме основного.
+  return PAY_METHOD_ORDER.filter(function(m){ return m !== p.pay; });
 }
 function setPlanBackupOn(id, on){
   var p = plans.filter(function(x){ return x.id===id; })[0];
@@ -1033,12 +1060,21 @@ function accProgress(p){
 function planPay(p){
   var cands = planBackupCandidates(p);
   var chips = cands.map(function(m){
-    return '<button type="button" class="backup-chip'+(p.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+'</button>';
+    return '<button type="button" class="backup-chip'+(p.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+
+      (needsFx(m, planCurrency(p)) ? '<span class="chip-fx">конвертация</span>' : '')+'</button>';
   }).join('');
   var backupTitle = (p.backupOn && p.backupMethod) ? 'Резерв — '+esc(payMainLabel(p.backupMethod)) : 'Резервный источник выключен';
+  var pcur = planCurrency(p);
+  var fxLines = [];
+  if (needsFx(p.pay, pcur)) fxLines.push(fxPhrase(p.pay, pcur));
+  if (p.backupOn && p.backupMethod && needsFx(p.backupMethod, pcur)) fxLines.push('Резерв: ' + fxPhrase(p.backupMethod, pcur));
+  var fxBlock = fxLines.length
+    ? '<div class="field-msg is-warn">'+MSG_ICONS.warn+'<div>'+esc(fxLines.join(' '))+'</div></div>'
+    : '';
   return '<div class="plan-pay" data-id="'+p.id+'">'+
     '<div class="plan-pay-label">Способ оплаты</div>'+
     '<div class="plan-pay-main">'+esc(payMainLabel(p.pay))+'</div>'+
+    fxBlock+
     '<label class="plan-backup-row'+(p.backupOn?' on':'')+'">'+
       '<div class="backup-text">'+
         '<div class="backup-title">'+backupTitle+'</div>'+
@@ -1074,7 +1110,7 @@ function planCard(p){
   var payBlock = (p.status==='active' && p.pay && PAY_METHODS[p.pay]) ? planPay(p) : '';
   return '<div class="plan" data-id="'+p.id+'">'+
     '<button type="button" class="plan-head">'+
-      '<span class="plan-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(p.badge)+'</span>'+
+      '<span class="plan-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(p.badge)+(function(){ var t=planTicker(p); return t ? logoTag(t.base, t.ex) : ''; })()+'</span>'+
       '<div class="plan-main"><div class="plan-name">'+esc(p.name)+'</div><div class="plan-meta">'+esc(p.amount)+' · '+esc(p.interval)+(p.next!=='—'?' · следующее '+p.next:'')+' · ID '+p.planId+'</div>'+((skipFlag||accFlag)?'<div class="plan-flags">'+skipFlag+accFlag+'</div>':'')+'</div>'+
       '<span class="plan-status '+p.status+'"'+statusTip+'>'+statusLabel(p.status)+'</span>'+
       '<svg class="plan-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'+
@@ -1172,7 +1208,139 @@ function openManage(){ renderPlans(); $('manage-view').classList.add('visible');
 function closeManage(){ $('manage-view').classList.remove('visible'); $('manage-view').setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
 function rgba(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
 function fmt(v){ return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function parseAmount(){ var n=parseFloat(($('amount').value||'').replace(/[^\d.]/g,'')); return isNaN(n)?0:n; }
+// ===== Деньги: лимиты, комиссии, баланс =====
+// ДОПУЩЕНИЯ ПРОТОТИПА — реальные значения приходят из тарифов и с бэкенда.
+var LIMITS   = { EUR:{min:10, max:15000}, USD:{min:10, max:15000}, PLN:{min:50, max:60000} };
+var FEES     = { card:{pct:0.5, min:0.50}, card2:{pct:0.5, min:0.50}, account:{pct:0, min:0}, blik:{pct:0, min:0} };
+var BALANCES = { EUR:4820.00, USD:5200.00, PLN:21000.00 };
+
+// «1 000,50», «1,000.50», «1000.50» → «1000.50».
+// Прежняя реализация вырезала запятую как мусор, и «1000,50» молча превращалось в 100050.
+function normalizeAmountStr(raw){
+  var s = String(raw || '').replace(/[\s\u00A0]/g, '');
+  if (/,\d{1,2}$/.test(s)) s = s.replace(/\./g, '').replace(',', '.'); // европейский формат
+  else s = s.replace(/,/g, '');                                        // запятая как разделитель тысяч
+  return s.replace(/[^\d.]/g, '');
+}
+function amountRaw(){ var el = $('amount'); return el ? String(el.value || '').trim() : ''; }
+function parseAmount(){ var n = parseFloat(normalizeAmountStr(amountRaw())); return isNaN(n) ? 0 : n; }
+
+function limitsFor(cur){ return LIMITS[cur || 'EUR'] || LIMITS.EUR; }
+function balanceFor(cur){ var b = BALANCES[cur || 'EUR']; return typeof b === 'number' ? b : 0; }
+function feeFor(method, amt){
+  var f = FEES[method];
+  if (!f || !f.pct || !amt) return 0;
+  return Math.max(f.min, Math.round(amt * f.pct) / 100);
+}
+function totalCharge(){ var a = parseAmount(); return a + feeFor(state.payMethod, a); }
+// Цена одной единицы: акция или средневзвешенная доля набора.
+// Допущение: цена инструмента сравнивается без конвертации в валюту списания.
+function unitPrice(){
+  if (state.subscription === 'payments') return 0;
+  if (isSplit()) return splitAvgPrice();
+  return state.selected ? state.selected.price : 0;
+}
+function pluralRu(n, one, few, many){
+  var m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+  return many;
+}
+
+// Возвращает {level, text, action} либо null. level: error — блокирует, warn/info — не блокируют.
+function amountIssue(){
+  var raw = amountRaw();
+  if (!raw) return null;
+  var cur = state.currency || 'EUR', sym = curSym(cur), lim = limitsFor(cur);
+  var norm = normalizeAmountStr(raw);
+  if (!/^\d+(\.\d+)?$/.test(norm))
+    return { level:'error', text:'Введите сумму цифрами — например, 250 или 250.00.' };
+  if ((norm.split('.')[1] || '').length > 2)
+    return { level:'error', text:'Списание проходит с точностью до 0.01 ' + cur + '. Округлите сумму до двух знаков.' };
+  var n = parseFloat(norm);
+  if (n < lim.min)
+    return { level:'error', text:'Минимальная сумма поручения — ' + fmt(lim.min) + ' ' + cur + '. С меньшей суммой поручение создать нельзя.' };
+  if (n > lim.max)
+    return { level:'error', text:'Максимум на одно поручение — ' + fmt(lim.max) + ' ' + cur + '. Уменьшите сумму или создайте несколько поручений.' };
+
+  var p = unitPrice();
+  if (p > 0 && n < p){
+    var unit = isSplit() ? 'одну долю набора' : 'одну акцию';
+    if (!state.accumulate)
+      return { level:'warn',
+               text:'Суммы не хватает на ' + unit + ' (≈' + sym + fmt(p) + '). Деньги спишутся, но покупка будет отложена, и остаток не перенесётся на следующий раз.',
+               action:'Включить накопление до целой акции' };
+    var periods = Math.ceil(p / n);
+    return { level:'info',
+             text:'Суммы пока не хватает на ' + unit + ' (≈' + sym + fmt(p) + '). Остаток копится — первая покупка пройдёт примерно через ' +
+                  periods + ' ' + pluralRu(periods, 'списание', 'списания', 'списаний') + '.' };
+  }
+  return null;
+}
+function amountBlocked(){ var i = amountIssue(); return !!i && i.level === 'error'; }
+
+var MSG_ICONS = {
+  error: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 17h.01"/></svg>',
+  warn:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  info:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+};
+function paintMsg(el, issue, actionId){
+  if (!el) return;
+  if (!issue){ el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.className = 'field-msg is-' + issue.level + (el.dataset.cls ? ' ' + el.dataset.cls : '');
+  el.innerHTML = MSG_ICONS[issue.level] + '<div>' + esc(issue.text) +
+    (issue.action ? '<button type="button" class="msg-action" id="' + actionId + '">' + esc(issue.action) + '</button>' : '') + '</div>';
+}
+
+function renderAmountFeedback(){
+  var issue = amountIssue();
+  paintMsg($('amount-feedback'), issue, 'amount-msg-action');
+  var input = $('amount');
+  if (input) input.classList.toggle('has-error', !!issue && issue.level === 'error');
+  var act = $('amount-msg-action');
+  if (act) act.addEventListener('click', function(){
+    var t = $('accumulate-toggle');
+    if (!t) return;
+    t.checked = true;
+    state.accumulate = true;
+    $('accumulate-opt').classList.toggle('on', true);
+    if (state.maxStep >= 6) renderReview();
+    recompute();
+  });
+}
+
+// Достаточность средств на брокерском счёте — предупреждение, а не блокировка:
+// поручение создаётся, но первое списание может не пройти.
+function fundsIssue(){
+  if (state.payMethod !== 'account' && state.backupMethod !== 'account') return null;
+  var cur = state.currency || 'EUR', sym = curSym(cur), bal = balanceFor(cur), need = totalCharge();
+  if (!need) return null;
+  if (state.payMethod === 'account' && need > bal){
+    if (state.backupOn && state.backupMethod && state.backupMethod !== 'account')
+      return { level:'info', text:'На брокерском счёте ' + sym + fmt(bal) + ', для первого списания нужно ' + sym + fmt(need) +
+                                  '. Платёж автоматически уйдёт с резерва — ' + backupLabel() + '.' };
+    return { level:'warn',
+             text:'На брокерском счёте ' + sym + fmt(bal) + ', для первого списания нужно ' + sym + fmt(need) +
+                  '. Без резервного источника платёж будет пропущен, а покупка не состоится.',
+             action:'Включить резервный источник' };
+  }
+  if (state.backupOn && state.backupMethod === 'account' && need > bal)
+    return { level:'warn', text:'Резерв — брокерский счёт, на нём ' + sym + fmt(bal) + ', а нужно ' + sym + fmt(need) +
+                                '. Если основное списание не пройдёт, резерв тоже не покроет платёж.' };
+  return null;
+}
+function renderFundsNote(){
+  var el = $('pay-funds-note');
+  paintMsg(el, fundsIssue(), 'funds-msg-action');
+  var act = $('funds-msg-action');
+  if (act) act.addEventListener('click', function(){ setBackup(true); });
+  var balEl = $('pay-account-balance');
+  if (balEl){
+    var cur = state.currency || 'EUR';
+    balEl.textContent = 'Баланс ' + curSym(cur) + fmt(balanceFor(cur));
+  }
+}
 
 function toast(m){ $('toast-message').textContent=m; $('toast').classList.add('visible'); setTimeout(function(){ $('toast').classList.remove('visible'); },3000); }
 function confetti(){ var c=$('confetti-canvas'),ctx=c.getContext('2d'); c.width=innerWidth;c.height=innerHeight; var p=[],cols=['#15824a','#FFD700','#2563eb','#4ECDC4','#45B7D1']; for(var i=0;i<100;i++)p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8}); var f=0;(function a(){ctx.clearRect(0,0,c.width,c.height);p.forEach(function(o){o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs;ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);ctx.restore();});if(++f<100)requestAnimationFrame(a);else ctx.clearRect(0,0,c.width,c.height);})(); }
@@ -1185,7 +1353,22 @@ function renderChips(){
 
 function curOf(inst){ return inst.ex==='US' ? '$' : inst.ex==='PL' ? 'zł' : '€'; }
 
-function getLogoUrl(base, market) { return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' + base.toLowerCase() + '.' + (market || 'us'); }
+// Логотипы инструментов берём с Freedom24 — единый источник для всех аватаров интерфейса.
+function getLogoUrl(base, market) {
+  return 'https://freedom24.com/logos/get-logo-by-ticker?ticker=' +
+         encodeURIComponent(String(base || '').toLowerCase() + '.' + String(market || 'us').toLowerCase());
+}
+// Буква под логотипом остаётся видимой, если картинка не загрузилась (нет логотипа, оффлайн, блокировщик).
+function logoTag(base, market, cls) {
+  if (!base) return '';
+  return '<img class="' + (cls || 'inst-logo') + '" src="' + getLogoUrl(base, market) +
+         '" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
+}
+// Тикер поручения вида «AAPL.US · Apple Inc.». У пополнений и наборов тикера нет — остаётся буква.
+function planTicker(p) {
+  var m = /^([A-Za-z0-9]{1,8})\.([A-Za-z]{2,4})\s/.exec(String((p && p.name) || ''));
+  return m ? { base: m[1], ex: m[2] } : null;
+}
 
 function assetRow(inst){
   if (!inst) return '';
@@ -1193,7 +1376,7 @@ function assetRow(inst){
   var pos = inst.yoy>=0, col=color(inst.base);
   return '<div class="asset-row'+(sel ? (state.splitMode?' in-split':' selected') : '')+'" data-id="'+inst.id+'">'+
     '<div class="asset-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(inst.base.charAt(0))+
-      '<img class="asset-logo" src="'+getLogoUrl(inst.base, inst.ex.toLowerCase())+'" onerror="this.style.display=\'none\'" alt="">'+
+      logoTag(inst.base, inst.ex, 'asset-logo')+
     '</div>'+
     '<div class="asset-main">'+
       '<div class="asset-ticker">'+esc(inst.base)+'.'+esc(inst.ex)+'</div>'+
@@ -1220,7 +1403,17 @@ function renderAssets(){
     : '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.88rem">Ничего не найдено. Попробуйте тикер, название или слово вроде «яблоко».</div>';
 }
 
-function renderTotal(){ $('total-value').textContent = fmt(parseAmount())+' '+(state.currency || 'EUR'); }
+function renderTotal(){
+  var amt = parseAmount(), cur = state.currency || 'EUR', fee = feeFor(state.payMethod, amt);
+  $('total-value').textContent = fmt(amt + fee) + ' ' + cur;
+  var bd = $('total-breakdown');
+  if (!bd) return;
+  var parts = [ fee > 0 ? fmt(amt) + ' ' + cur + ' + комиссия за платёж ' + fmt(fee) + ' ' + cur
+                        : 'Комиссия за платёж не взимается' ];
+  if (state.frequency) parts.push('первое списание ' + nextDate(state.frequency));
+  if (needsFx(state.payMethod, cur)) parts.push('сумма в валюте источника — по курсу на день списания');
+  bd.textContent = parts.join(' · ');
+}
 var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>';
 var BACKUP_ICON_CARD = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>';
 var BACKUP_ICON_BLIK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M6 5.5h12"/><path d="M6 18h12"/><path d="M10 21h4"/></svg>';
@@ -1236,21 +1429,43 @@ var PAY_METHODS = {
 var PAY_METHOD_ORDER = ['card','card2','account','blik'];
 
 function isCardMethod(m){ return m === 'card' || m === 'card2'; }
-function currencyAllowsCard(){ return state.currency !== 'PLN'; }
+// Валюты, в которых способ оплаты работает напрямую. ДОПУЩЕНИЕ ПРОТОТИПА.
+// Всё, что вне списка, доступно — но через конвертацию, о которой предупреждаем.
+var METHOD_CURRENCIES = {
+  card:    ['EUR','USD'],
+  card2:   ['EUR','USD'],
+  account: ['EUR','USD','PLN'],
+  blik:    ['PLN']
+};
+// Кто выполняет конвертацию: 'self' — мы, по своему курсу; 'issuer' — банк-эмитент карты.
+var FX_BY = { card:'issuer', card2:'issuer', account:'self', blik:'self' };
+function methodCurrencies(m){ return METHOD_CURRENCIES[m] || []; }
+function needsFx(m, cur){
+  var list = methodCurrencies(m);
+  return !!m && !!cur && list.length > 0 && list.indexOf(cur) === -1;
+}
+function fxFrom(m){ return methodCurrencies(m).join('/'); }
+function fxPhrase(m, cur){
+  var from = fxFrom(m), label = payMainLabel(m);
+  if (FX_BY[m] === 'self')
+    return '«' + label + '» работает в ' + from + ', а поручение — в ' + cur +
+           '. Конвертацию выполним мы: спишем в ' + from + ' сумму, эквивалентную сумме поручения, по нашему курсу на момент списания. Точная сумма в ' + from + ' зависит от курса в день платежа.';
+  return '«' + label + '» работает в ' + from + ', а списание пойдёт в ' + cur +
+         '. Конвертацию выполнит банк-эмитент карты по своему курсу — сумма в валюте карты станет известна в день списания.';
+}
+// Любой способ может резервировать любой другой; ограничение только одно — резерв не совпадает с основным.
+function currencyAllowsCard(){ return true; }
 function payMainLabel(m){ return PAY_METHODS[m] ? PAY_METHODS[m].label : 'Не выбран'; }
 function payMainSrc(m){ return PAY_METHODS[m] ? PAY_METHODS[m].src : ''; }
 function payMainPhrase(m){ return PAY_METHODS[m] ? PAY_METHODS[m].phrase : ''; }
 function backupCandidates(){
-  return PAY_METHOD_ORDER.filter(function(m){
-    if (m === state.payMethod) return false;
-    if (!currencyAllowsCard() && isCardMethod(m)) return false;
-    if (state.payMethod === 'blik' && isCardMethod(m)) return false; // резерв для BLIK — только счёт, без карт
-    return true;
-  });
+  return PAY_METHOD_ORDER.filter(function(m){ return m !== state.payMethod; });
 }
 function defaultBackupFor(primary){
-  if (!currencyAllowsCard()) return primary === 'account' ? 'blik' : 'account';
-  return primary === 'account' ? 'card' : 'account';
+  var cands = PAY_METHOD_ORDER.filter(function(m){ return m !== primary; });
+  var native = cands.filter(function(m){ return !needsFx(m, state.currency); });
+  var pick = native.length ? native : cands;
+  return pick.indexOf('account') > -1 ? 'account' : pick[0];
 }
 
 // Согласие на хранение данных карты нужно, если карта (любая) участвует —
@@ -1268,7 +1483,8 @@ function backupPhrase(){ return state.backupMethod ? PAY_METHODS[state.backupMet
 function renderBackupOptions(){
   var cands = backupCandidates();
   $('backup-chip-row').innerHTML = cands.map(function(m){
-    return '<button type="button" class="backup-chip'+(state.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+'</button>';
+    return '<button type="button" class="backup-chip'+(state.backupMethod===m?' active':'')+'" data-method="'+m+'">'+esc(PAY_METHODS[m].label)+
+      (needsFx(m, state.currency) ? '<span class="chip-fx">конвертация</span>' : '')+'</button>';
   }).join('');
   document.querySelectorAll('#backup-chip-row .backup-chip').forEach(function(btn){
     btn.addEventListener('click', function(){ setBackupMethod(btn.dataset.method); });
@@ -1298,38 +1514,39 @@ function updatePayStepUI(){
   $('check-data-row').style.display = involved ? '' : 'none';
   var ok = !!state.payMethod && $('check-tos').checked && (!involved || $('check-data').checked);
   $('pay-next').disabled = !ok;
+  renderFxBadges();
+  renderFxNote();
+  renderFundsNote();
+  renderTotal();
   if (state.maxStep >= 6 && orderValid()) renderReview();
   validate();
 }
+var FX_BADGES = { card:'fx-card', card2:'fx-card2', account:'fx-account', blik:'fx-blik' };
+function renderFxBadges(){
+  ['pay-saved','pay-card2','pay-account','pay-blik','pay-add'].forEach(function(id){ $(id).classList.remove('pay-disabled'); });
+  PAY_METHOD_ORDER.forEach(function(m){
+    var el = $(FX_BADGES[m]);
+    if (el) el.hidden = !needsFx(m, state.currency);
+  });
+}
+function renderFxNote(){
+  var cur = state.currency, lines = [];
+  if (cur && state.payMethod && needsFx(state.payMethod, cur)) lines.push(fxPhrase(state.payMethod, cur));
+  if (cur && state.backupOn && state.backupMethod && needsFx(state.backupMethod, cur))
+    lines.push('Резерв: ' + fxPhrase(state.backupMethod, cur));
+  paintMsg($('pay-currency-note'), lines.length ? { level:'warn', text: lines.join(' ') } : null);
+}
 function updatePayAvailability(){
-  var allow = currencyAllowsCard();
-  ['pay-saved','pay-card2','pay-add'].forEach(function(id){ $(id).classList.toggle('pay-disabled', !allow); });
-  $('pay-currency-note').style.display = allow ? 'none' : '';
-  if (!allow && isCardMethod(state.payMethod)){
-    state.payMethod = null;
-    state.backupOn = false;
-    state.backupMethod = null;
-    $('pay-saved').classList.remove('selected');
-    $('pay-card2').classList.remove('selected');
-    $('backup-source').style.display = 'none';
-    $('backup-toggle').checked = false;
-    setStepValue(5, 'Не выбран');
-    updatePayStepUI();
-    toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.');
-    return;
-  }
-  if (!allow && state.backupMethod && isCardMethod(state.backupMethod)){
+  renderFxBadges();
+  renderFxNote();
+  if (state.backupMethod && state.backupMethod === state.payMethod){
     state.backupMethod = defaultBackupFor(state.payMethod);
-    updateBackupBlock();
-    if (state.payMethod) setStepValue(5, payValue());
-    updatePayStepUI();
   }
+  updateBackupBlock();
+  if (state.payMethod) setStepValue(5, payValue());
+  updatePayStepUI();
 }
 function selectPay(method){
-  if (isCardMethod(method) && !currencyAllowsCard()){
-    toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.');
-    return;
-  }
   var changed = state.payMethod !== method;
   state.payMethod = method;
   if (changed){
@@ -1363,7 +1580,7 @@ function setBackup(on){
 }
 function openBackupSheet(){
   if (state.selected){
-    $('backup-sheet-badge').textContent = state.selected.base.charAt(0);
+    $('backup-sheet-badge').innerHTML = esc(state.selected.base.charAt(0)) + logoTag(state.selected.base, state.selected.ex);
     $('backup-sheet-instrument').textContent = state.selected.base + '.' + state.selected.ex + ' — Повторяющ.';
   }
   $('backup-sheet-desc').textContent = 'Если списание через «'+payMainLabel(state.payMethod)+'» не пройдёт, поручение будет оплачено из резерва. Вы сами выбираете, что послужит резервом — карту, счёт или BLIK, — и можете изменить это в любой момент.';
@@ -1377,13 +1594,15 @@ function closeBackupSheet(){
 }
 
 function validate(){
-  var ok = !!state.subscription && parseAmount()>0 && orderValid() && !!state.currency && !!state.frequency && !!state.payMethod && $('check-tos').checked && (!cardInvolved() || $('check-data').checked);
+  var ok = !!state.subscription && parseAmount()>0 && !amountBlocked() && orderValid() && !!state.currency && !!state.frequency && !!state.payMethod && $('check-tos').checked && (!cardInvolved() || $('check-data').checked);
   $('submit-btn').disabled = !ok;
 }
 
 function recompute(){
   renderTotal();
-  $('amount-next').disabled = parseAmount() <= 0;
+  renderAmountFeedback();
+  renderFundsNote();
+  $('amount-next').disabled = parseAmount() <= 0 || amountBlocked();
   if (parseAmount() > 0) $('step-value-3').textContent = fmt(parseAmount())+' '+(state.currency || '');
   validate();
 }
@@ -1477,10 +1696,20 @@ function renderReview(){
     '<div class="review-row"><span>Тип операции</span><strong>'+type+'</strong></div>'+
     instRow+
     '<div class="review-row"><span>Сумма</span><strong>'+fmt(amt)+' '+state.currency+'</strong></div>'+
+    '<div class="review-row"><span>Комиссия за платёж</span><strong>'+(feeFor(state.payMethod, amt) > 0 ? fmt(feeFor(state.payMethod, amt))+' '+state.currency : 'Не взимается')+'</strong></div>'+
     '<div class="review-row"><span>Частота</span><strong>'+period+'</strong></div>'+
+    '<div class="review-row"><span>Первое списание</span><strong>'+nextDate(state.frequency || 'month')+'</strong></div>'+
     accRow+
     '<div class="review-row"><span>Способ оплаты</span><strong>'+payMainLabel(state.payMethod)+'</strong></div>'+
-    '<div class="review-row"><span>Резервный источник</span><strong>'+(state.backupOn ? backupLabel() : '—')+'</strong></div>';
+    '<div class="review-row"><span>Резервный источник</span><strong>'+(state.backupOn ? backupLabel() : '—')+'</strong></div>'+
+    (function(){
+      var parts = [];
+      if (needsFx(state.payMethod, state.currency)) parts.push(fxFrom(state.payMethod)+' → '+state.currency);
+      if (state.backupOn && state.backupMethod && needsFx(state.backupMethod, state.currency))
+        parts.push('резерв ' + fxFrom(state.backupMethod)+' → '+state.currency);
+      return parts.length ? '<div class="review-row"><span>Конвертация</span><strong>'+esc(parts.join(' · '))+'</strong></div>' : '';
+    })();
+  renderTotal();
   setStepValue(6, 'Готово к подтверждению');
 }
 
@@ -1575,7 +1804,7 @@ function splitItemRow(x){
   var i = byId(x.id); if (!i) return '';
   var col = color(i.base);
   return '<div class="split-item" data-id="'+i.id+'">'+
-    '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+'</span>'+
+    '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+logoTag(i.base, i.ex)+'</span>'+
     '<div class="split-item-main"><div class="split-item-tk">'+esc(i.base)+'.'+esc(i.ex)+'</div><div class="split-item-nm">'+esc(i.name)+'</div></div>'+
     '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><input type="text" inputmode="numeric" class="split-pct-input" value="'+x.pct+'" maxlength="3" aria-label="Доля в процентах"><span class="split-pct-suffix">%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
     '<button type="button" class="split-remove" aria-label="Убрать"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'+
@@ -1792,7 +2021,7 @@ function bind(){
   $('amount').addEventListener('input', recompute);
   $('amount').addEventListener('blur', function(){ var n=parseAmount(); if (n>0) $('amount').value=fmt(n); recompute(); });
   document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmount()+parseFloat(b.dataset.add)); recompute(); }); });
-  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0){ setStepValue(3, fmt(parseAmount())+' '+state.currency); completeStep(3); } });
+  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0 && !amountBlocked()){ setStepValue(3, fmt(parseAmount())+' '+state.currency); completeStep(3); } });
 
   $('freq-options').addEventListener('click', function(e){ var o=e.target.closest('.freq-opt'); if (o) setFrequency(o.dataset.freq); });
 
@@ -1800,10 +2029,7 @@ function bind(){
   $('pay-card2').addEventListener('click', function(){ selectPay('card2'); });
   $('pay-account').addEventListener('click', function(){ selectPay('account'); });
   $('pay-blik').addEventListener('click', function(){ selectPay('blik'); });
-  $('pay-add').addEventListener('click', function(){
-    if (!currencyAllowsCard()){ toast('Для PLN карты недоступны — выберите BLIK или брокерский счёт.'); return; }
-    toast('Добавление карты (мок).');
-  });
+  $('pay-add').addEventListener('click', function(){ toast('Добавление карты (мок).'); });
   $('backup-toggle').addEventListener('change', function(){ setBackup(this.checked); });
   $('backup-sheet-enable').addEventListener('click', function(){ setBackup(true); closeBackupSheet(); toast('Резервный источник включён.'); });
   $('backup-sheet-skip').addEventListener('click', closeBackupSheet);
@@ -1821,7 +2047,7 @@ function bind(){
   $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=6) renderReview(); } });
   $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
   $('split-done').addEventListener('click', finalizeSplit);
-  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); if (state.maxStep >= 6) renderReview(); });
+  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); renderAmountFeedback(); if (state.maxStep >= 6) renderReview(); });
   $('wizard-back').addEventListener('click', function(){ openStep(prevStep(state.currentStep)); });
   $('manage-back').addEventListener('click', closeManage);
   $('manage-close').addEventListener('click', closeManage);
