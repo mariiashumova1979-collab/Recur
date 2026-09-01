@@ -210,6 +210,15 @@
   html.is-mobile .mobile-topbar { display: flex !important; width: 100%; box-sizing: border-box; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
   html.is-mobile .app { min-height: 0; }
   html.is-mobile .main { padding: 20px 16px 88px; }
+  /* На мобильном .sub-grid/.pay-grid всегда в одну колонку. Убираем из уравнения flex,
+     gap и гуттеры UIkit (margin-left:-10px у контейнера + padding-left:10px у детей):
+     их наложение сдвигало первую карточку относительно второй ровно на ширину gap. */
+  html.is-mobile .sub-grid, html.is-mobile .pay-grid { display: block; margin-left: 0; gap: 0; }
+  html.is-mobile .sub-grid > *, html.is-mobile .pay-grid > * {
+    display: block; width: 100%; box-sizing: border-box; float: none;
+    margin: 0 0 14px; padding-left: 0;
+  }
+  html.is-mobile .sub-grid > *:last-child, html.is-mobile .pay-grid > *:last-child { margin-bottom: 0; }
   .mobile-topbar { display: none; }
   .pay-card { align-items: center; gap: 14px; cursor: pointer; }
   .pay-card.pay-disabled { opacity: .4; filter: grayscale(70%); cursor: not-allowed; pointer-events: none; }
@@ -307,6 +316,22 @@
   .asset-yoy.pos { color: var(--green); }
   .asset-yoy.neg { color: var(--red); }
   .quick-add { display: flex; gap: 8px; margin: 10px 0; }
+  /* --- Покупка по количеству --- */
+  .buy-mode { display: inline-flex; background: var(--bg); border-radius: 10px; padding: 3px; margin-bottom: 16px; gap: 2px; }
+  .buy-mode-btn { border-radius: 7px; }
+  .qty-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .qty-row:last-child { border-bottom: 0; }
+  .qty-price { font-size: .76rem; color: var(--muted); }
+  .qty-input { width: 42px; text-align: right; font-weight: 700; border: 0; background: transparent; font-family: var(--sans); }
+  .qty-cost { margin-left: auto; text-align: right; min-width: 96px; }
+  .qty-cost-val { font-weight: 700; font-size: .9rem; }
+  .qty-cost-pct { font-size: .74rem; color: var(--muted); }
+  .qty-total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0 2px; margin-top: 4px; border-top: 1px solid var(--line); }
+  .qty-total-label { font-size: .82rem; color: var(--muted); }
+  .qty-total-val { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; }
+  html.is-mobile .qty-row { row-gap: 8px; }
+  html.is-mobile .qty-row .split-item-main { flex: 1 1 calc(100% - 40px); }
+  html.is-mobile .qty-cost { min-width: 0; }
   .amount-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .amount-note { font-size: .78rem; color: var(--muted); display: flex; gap: 6px; margin-bottom: 6px; }
 
@@ -383,6 +408,12 @@
   .confirm-btn.loading .spinner { display: block; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  .type-select-manage { margin-top: 16px; }
+  .confirm-intro { font-size: .88rem; color: var(--muted); margin: 0 0 14px; }
+  .sheet-wide { max-width: 520px; }
+  .confirm-modal-body { padding: 20px; }
+  .confirm-modal-body .review-list { margin-bottom: 0; }
+  html.is-mobile .confirm-modal-body { padding: 16px; }
   .summary-panel { display: none; background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 8px; padding: 16px; margin-top: 16px; }
   .summary-panel.visible { display: block; }
   .first-purchase { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--green-border); }
@@ -509,6 +540,9 @@
           </div>
         </div>
       </div>
+      <div class="type-select-manage">
+        <button type="button" id="open-manage-top" class="manage-link uk-button uk-button-link">Управление поручениями →</button>
+      </div>
     </div>
 
     <div class="flow-progress uk-margin-bottom">
@@ -583,15 +617,29 @@
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
-        <div class="amount-row">
-          <input type="text" id="amount" class="amount-input uk-input" inputmode="decimal" placeholder="0.00" value="">
-          <strong id="amount-currency-label">EUR</strong>
+        <div class="buy-mode" id="buy-mode" hidden>
+          <button type="button" class="buy-mode-btn active uk-button uk-button-small uk-button-primary" data-buymode="amount">По сумме</button>
+          <button type="button" class="buy-mode-btn uk-button uk-button-small" data-buymode="qty">По количеству</button>
         </div>
-        <div class="field-msg" id="amount-feedback" hidden></div>
-        <div class="quick-add">
-          <button type="button" class="quick-btn uk-button uk-button-small" data-add="100">+100</button>
-          <button type="button" class="quick-btn uk-button uk-button-small" data-add="500">+500</button>
-          <button type="button" class="quick-btn uk-button uk-button-small" data-add="1000">+1000</button>
+        <div id="amount-block">
+          <div class="amount-row">
+            <input type="text" id="amount" class="amount-input uk-input" inputmode="decimal" placeholder="0.00" value="">
+            <strong id="amount-currency-label">EUR</strong>
+          </div>
+          <div class="field-msg" id="amount-feedback" hidden></div>
+          <div class="quick-add">
+            <button type="button" class="quick-btn uk-button uk-button-small" data-add="100">+100</button>
+            <button type="button" class="quick-btn uk-button uk-button-small" data-add="500">+500</button>
+            <button type="button" class="quick-btn uk-button uk-button-small" data-add="1000">+1000</button>
+          </div>
+        </div>
+        <div id="qty-block" hidden>
+          <div id="qty-list"></div>
+          <div class="qty-total">
+            <span class="qty-total-label" id="qty-total-label">Оценка списания</span>
+            <span class="qty-total-val" id="qty-total-val">—</span>
+          </div>
+          <div class="field-msg" id="qty-feedback" hidden></div>
         </div>
         <div class="amount-note" id="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
         <label class="accumulate-opt" id="accumulate-opt">
@@ -691,17 +739,9 @@
         <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="step-body">
-      <div class="review-list" id="review-list"></div>
-      <div class="confirm-foot">
-        <div>
-          <div class="total-label">Общая сумма списания</div>
-          <div class="total-value" id="total-value">1,000.00 EUR</div>
-          <div class="total-breakdown" id="total-breakdown"></div>
-        </div>
-        <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large" disabled>
-          <span class="btn-text">Подтвердить поручение</span>
-          <div class="spinner"></div>
-        </button>
+      <div id="confirm-cta">
+        <p class="confirm-intro">Откройте окно подтверждения, чтобы проверить все параметры поручения перед созданием.</p>
+        <div class="step-actions"><button type="button" class="step-next uk-button uk-button-primary uk-width-1-1" id="open-confirm" disabled>Проверить и подтвердить</button></div>
       </div>
       <div id="summary-panel" class="summary-panel">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
@@ -735,6 +775,30 @@
   <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>Счёт</div>
   <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Профиль</div>
 </nav>
+
+<!-- Окно подтверждения: параметры поручения перед созданием -->
+<div class="sheet-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-hidden="true">
+  <div class="sheet sheet-wide" role="document">
+    <div class="sheet-head">
+      <div class="sheet-head-title" id="confirm-modal-title">Проверка и подтверждение</div>
+      <button type="button" class="sheet-icon-btn" id="confirm-modal-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="confirm-modal-body">
+      <div class="review-list" id="review-list"></div>
+      <div class="confirm-foot">
+        <div>
+          <div class="total-label">Общая сумма списания</div>
+          <div class="total-value" id="total-value">1,000.00 EUR</div>
+          <div class="total-breakdown" id="total-breakdown"></div>
+        </div>
+        <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large" disabled>
+          <span class="btn-text">Подтвердить поручение</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="toast-container"><div id="toast" class="toast"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg><span id="toast-message"></span></div></div>
 
@@ -892,7 +956,7 @@ function updateSearchPlaceholder(){
     : 'Search ticker, company or keyword';
 }
 
-var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupMethod:null, backupPrompted:false, accumulate:false, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
+var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupMethod:null, backupPrompted:false, accumulate:false, buyMode:'amount', qty:1, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
 var SPLIT_SUGGEST = ['Ядро US & Europe','Развитые & Развивающиеся','Дивидендный','Технологии', 'Всепогодный'];
 var firstSchedule = true;
 
@@ -1008,7 +1072,8 @@ function buildPlanFromState(){
   var srcTail = (state.backupOn && state.backupMethod) ? ', резерв — ' + payMainLabel(state.backupMethod) : '';
   var interval = state.frequency==='week' ? 'Раз в неделю' : 'Раз в месяц';
   var today = fmtDate(new Date());
-  var accOp = state.accumulate ? [{d:today, t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'}] : [];
+  var accOp = (state.accumulate && !isQtyMode()) ? [{d:today, t:'Стратегия: остаток накапливается до целой акции', kind:'info', cat:'change'}] : [];
+  var qtyOp = isQtyMode() ? [{d:today, t:'Режим: покупка по количеству — '+qtyCount()+' '+pluralRu(qtyCount(),'акция','акции','акций')+' за списание, сумма пересчитывается по цене исполнения', kind:'info', cat:'change'}] : [];
   if (state.subscription === 'payments'){
     return {
       id:'NEW-'+Date.now(), seed:'CASH-'+state.currency, badge:'П',
@@ -1021,7 +1086,9 @@ function buildPlanFromState(){
     };
   }
   if (isSplit()){
-    var comp = state.split.items.map(function(x){ var i=byId(x.id); return i.base+'.'+i.ex+' '+x.pct+'%'; }).join(', ');
+    var comp = isQtyMode()
+      ? qtyProportions().map(function(r){ return r.inst.base+'.'+r.inst.ex+' '+r.qty+' шт. ('+fmtPct(r.pct)+'%)'; }).join(', ')
+      : state.split.items.map(function(x){ var i=byId(x.id); return i.base+'.'+i.ex+' '+x.pct+'%'; }).join(', ');
     return {
       id:'NEW-'+Date.now(), seed:splitName(), badge:'Σ',
       name:'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.',
@@ -1031,8 +1098,12 @@ function buildPlanFromState(){
       ops:[
         {d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'},
         {d:today, t:'Состав набора: '+comp, kind:'info', cat:'change'}
-      ].concat(accOp),
-      buys:[], _sym:sym, _amt:amt, _carry:0, _split: state.split.items.map(function(x){ var i=byId(x.id); return {base:i.base, price:i.price, pct:x.pct, carry:0}; })
+      ].concat(qtyOp, accOp),
+      buys:[], _sym:sym, _amt:amt, _carry:0, _qty: isQtyMode() ? qtyCount() : null,
+      _split: (isQtyMode() ? qtyProportions() : state.split.items).map(function(x){
+        var i = x.inst || byId(x.id);
+        return { base:i.base, price:i.price, pct:x.pct, qty: typeof x.qty === 'number' ? x.qty : null, carry:0 };
+      })
     };
   }
   var inst = state.selected;
@@ -1042,8 +1113,8 @@ function buildPlanFromState(){
     amount:sym+fmt(amt), interval:interval,
     next:nextDate(state.frequency), planId:String(90000+Math.floor(Math.random()*9999)), status:'active', accumulate:state.accumulate,
     pay:state.payMethod, backupOn:state.backupOn, backupMethod:state.backupMethod,
-    ops:[{d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'}].concat(accOp),
-    buys:[], _sym:sym, _price:inst.price, _base:inst.base, _amt:amt, _carry:0
+    ops:[{d:today, t:'Поручение создано · основной источник — '+srcMain+srcTail, kind:'info', cat:'change'}].concat(qtyOp, accOp),
+    buys:[], _sym:sym, _price:inst.price, _base:inst.base, _amt:amt, _carry:0, _qty: isQtyMode() ? qtyCount() : null
   };
 }
 
@@ -1206,6 +1277,20 @@ function bindPlans(){
     });
   });
 }
+function openConfirmModal(){
+  if ($('summary-panel').classList.contains('visible')) return; // поручение уже создано
+  if (!orderValid()) return;                                     // нечего показывать — параметры неполные
+  renderReview();
+  $('confirm-modal').classList.add('visible');
+  $('confirm-modal').setAttribute('aria-hidden', 'false');
+  document.documentElement.style.overflow = 'hidden';
+}
+function closeConfirmModal(){
+  $('confirm-modal').classList.remove('visible');
+  $('confirm-modal').setAttribute('aria-hidden', 'true');
+  document.documentElement.style.overflow = '';
+}
+function confirmModalOpen(){ return $('confirm-modal').classList.contains('visible'); }
 function openManage(){ renderPlans(); $('manage-view').classList.add('visible'); $('manage-view').setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; $('manage-view').scrollTop=0; }
 function closeManage(){ $('manage-view').classList.remove('visible'); $('manage-view').setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
 function rgba(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
@@ -1225,7 +1310,138 @@ function normalizeAmountStr(raw){
   return s.replace(/[^\d.]/g, '');
 }
 function amountRaw(){ var el = $('amount'); return el ? String(el.value || '').trim() : ''; }
-function parseAmount(){ var n = parseFloat(normalizeAmountStr(amountRaw())); return isNaN(n) ? 0 : n; }
+function parseAmountField(){ var n = parseFloat(normalizeAmountStr(amountRaw())); return isNaN(n) ? 0 : n; }
+
+// ===== Покупка по количеству =====
+// Режим доступен только для инвестиций: у пополнения нет инструмента, считать нечего.
+function qtyModeAvailable(){ return state.subscription === 'investments'; }
+function isQtyMode(){ return qtyModeAvailable() && state.buyMode === 'qty'; }
+
+// Строки количества: набор — по инструменту, один инструмент — одна строка.
+function qtyRows(){
+  if (!qtyModeAvailable()) return [];
+  if (isSplit()) return state.split.items.map(function(x){
+    var i = byId(x.id); if (!i) return null;
+    var q = qtyOf(x.qty);
+    return { id:i.id, inst:i, qty:q, cost:money(q * i.price) };
+  }).filter(Boolean);
+  if (!state.selected) return [];
+  var q = qtyOf(state.qty);
+  return [{ id:state.selected.id, inst:state.selected, qty:q, cost:money(q * state.selected.price) }];
+}
+function qtyOf(v){ var n = parseInt(v, 10); return isNaN(n) || n < 0 ? 0 : Math.min(n, 9999); }
+function money(v){ return Math.round(v * 100) / 100; }
+function qtyTotal(){ return money(qtyRows().reduce(function(s,r){ return s + r.cost; }, 0)); }
+function qtyCount(){ return qtyRows().reduce(function(s,r){ return s + r.qty; }, 0); }
+
+// Доли считаем из стоимости позиций, а не из количества штук: две акции по разной цене
+// дают разный вклад в поручение. Крупнейший остаток — чтобы сумма долей была ровно 100%.
+function qtyProportions(){
+  var rows = qtyRows(), total = qtyTotal();
+  if (!total) return rows.map(function(r){ return { id:r.id, inst:r.inst, qty:r.qty, cost:r.cost, pct:0 }; });
+  var SCALE = 10; // округляем до десятых процента
+  var raw = rows.map(function(r){ return r.cost / total * 100 * SCALE; });
+  var base = raw.map(Math.floor);
+  var rem = 100 * SCALE - base.reduce(function(s,v){ return s + v; }, 0);
+  raw.map(function(v,i){ return { i:i, frac: v - Math.floor(v) }; })
+     .sort(function(a,b){ return b.frac - a.frac; })
+     .slice(0, Math.max(0, rem))
+     .forEach(function(o){ base[o.i] += 1; });
+  return rows.map(function(r,i){ return { id:r.id, inst:r.inst, qty:r.qty, cost:r.cost, pct: base[i]/SCALE }; });
+}
+
+// Единая точка: всё, что ниже по потоку (комиссия, достаточность средств, итог, поручение),
+// работает с одной суммой независимо от того, как её задали.
+function parseAmount(){ return isQtyMode() ? qtyTotal() : parseAmountField(); }
+
+function setQty(id, v){
+  var q = qtyOf(v);
+  if (isSplit()){
+    state.split.items.forEach(function(x){ if (x.id === id) x.qty = q; });
+  } else {
+    state.qty = q;
+  }
+  renderQtyBlock();
+  recompute();
+}
+function bumpQty(id, delta){
+  var cur = isSplit()
+    ? (function(){ var f = null; state.split.items.forEach(function(x){ if (x.id === id) f = x; }); return f ? qtyOf(f.qty) : 0; })()
+    : qtyOf(state.qty);
+  setQty(id, Math.max(0, cur + delta));
+}
+// У новых позиций набора количество по умолчанию — 1 штука.
+function syncQtyItems(){
+  state.split.items.forEach(function(x){ if (typeof x.qty !== 'number') x.qty = 1; });
+  if (typeof state.qty !== 'number') state.qty = 1;
+}
+
+function renderQtyBlock(){
+  syncQtyItems();
+  var avail = qtyModeAvailable();
+  $('buy-mode').hidden = !avail;
+  if (!avail && state.buyMode !== 'amount') state.buyMode = 'amount';
+  var qty = isQtyMode();
+  $('amount-block').hidden = qty;
+  $('qty-block').hidden = !qty;
+  $('accumulate-opt').style.display = qty ? 'none' : '';   // целые акции — накапливать нечего
+  $('amount-note').style.display = qty ? 'none' : '';
+  if (!qty) return;
+
+  var rows = qtyProportions(), sym = curSym(state.currency || 'EUR'), multi = rows.length > 1;
+  $('qty-list').innerHTML = rows.map(function(r){
+    var col = color(r.inst.base);
+    return '<div class="qty-row" data-id="'+r.id+'">'+
+      '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(r.inst.base.charAt(0))+logoTag(r.inst.base, r.inst.ex)+'</span>'+
+      '<div class="split-item-main">'+
+        '<div class="split-item-tk">'+esc(r.inst.base)+'.'+esc(r.inst.ex)+'</div>'+
+        '<div class="qty-price">'+sym+fmt(r.inst.price)+' за акцию</div>'+
+      '</div>'+
+      '<div class="split-stepper">'+
+        '<button type="button" class="qty-minus" aria-label="Меньше">−</button>'+
+        '<input type="text" inputmode="numeric" class="qty-input" value="'+r.qty+'" maxlength="4" aria-label="Количество акций">'+
+        '<span class="split-pct-suffix">шт.</span>'+
+        '<button type="button" class="qty-plus" aria-label="Больше">+</button>'+
+      '</div>'+
+      '<div class="qty-cost">'+
+        '<div class="qty-cost-val">'+sym+fmt(r.cost)+'</div>'+
+        (multi ? '<div class="qty-cost-pct">'+fmtPct(r.pct)+'% набора</div>' : '')+
+      '</div>'+
+    '</div>';
+  }).join('') || '<div class="qty-price">Сначала выберите инструмент.</div>';
+
+  var total = qtyTotal(), n = qtyCount();
+  $('qty-total-label').textContent = n
+    ? 'Оценка списания · ' + n + ' ' + pluralRu(n, 'акция', 'акции', 'акций')
+    : 'Оценка списания';
+  $('qty-total-val').textContent = total ? fmt(total) + ' ' + (state.currency || 'EUR') : '—';
+
+  document.querySelectorAll('#qty-list .qty-row').forEach(function(row){
+    var id = parseInt(row.dataset.id, 10), input = row.querySelector('.qty-input');
+    row.querySelector('.qty-minus').addEventListener('click', function(){ bumpQty(id, -1); });
+    row.querySelector('.qty-plus').addEventListener('click', function(){ bumpQty(id, 1); });
+    input.addEventListener('input', function(){ setQty(id, input.value.replace(/[^\d]/g, '')); });
+  });
+}
+function fmtPct(v){ return (Math.round(v*10)/10).toFixed(1).replace(/\.0$/, ''); }
+
+function setBuyMode(mode){
+  state.buyMode = (mode === 'qty' && qtyModeAvailable()) ? 'qty' : 'amount';
+  document.querySelectorAll('#buy-mode .buy-mode-btn').forEach(function(b){
+    var on = b.dataset.buymode === state.buyMode;
+    b.classList.toggle('active', on);
+    b.classList.toggle('uk-button-primary', on);
+  });
+  renderQtyBlock();
+  recompute();
+}
+
+function amountStepLabel(){
+  var cur = state.currency || '';
+  if (!isQtyMode()) return fmt(parseAmount()) + ' ' + cur;
+  var n = qtyCount();
+  return n + ' ' + pluralRu(n, 'акция', 'акции', 'акций') + ' · ≈' + fmt(qtyTotal()) + ' ' + cur;
+}
 
 function limitsFor(cur){ return LIMITS[cur || 'EUR'] || LIMITS.EUR; }
 function balanceFor(cur){ var b = BALANCES[cur || 'EUR']; return typeof b === 'number' ? b : 0; }
@@ -1250,7 +1466,22 @@ function pluralRu(n, one, few, many){
 }
 
 // Возвращает {level, text, action} либо null. level: error — блокирует, warn/info — не блокируют.
+function qtyIssue(){
+  var rows = qtyRows();
+  if (!rows.length) return null;
+  var n = qtyCount();
+  if (!n) return { level:'error', text:'Укажите количество — хотя бы одну акцию.' };
+  var cur = state.currency || 'EUR', lim = limitsFor(cur), total = qtyTotal();
+  if (total < lim.min)
+    return { level:'error', text:'Оценка списания ' + fmt(total) + ' ' + cur + ' ниже минимума поручения (' + fmt(lim.min) + ' ' + cur + '). Увеличьте количество.' };
+  if (total > lim.max)
+    return { level:'error', text:'Оценка списания ' + fmt(total) + ' ' + cur + ' выше максимума поручения (' + fmt(lim.max) + ' ' + cur + '). Уменьшите количество.' };
+  return { level:'info',
+           text:'Оценка по текущим ценам. Списание рассчитывается по цене на момент исполнения, поэтому фактическая сумма будет отличаться.' };
+}
+
 function amountIssue(){
+  if (isQtyMode()) return qtyIssue();
   var raw = amountRaw();
   if (!raw) return null;
   var cur = state.currency || 'EUR', sym = curSym(cur), lim = limitsFor(cur);
@@ -1296,10 +1527,11 @@ function paintMsg(el, issue, actionId){
 }
 
 function renderAmountFeedback(){
-  var issue = amountIssue();
-  paintMsg($('amount-feedback'), issue, 'amount-msg-action');
+  var issue = amountIssue(), qty = isQtyMode();
+  paintMsg($(qty ? 'qty-feedback' : 'amount-feedback'), issue, 'amount-msg-action');
+  paintMsg($(qty ? 'amount-feedback' : 'qty-feedback'), null);
   var input = $('amount');
-  if (input) input.classList.toggle('has-error', !!issue && issue.level === 'error');
+  if (input) input.classList.toggle('has-error', !qty && !!issue && issue.level === 'error');
   var act = $('amount-msg-action');
   if (act) act.addEventListener('click', function(){
     var t = $('accumulate-toggle');
@@ -1414,6 +1646,7 @@ function renderTotal(){
                         : 'Комиссия за платёж не взимается' ];
   if (state.frequency) parts.push('первое списание ' + nextDate(state.frequency));
   if (needsFx(state.payMethod, cur)) parts.push('сумма в валюте источника — по курсу на день списания');
+  if (isQtyMode()) parts.push('оценка по текущим ценам — итог зависит от цены в день исполнения');
   bd.textContent = parts.join(' · ');
 }
 var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>';
@@ -1598,6 +1831,7 @@ function closeBackupSheet(){
 function validate(){
   var ok = !!state.subscription && parseAmount()>0 && !amountBlocked() && orderValid() && !!state.currency && !!state.frequency && !!state.payMethod && $('check-tos').checked && (!cardInvolved() || $('check-data').checked);
   $('submit-btn').disabled = !ok;
+  $('open-confirm').disabled = !ok;
 }
 
 function recompute(){
@@ -1605,7 +1839,7 @@ function recompute(){
   renderAmountFeedback();
   renderFundsNote();
   $('amount-next').disabled = parseAmount() <= 0 || amountBlocked();
-  if (parseAmount() > 0) $('step-value-3').textContent = fmt(parseAmount())+' '+(state.currency || '');
+  if (parseAmount() > 0) $('step-value-3').textContent = amountStepLabel();
   validate();
 }
 
@@ -1663,7 +1897,7 @@ function openStep(n, scroll){
       step.classList.toggle('completed', num < n);
       step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
     });
-    if (n === 6) renderReview();
+    if (n === 6){ renderReview(); openConfirmModal(); }
   }
   $('wizard-back').hidden = isFirstContentStep(n);
   renderProgress();
@@ -1674,6 +1908,11 @@ function completeStep(n){
   state.maxStep = Math.max(state.maxStep, nxt);
   openStep(nxt);
 }
+// В режиме количества покупаются целые акции — накапливать остаток нечего.
+function accumulateRow(){
+  if (isQtyMode()) return '';
+  return '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>';
+}
 function renderReview(){
   if (state.subscription !== 'payments' && !state.selected) return;
   var type = state.subscription === 'investments' ? 'Регулярные инвестиции' : 'Регулярные платежи';
@@ -1683,21 +1922,29 @@ function renderReview(){
   if (state.subscription === 'payments'){
     // Пополнение — без инструмента и без накопления до целой акции
   } else if (isSplit()){
-    var sub = state.split.items.map(function(x){
-      var i = byId(x.id), part = Math.round(amt * x.pct / 100);
-      return '<div class="review-sub"><span>'+esc(i.base)+'.'+esc(i.ex)+' · '+x.pct+'%</span><span>'+sym+fmt(part)+'</span></div>';
-    }).join('');
+    var sub = isQtyMode()
+      ? qtyProportions().map(function(r){
+          return '<div class="review-sub"><span>'+esc(r.inst.base)+'.'+esc(r.inst.ex)+' · '+r.qty+' шт. · '+fmtPct(r.pct)+'%</span><span>'+sym+fmt(r.cost)+'</span></div>';
+        }).join('')
+      : state.split.items.map(function(x){
+          var i = byId(x.id), part = Math.round(amt * x.pct / 100);
+          return '<div class="review-sub"><span>'+esc(i.base)+'.'+esc(i.ex)+' · '+x.pct+'%</span><span>'+sym+fmt(part)+'</span></div>';
+        }).join('');
     instRow = '<div class="review-row"><span>Набор</span><strong>«'+esc(splitName())+'» · '+state.split.items.length+' инстр.</strong></div>'+
       '<div class="review-split">'+sub+'</div>';
-    accRow = '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>';
+    accRow = accumulateRow();
   } else {
     instRow = '<div class="review-row"><span>Инструмент</span><strong>'+esc(state.selected.base+'.'+state.selected.ex)+'</strong></div>';
-    accRow = '<div class="review-row"><span>Накопление до целой акции</span><strong>'+(state.accumulate ? 'Включено' : 'Выключено')+'</strong></div>';
+    accRow = accumulateRow();
   }
+  var qtyRow = isQtyMode()
+    ? '<div class="review-row"><span>Количество</span><strong>'+qtyCount()+' '+pluralRu(qtyCount(),'акция','акции','акций')+'</strong></div>'
+    : '';
   $('review-list').innerHTML =
     '<div class="review-row"><span>Тип операции</span><strong>'+type+'</strong></div>'+
     instRow+
-    '<div class="review-row"><span>Сумма</span><strong>'+fmt(amt)+' '+state.currency+'</strong></div>'+
+    qtyRow+
+    '<div class="review-row"><span>'+(isQtyMode() ? 'Оценка списания' : 'Сумма')+'</span><strong>'+(isQtyMode() ? '≈' : '')+fmt(amt)+' '+state.currency+'</strong></div>'+
     '<div class="review-row"><span>Комиссия за платёж</span><strong>'+(feeFor(state.payMethod, amt) > 0 ? fmt(feeFor(state.payMethod, amt))+' '+state.currency : 'Не взимается')+'</strong></div>'+
     '<div class="review-row"><span>Частота</span><strong>'+period+'</strong></div>'+
     '<div class="review-row"><span>Первое списание</span><strong>'+nextDate(state.frequency || 'month')+'</strong></div>'+
@@ -1720,7 +1967,8 @@ function selectAsset(inst){
   state.selected=inst;
   renderAssets();
   setStepValue(1, inst.base+'.'+inst.ex+' · '+inst.name);
-  validate();
+  renderQtyBlock();
+  recompute();
   completeStep(1);
 }
 
@@ -1739,6 +1987,7 @@ function toggleSplit(inst){
   splitEvenly();
   renderAssets();
   updateSplitUI();
+  renderQtyBlock();
 }
 function splitEvenly(){
   var n = state.split.items.length; if (!n) return;
@@ -1874,6 +2123,7 @@ function setInstMode(mode){
   setStepValue(1, state.splitMode ? 'Соберите набор' : 'Не выбран');
   if (state.splitMode) updateSplitUI();
   renderAssets();
+  renderQtyBlock();
   validate();
 }
 function renderSplitSuggest(){
@@ -1948,6 +2198,8 @@ function handleSubmit(){
   $('submit-btn').classList.add('loading');
   setTimeout(function(){
     $('submit-btn').classList.remove('loading');
+    closeConfirmModal();
+    $('confirm-cta').hidden = true;
     var period = state.frequency==='week' ? 'раз в неделю' : 'раз в месяц';
     var mainLine = payMainPhrase(state.payMethod);
     var payLine = mainLine + (state.backupOn ? '; при неудаче — резерв ' + backupPhrase() : '');
@@ -1956,8 +2208,9 @@ function handleSubmit(){
       $('first-purchase').style.display = 'none';
     } else {
       var t = isSplit() ? ('набор «'+splitName()+'» ('+state.split.items.length+' инстр.)') : (state.selected.base+'.'+state.selected.ex);
-      var accLine = state.accumulate ? ' Остаток накапливается до целой акции.' : '';
-      $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', '+payLine+'.'+accLine;
+      var accLine = (state.accumulate && !isQtyMode()) ? ' Остаток накапливается до целой акции.' : '';
+      var qtyLine = isQtyMode() ? (' Покупка по количеству: ' + qtyCount() + ' ' + pluralRu(qtyCount(),'акция','акции','акций') + ' за списание.') : '';
+      $('summary-text').innerHTML = 'Поручение создано: <strong>'+fmt(parseAmount())+' '+state.currency+'</strong> в <strong>'+esc(t)+'</strong> '+period+', '+payLine+'.'+qtyLine+accLine;
       $('first-purchase').style.display = '';
       resetFirstPurchaseChoice();
     }
@@ -1982,6 +2235,7 @@ function bind(){
     document.querySelectorAll('.sub-card').forEach(function(c){ c.classList.toggle('selected', c===card); });
     updateStepBadges();
     updateAmountStepForSubscription();
+    if (state.subscription === 'payments') setBuyMode('amount'); else renderQtyBlock();
     if (state.subscription === 'payments'){
       // Регулярные платежи — это пополнение счёта, без выбора инструмента
       state.selected = null;
@@ -2021,9 +2275,12 @@ function bind(){
   });
   $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); updatePayAvailability(); });
   $('amount').addEventListener('input', recompute);
-  $('amount').addEventListener('blur', function(){ var n=parseAmount(); if (n>0) $('amount').value=fmt(n); recompute(); });
-  document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmount()+parseFloat(b.dataset.add)); recompute(); }); });
-  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0 && !amountBlocked()){ setStepValue(3, fmt(parseAmount())+' '+state.currency); completeStep(3); } });
+  $('amount').addEventListener('blur', function(){ var n=parseAmountField(); if (n>0) $('amount').value=fmt(n); recompute(); });
+  document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmountField()+parseFloat(b.dataset.add)); recompute(); }); });
+  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0 && !amountBlocked()){ setStepValue(3, amountStepLabel()); completeStep(3); } });
+  document.querySelectorAll('#buy-mode .buy-mode-btn').forEach(function(b){
+    b.addEventListener('click', function(){ setBuyMode(b.dataset.buymode); });
+  });
 
   $('freq-options').addEventListener('click', function(e){ var o=e.target.closest('.freq-opt'); if (o) setFrequency(o.dataset.freq); });
 
@@ -2044,7 +2301,13 @@ function bind(){
   $('submit-btn').addEventListener('click', handleSubmit);
   $('buy-now-btn').addEventListener('click', function(){ chooseFirstPurchase(true); });
   $('buy-scheduled-btn').addEventListener('click', function(){ chooseFirstPurchase(false); });
-  $('open-manage').addEventListener('click', openManage);
+  Array.prototype.forEach.call(document.querySelectorAll('.manage-link'), function(el){
+    el.addEventListener('click', openManage);
+  });
+  $('open-confirm').addEventListener('click', openConfirmModal);
+  $('confirm-modal-close').addEventListener('click', closeConfirmModal);
+  $('confirm-modal').addEventListener('click', function(e){ if (e.target === this) closeConfirmModal(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && confirmModalOpen()) closeConfirmModal(); });
   document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.addEventListener('click', function(){ setInstMode(b.dataset.mode); }); });
   $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=6) renderReview(); } });
   $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
@@ -2071,6 +2334,7 @@ function init(){
   renderChips();
   renderSplitSuggest();
   renderAssets();
+  renderQtyBlock();
   recompute();
   openStep(0, false);
 }
