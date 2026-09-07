@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Регулярные инвестиции</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/css/uikit.almost-flat.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/uikit.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.4/js/components/accordion.min.js"></script>
@@ -20,38 +23,39 @@
   /* Brand palette applied on top of native UIkit v2 classes — no components invented outside UIkit v2. */
   :root {
     /* Real F24 brand tokens, extracted from Figma (header S component) — replaces earlier approximation. */
-    --bg: #f8f8f8;
+    --bg: #f4f5f7; /* Bg/surface */
     --surface: #ffffff;
-    --ink: #000000;
-    --muted: #999999;
-    --faint: #b3b3b3;
-    --line: #e5e5e5;
-    --line-strong: #d0d0d0;
-    --green: #72bf44;
-    --green-dark: #5da032;
-    --green-soft: #eef7e6;
-    --green-border: #a3d97f;
-    --blue: #2563eb;
-    --red: #cc0e00;
-    --sidebar-head: #999999;
-    --sans: 'Good Pro', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --serif: 'Georgia', 'Times New Roman', serif;
-    --radius-btn: 3px;
-    --radius-field: 3px;
+    --ink: #161d2c; /* Text/primary */
+    --muted: #6b7280; /* Text/secondary */
+    --faint: #9ca3af; /* Text/tertiary */
+    --line: #e5e7eb; /* Bg/border */
+    --line-strong: #d1d5db; /* icon/muted */
+    --green: #16a34a; /* Base/green */
+    --green-dark: #15803d; /* brand-hover */
+    --green-soft: #dcfce7; /* brand-surface */
+    --green-border: #86efac; /* производный от Base/green */
+    --blue: #3b82f6; /* Accent/500 */
+    --red: #dc2626; /* danger */
+    --sidebar-head: #6b7280; /* Text/secondary */
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* fontFamily */
+    --serif: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* в макете засечных нет */
+    --radius-btn: 6px; /* Border radius/s */
+    --radius-field: 6px; /* Border radius/s */
   }
   html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; width: 100%; max-width: 100%; overflow-x: hidden; }
   h1, h2, h3, .main-title { font-family: var(--serif); }
 
   /* uk-button-primary / uk-badge-success / uk-progress-success recolored to brand green */
-  .uk-button-primary, .uk-badge-success, .uk-progress-success .uk-progress-bar { background: var(--green) !important; border-color: var(--green) !important; }
-  .uk-button-primary:hover { background: #86c960 !important; }
-  .uk-button-primary:active { background: #63af3c !important; }
-  .uk-button-primary[disabled] { background: #e5e5e5 !important; color: #999 !important; }
-  .uk-alert-success { background: var(--green-soft) !important; border-color: var(--green-border) !important; color: var(--green-dark) !important; }
-  a, .uk-text-primary { color: var(--green); }
+  .uk-button-primary { background: var(--brand) !important; border-color: var(--brand) !important; }
+  .uk-badge-success, .uk-progress-success .uk-progress-bar { background: var(--green) !important; border-color: var(--green) !important; }
+  .uk-button-primary:hover { background: var(--brand-hover) !important; }
+  .uk-button-primary:active { background: var(--brand-active) !important; }
+  .uk-button-primary[disabled] { background: #e5e7eb !important; color: #9ca3af !important; }
+  .uk-alert-success { background: var(--brand-surface) !important; border-color: var(--brand-edge) !important; color: var(--green-dark) !important; }
+  a, .uk-text-primary { color: var(--brand); }
   a:hover { color: var(--green-dark); }
-  .uk-panel-box.selected, .uk-panel-box.active, .uk-panel-box.in-split { border-color: var(--green) !important; background: var(--green-soft) !important; box-shadow: 0 0 0 1px var(--green) inset; }
-  .uk-badge.active { background: var(--green) !important; }
+  .uk-panel-box.selected, .uk-panel-box.active, .uk-panel-box.in-split { border-color: var(--brand) !important; background: var(--brand-surface) !important; box-shadow: 0 0 0 1px var(--brand) inset; }
+  .uk-badge.active { background: var(--brand) !important; }
 
   /* Self-sufficient component base styles using exact F24 tokens.
      These do NOT depend on the external UIkit v2 stylesheet loading —
@@ -65,11 +69,11 @@
     border-radius: var(--radius-btn); box-shadow: none; text-shadow: none; text-decoration: none;
     cursor: pointer; transition: background .15s, border-color .15s; white-space: nowrap;
   }
-  .uk-button-primary { background: var(--green); border-color: var(--green); color: #fff; }
-  .uk-button-primary:hover { background: #86c960; border-color: #86c960; }
-  .uk-button-primary:active { background: #63af3c; border-color: #63af3c; }
-  .uk-button-primary[disabled] { background: #e5e5e5; border-color: #e5e5e5; color: #999; cursor: not-allowed; }
-  .uk-button-link { background: none; border: 0; color: var(--green); padding: 6px 4px; }
+  .uk-button-primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .uk-button-primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+  .uk-button-primary:active { background: var(--brand-active); border-color: var(--brand-active); }
+  .uk-button-primary[disabled] { background: #e5e7eb; border-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+  .uk-button-link { background: none; border: 0; color: var(--brand); padding: 6px 4px; }
   .uk-button-link:hover { color: var(--green-dark); text-decoration: underline; }
   .uk-button-small { padding: 7px 14px; font-size: .82rem; }
   .uk-button-mini { padding: 4px 10px; font-size: .74rem; }
@@ -84,10 +88,10 @@
     padding: 11px 22px; font-size: .88rem; font-weight: 600; font-family: var(--sans);
     border-radius: var(--radius-btn); cursor: pointer; transition: background .15s, border-color .15s;
   }
-  .first-purchase-btn.primary { background: var(--green); border: 1px solid var(--green); color: #fff; }
-  .first-purchase-btn.primary:hover { background: #86c960; border-color: #86c960; }
+  .first-purchase-btn.primary { background: var(--brand); border: 1px solid var(--brand); color: #fff; }
+  .first-purchase-btn.primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
   .first-purchase-btn.secondary { background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink); }
-  .first-purchase-btn.secondary:hover { border-color: var(--green-border); color: var(--green); }
+  .first-purchase-btn.secondary:hover { border-color: var(--brand-edge); color: var(--brand); }
   .first-purchase-btn[disabled] { opacity: .5; cursor: not-allowed; }
   .uk-button-large { padding: 14px 24px; font-size: 1rem; }
   .uk-width-1-1 { width: 100%; }
@@ -96,8 +100,8 @@
 
   .uk-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--line); color: var(--muted); font-size: .74rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; box-shadow: none; box-sizing: border-box; }
 
-  .uk-progress { display: block; width: 100%; height: 6px; background: #e5e5e5; border-radius: 999px; overflow: hidden; box-shadow: none; box-sizing: border-box; }
-  .uk-progress-bar { display: block; height: 100%; background: var(--green); border-radius: 999px; box-shadow: none; transition: width .2s; }
+  .uk-progress { display: block; width: 100%; height: 6px; background: #e5e7eb; border-radius: 999px; overflow: hidden; box-shadow: none; box-sizing: border-box; }
+  .uk-progress-bar { display: block; height: 100%; background: var(--brand); border-radius: 999px; box-shadow: none; transition: width .2s; }
 
   .uk-input { display: block; width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: .95rem; font-family: var(--sans); color: var(--ink); background: var(--surface); }
 
@@ -114,13 +118,13 @@
     cursor: pointer; position: relative; transition: background .15s, border-color .15s;
   }
   .uk-checkbox:hover { border-color: var(--faint); }
-  .uk-checkbox:checked { background: var(--green); border-color: var(--green); }
+  .uk-checkbox:checked { background: var(--brand); border-color: var(--brand); }
   .uk-checkbox:checked::after {
     content: ''; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px;
     border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
   }
-  .uk-checkbox:focus-visible { outline: 2px solid var(--green-border); outline-offset: 2px; }
-  .uk-alert-success { display: block; background: var(--green-soft); border: 1px solid var(--green-border); color: var(--green-dark); border-radius: 10px; padding: 14px 16px; box-shadow: none; }
+  .uk-checkbox:focus-visible { outline: 2px solid var(--brand-edge); outline-offset: 2px; }
+  .uk-alert-success { display: block; background: var(--brand-surface); border: 1px solid var(--brand-edge); color: var(--green-dark); border-radius: 10px; padding: 14px 16px; box-shadow: none; }
   .uk-text-bold { font-weight: 700; }
   .uk-text-muted { color: var(--muted); }
   .uk-text-small { font-size: .82rem; }
@@ -152,7 +156,7 @@
   .step[hidden] { display: none; }
   .step-body { padding: 4px 4px 4px 4px; }
   .step-head { cursor: default; background: none; border: 0; width: 100%; text-align: left; display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; font: inherit; }
-  .step-number { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #fff; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .step-number { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
   .step-title-wrap { flex: 1; min-width: 0; }
   .step-title { font-weight: 700; }
   .step-value { display: block; font-size: 0.8rem; color: var(--muted); }
@@ -162,11 +166,11 @@
   /* switches — exact spec from F24 Figma "switcher" component (no UIkit v2 equivalent exists) */
   .switch { display: inline-block; flex-shrink: 0; cursor: pointer; }
   .switch input { display: none; }
-  .switch-track { display: block; width: 44px; height: 24px; padding: 2px; box-sizing: border-box; border-radius: 12px; background: #d0d0d0; position: relative; transition: 0.15s; }
-  .switch:hover .switch-track { background: #e5e5e5; }
+  .switch-track { display: block; width: 44px; height: 24px; padding: 2px; box-sizing: border-box; border-radius: 12px; background: #d1d5db; position: relative; transition: 0.15s; }
+  .switch:hover .switch-track { background: #e5e7eb; }
   .switch-thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1); transition: 0.15s; }
-  .switch input:checked + .switch-track { background: var(--green); }
-  .switch:hover input:checked + .switch-track { background: #63af3c; }
+  .switch input:checked + .switch-track { background: var(--brand); }
+  .switch:hover input:checked + .switch-track { background: var(--brand-active); }
   .switch input:checked + .switch-track .switch-thumb { transform: translateX(20px); }
 
   /* percentage steppers in the split builder */
@@ -183,8 +187,8 @@
     font-family: var(--sans); font-size: .84rem; font-weight: 600;
     padding: 9px 16px; border-radius: 999px; transition: border-color .15s, color .15s, background .15s;
   }
-  .backup-chip:hover { border-color: var(--green-border); }
-  .backup-chip.active { background: var(--green); border-color: var(--green); color: #fff; }
+  .backup-chip:hover { border-color: var(--brand-edge); }
+  .backup-chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
   .op-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; position: relative; }
   .op:not(:last-child) .op-dot::after { content: ''; position: absolute; left: 50%; top: 13px; transform: translateX(-50%); width: 2px; height: calc(100% + 5px); background: var(--line); }
   .op-dot.ok { background: var(--green); } .op-dot.info { background: var(--blue); } .op-dot.warn { background: #f59e0b; } .op-dot.cancel { background: #c0392b; }
@@ -227,7 +231,7 @@
   .pay-fx-note { margin: 14px 0 0; }
   .pay-fx { margin-left: auto; flex: 0 0 auto; padding: 2px 6px; border: 1px solid #f0d69a; border-radius: 2px; background: #fff8e6; color: #8a6200; font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
   .chip-fx { margin-left: 6px; padding: 1px 4px; border: 1px solid currentColor; border-radius: 2px; font-size: .62rem; font-weight: 700; text-transform: uppercase; opacity: .7; }
-  .pay-card.selected { border-color: var(--green) !important; background: var(--green-soft) !important; }
+  .pay-card.selected { border-color: var(--brand) !important; background: var(--brand-surface) !important; }
   .card-brand { flex-shrink: 0; width: 46px; height: 30px; border-radius: 6px; background: linear-gradient(90deg,#eb001b 55%,#f79e1b 45%); }
   .card-brand-alt { background: linear-gradient(135deg,#1a2233 0%,#3b4a63 100%); }
   .acct-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: #eef2f7; color: var(--muted); display: flex; align-items: center; justify-content: center; }
@@ -246,7 +250,7 @@
   .sheet { width: 100%; max-width: 440px; background: var(--surface); border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,.3); max-height: 90vh; overflow-y: auto; }
   .sheet-head, .manage-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--line); }
   .sheet-head-title { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-  .sheet-head-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: .7rem; display: flex; align-items: center; justify-content: center; }
+  .sheet-head-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; font-size: .7rem; display: flex; align-items: center; justify-content: center; }
   .sheet-icon-btn { border: 0; background: none; cursor: pointer; padding: 4px; color: var(--muted); }
   .sheet-body { padding: 24px; text-align: center; }
   .sheet-shield { width: 72px; margin: 0 auto 14px; }
@@ -254,7 +258,7 @@
   .sheet-desc { color: var(--muted); font-size: .88rem; }
   .sheet-benefits { display: flex; justify-content: space-around; margin: 18px 0; }
   .sheet-benefit { font-size: .74rem; color: var(--muted); max-width: 90px; }
-  .sheet-benefit-icon { color: var(--green); display: block; margin: 0 auto 6px; }
+  .sheet-benefit-icon { color: var(--brand); display: block; margin: 0 auto 6px; }
 
   .manage-view { display: none; position: fixed; inset: 0; z-index: 2500; background: var(--bg); overflow-y: auto; }
   .manage-view.visible { display: block; }
@@ -270,7 +274,7 @@
   /* Remaining structural layout not covered by native UIkit v2 utility classes */
   .type-select-label { font-weight: 700; }
   .sub-card { cursor: pointer; }
-  .sub-icon { color: var(--green); }
+  .sub-icon { color: var(--brand); }
   .col-label { font-size: .78rem; font-weight: 700; color: var(--faint); text-transform: uppercase; margin: 14px 0 8px; }
   .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
   .chip {
@@ -279,18 +283,17 @@
     font-family: var(--sans); font-size: .82rem; font-weight: 600;
     padding: 7px 15px; border-radius: 999px; transition: border-color .15s, color .15s, background .15s;
   }
-  .chip:hover { border-color: var(--green-border); color: var(--ink); }
-  .chip.active { background: var(--green) !important; border-color: var(--green) !important; color: #fff; }
+  .chip:hover { border-color: var(--brand-edge); color: var(--ink); }
+  .chip.active { background: var(--brand) !important; border-color: var(--brand) !important; color: #fff; }
   .search-wrap { position: relative; margin-bottom: 6px; }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--faint); }
   .search-input, .uk-input, .amount-input, .split-name-input { padding-left: 38px !important; border-radius: var(--radius-field) !important; border: 1px solid #ccc !important; }
   .amount-input, .split-name-input { padding-left: 12px !important; }
   .search-input:focus, .uk-input:focus, .amount-input:focus, .split-name-input:focus {
-    outline: none; border-color: var(--green) !important; box-shadow: 0 2px 10px rgba(0,0,0,.15) !important;
+    outline: none; border-color: var(--brand) !important; box-shadow: 0 2px 10px rgba(0,0,0,.15) !important;
   }
-  .clear-button { position: absolute; right: 84px; top: 50%; transform: translateY(-50%); display: none; }
+  .clear-button { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: none; }
   .clear-button.visible { display: block; }
-  .search-lang { position: absolute; right: 4px; top: 4px; display: flex; gap: 2px; }
   .asset-list { display: flex; flex-direction: column; gap: 8px; }
   .asset-avatar { display: flex; align-items: center; justify-content: center; }
   .asset-row {
@@ -300,7 +303,7 @@
     cursor: pointer; transition: border-color .15s, background .15s;
   }
   .asset-row:hover { border-color: var(--line-strong); }
-  .asset-row.selected, .asset-row.in-split { border-color: var(--green); background: var(--green-soft); }
+  .asset-row.selected, .asset-row.in-split { border-color: var(--brand); background: var(--brand-surface); }
   .asset-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; font-weight: 700; font-size: .95rem; position: relative; overflow: hidden; }
   .asset-logo, .inst-logo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; background: #fff; }
   /* Слоты аватара: буква — фолбэк под логотипом, логотип перекрывает её при успешной загрузке. */
@@ -326,6 +329,11 @@
   .qty-cost { margin-left: auto; text-align: right; min-width: 96px; }
   .qty-cost-val { font-weight: 700; font-size: .9rem; }
   .qty-cost-pct { font-size: .74rem; color: var(--muted); }
+  .qty-row { position: relative; }
+  .qty-remove { flex-shrink: 0; margin-left: 4px; width: 30px; height: 30px; border: 0; padding: 0;
+    background: none; cursor: pointer; color: var(--faint); border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center; }
+  .qty-remove:hover { background: var(--bg); color: var(--red); }
   .qty-total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0 2px; margin-top: 4px; border-top: 1px solid var(--line); }
   .qty-total-label { font-size: .82rem; color: var(--muted); }
   .qty-total-val { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; }
@@ -340,16 +348,16 @@
   .field-msg svg { flex: 0 0 auto; margin-top: 2px; }
   .field-msg.is-error { background: #fdecea; border-color: #f0b3ac; color: var(--red); }
   .field-msg.is-warn  { background: #fff8e6; border-color: #f0d69a; color: #8a6200; }
-  .field-msg.is-info  { background: var(--green-soft); border-color: var(--green-border); color: var(--green-dark); }
+  .field-msg.is-info  { background: #f4f5f7; border-color: #e5e7eb; color: #6b7280; }
   .field-msg .msg-action { display: inline-block; margin-top: 6px; padding: 0; border: 0; background: none; font: inherit; font-weight: 700; color: inherit; text-decoration: underline; cursor: pointer; }
   .amount-input.has-error { border-color: var(--red) !important; box-shadow: 0 0 0 2px rgba(204,14,0,.10) !important; }
   .pay-funds-note { margin: 14px 0 0; }
   .total-breakdown { font-size: .76rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
   .freq-options { display: flex; flex-direction: column; gap: 10px; }
   .freq-opt { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
-  .freq-opt.active { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+  .freq-opt.active { border-color: var(--brand); background: var(--brand-surface); color: var(--brand); }
   .freq-opt .check { color: transparent; }
-  .freq-opt.active .check { color: var(--green); }
+  .freq-opt.active .check { color: var(--brand); }
   .step-actions { margin-top: 16px; }
 
   .split-name-label, .backup-options-label, .pay-section-label { font-size: .78rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
@@ -383,6 +391,14 @@
   .plan.open .plan-chevron { transform: rotate(180deg); }
   .split-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
   .split-pct-suffix { color: var(--muted); font-size: .82rem; margin-left: 1px; }
+  .split-amount-panel { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .split-amount-right { text-align: right; flex-shrink: 0; margin-left: 8px; }
+  .split-amount-price { font-weight: 600; font-size: .85rem; }
+  .split-amount-est { font-size: .76rem; color: var(--muted); margin-top: 1px; }
+  .split-amount-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
+  .split-amount-label { font-size: .78rem; color: var(--muted); line-height: 1.35; }
+  .split-amount-sub { font-size: .76rem; }
+  .split-amount-total { font-weight: 700; white-space: nowrap; }
   .plus { display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; }
   .manage-count { font-weight: 700; font-size: .95rem; }
   .buys-title { font-size: .82rem; color: var(--muted); font-weight: 600; }
@@ -392,10 +408,21 @@
   .split-item-main { flex: 1; }
   .split-remove { border: 0; background: none; color: var(--faint); cursor: pointer; }
   .split-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-  .split-total { font-weight: 700; color: var(--green); }
+  .split-total { font-weight: 700; color: var(--brand); }
   .split-total.off { color: #b45309; }
   .split-empty { font-size: .8rem; color: var(--muted); }
-  .in-split { border-color: var(--green) !important; background: var(--green-soft) !important; }
+  .split-chips-panel { margin-top: 14px; }
+  .split-chips-h { font-weight: 600; font-size: .9rem; margin-bottom: 8px; }
+  .split-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .split-chip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 6px 0 8px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: .82rem; font-weight: 500; }
+  .split-chip-av { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center;
+    justify-content: center; font-size: .62rem; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+  .split-chip-av img { width: 100%; height: 100%; object-fit: cover; }
+  .split-chip-x { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px;
+    border: 0; padding: 0; background: none; cursor: pointer; color: var(--muted); border-radius: 50%; }
+  .split-chip-x:hover { background: var(--bg); color: var(--ink); }
+  .in-split { border-color: var(--brand) !important; background: var(--brand-surface) !important; }
 
   .review-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .88rem; }
   .review-sub { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); padding: 3px 0 3px 12px; }
@@ -406,7 +433,7 @@
   .confirm-btn.loading { pointer-events: none; opacity: .85; }
   .confirm-btn.loading .btn-text { display: none; }
   .confirm-btn.loading .spinner { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  keyframes spin { to { transform: rotate(360deg); } }
 
   .type-select-manage { margin-top: 16px; }
   .confirm-intro { font-size: .88rem; color: var(--muted); margin: 0 0 14px; }
@@ -414,9 +441,9 @@
   .confirm-modal-body { padding: 20px; }
   .confirm-modal-body .review-list { margin-bottom: 0; }
   html.is-mobile .confirm-modal-body { padding: 16px; }
-  .summary-panel { display: none; background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 8px; padding: 16px; margin-top: 16px; }
+  .summary-panel { display: none; background: var(--brand-surface); border: 1px solid var(--brand-edge); border-radius: 8px; padding: 16px; margin-top: 16px; }
   .summary-panel.visible { display: block; }
-  .first-purchase { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--green-border); }
+  .first-purchase { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--brand-edge); }
   .first-purchase-title { font-weight: 700; }
   .first-purchase-desc { font-size: .82rem; color: var(--muted); margin-bottom: 10px; }
   .first-purchase-actions { display: flex; gap: 8px; }
@@ -448,7 +475,7 @@
   .manage-empty { text-align: center; color: var(--muted); padding: 20px 0; font-size: .86rem; }
   .skip-flag, .acc-flag { font-size: .72rem; font-weight: 600; border-radius: 999px; padding: 3px 10px; display: inline-block; margin-top: 4px; }
   .skip-flag { color: #b45309; background: #fef3e2; } .acc-flag { color: var(--green); background: var(--green-soft); }
-  .acc-progress { background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+  .acc-progress { background: var(--brand-surface); border: 1px solid var(--brand-edge); border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
   .acc-progress-top { display: flex; justify-content: space-between; font-size: .8rem; }
   .acc-bar { height: 6px; background: #d7e8dd; border-radius: 999px; overflow: hidden; margin-top: 6px; }
   .acc-bar span { display: block; height: 100%; background: var(--green); }
@@ -458,16 +485,295 @@
   html.is-mobile .confirm-foot { flex-direction: column; align-items: stretch; }
   html.is-mobile .confirm-btn { width: 100%; min-width: 0; }
   .bn-item { display: flex; flex-direction: column; align-items: center; font-size: .68rem; color: var(--faint); }
-  .bn-item.active { color: var(--green); }
+  .bn-item.active { color: var(--brand); }
+
+/* ==========================================================================
+   Figma «Task-2026 / Рекурренты 2.0» — токены из файла pidrQA6ve2gXpKTL7FGjgj
+   Значения получены через get_variable_defs; бренд-зелёный #16a34a прочитан
+   с самих узлов (он локальный оверрайд, к переменной не привязан).
+   ========================================================================== */
+:root{
+  /* Цвет */
+  --fg-primary:#161d2c; --fg-secondary:#6b7280; --fg-tertiary:#9ca3af;
+  --line-2:#e5e7eb; --surface-2:#f4f5f7; --card-2:#ffffff;
+  --accent:var(--brand); --accent-surface:var(--brand-surface);
+  --brand:#16a34a; --brand-hover:#15803d; --brand-active:#166534; --brand-ring:rgba(22,163,74,.15);
+  --brand-surface:#dcfce7; --brand-edge:#86efac;
+  --icon-muted:#d1d5db; --icon-normal:#9ca3af;
+  --danger-2:#dc2626; --danger-surface:#fef2f2;
+  --warn-2:#b45309; --warn-surface:#fffbeb;
+  /* Радиус */
+  --r-xs:4px; --r-s:6px; --r-tile:8px; --r-l:12px; --r-pill:999px;
+  /* Тень */
+  --shadow-base:0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.10);
+}
+html, body{ background:var(--card-2); }
+body, .uk-button, .uk-input, input, select, textarea{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  color:var(--fg-primary);
+}
+/* Типографика из файла: h2 22/32/600, h4 18/26/600, body 16/24, footnote 14/20, captionSm 12/16 */
+body{ font-size:16px; line-height:24px; }
+
+/* ---------- Каркас: шапка продукта + карточка мастера ---------- */
+.app{ display:block !important; max-width:1680px; margin:0 auto; background:var(--card-2); }
+.sidebar{ display:none !important; }
+.ff-header{ display:flex; align-items:center; gap:20px; height:64px; padding:0 32px; border-bottom:1px solid var(--line-2); }
+.ff-logo{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:18px; letter-spacing:-.01em; }
+.ff-logo svg{ flex:0 0 auto; }
+.ff-nav{ display:flex; gap:4px; margin-left:8px; }
+.ff-nav span{ padding:8px 12px; font-size:14px; line-height:20px; color:var(--fg-secondary); border-radius:var(--r-s); }
+.ff-nav span.on{ color:var(--fg-primary); font-weight:600; }
+.ff-header-right{ margin-left:auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--fg-secondary); }
+.ff-balance{ font-weight:600; color:var(--fg-primary); }
+.main{ width:100% !important; padding:0 !important; background:var(--card-2); }
+.ff-shell{ max-width:1188px; margin:0 auto; padding:24px 16px 64px; }
+.ff-card{ background:var(--card-2); border:1px solid var(--line-2); border-radius:var(--r-l); padding:16px; }
+.main-head{ display:none !important; }
+
+/* ---------- Заголовок и табы Подключить / Отключить ---------- */
+.ff-title{ font-size:22px; line-height:32px; font-weight:600; margin:0 0 16px; }
+.ff-title-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.ff-title-row .ff-title{ margin:0; }
+.recur-counter{ display:inline-flex; align-items:center; gap:4px; height:32px; padding:0 10px 0 12px;
+  border:0; border-radius:999px; background:var(--brand-surface); color:var(--brand);
+  font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.recur-counter:hover{ background:var(--brand-edge); }
+.recur-counter svg{ width:14px; height:14px; }
+.ff-shell .ff-title-row{ padding-bottom:16px; border-bottom:1px solid var(--line-2); margin-bottom:16px; }
+.ff-tabs{ display:flex; gap:8px; border-bottom:1px solid var(--line-2); margin-bottom:24px; }
+.ff-tab{ height:36px; padding:0 12px; border:0; background:none; cursor:pointer;
+  font-size:14px; line-height:20px; font-weight:600; color:var(--fg-secondary);
+  border-bottom:2px solid transparent; margin-bottom:-1px; }
+.ff-tab.on{ color:var(--accent); border-bottom-color:var(--accent); }
+
+/* ---------- Прогресс + заголовок шага ---------- */
+.flow-progress{ margin:0 0 16px; }
+.flow-progress .uk-progress{ height:12px; border-radius:var(--r-pill); background:var(--line-2); margin:0; overflow:hidden; }
+.flow-progress .uk-progress-bar{ height:12px; background:var(--accent); border-radius:var(--r-pill); transition:width .25s ease; }
+#progress-text{ display:none; }
+.step-topline{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:24px 0 12px; }
+.step-topline .step-h{ font-size:18px; line-height:26px; font-weight:600; }
+.step-topline .step-count{ font-size:14px; line-height:20px; color:var(--fg-tertiary); }
+.step-topline .step-value{ display:none; }
+
+/* Шаги теперь не аккордеон: шапку прячем, тело всегда раскрыто */
+.step{ border:0 !important; background:none !important; box-shadow:none !important; margin:0 !important; padding:0 !important; }
+.step-head{ display:none !important; }
+.step-body{ display:block !important; padding:0 !important; max-height:none !important; opacity:1 !important; overflow:visible !important; }
+
+/* ---------- Плитки (тип операции, периодичность) ---------- */
+.sub-grid, .freq-options{ display:flex; gap:8px; flex-wrap:wrap; }
+.freq-options .freq-opt{ flex:1 1 0; min-width:260px; }
+html.is-mobile .freq-options .freq-opt{ min-width:0; flex:1 1 100%; }
+.freq-options .freq-opt{ flex:1 1 0; min-width:260px; }
+html.is-mobile .freq-options .freq-opt{ min-width:0; flex:1 1 100%; }
+.sub-grid > div{ flex:1 1 0; min-width:280px; }
+.sub-card, .freq-opt{
+  display:flex; align-items:flex-start; gap:12px; padding:12px;
+  background:var(--surface-2); border:1px solid transparent; border-radius:var(--r-tile);
+  cursor:pointer; box-shadow:none; height:100%; }
+.sub-card:hover, .freq-opt:hover{ background:#eef0f3; }
+.sub-card.selected, .freq-opt.selected{ background:var(--accent-surface); border-color:var(--accent); }
+.sub-icon, .freq-ic{
+  flex:0 0 auto; width:40px; height:40px; border-radius:var(--r-s);
+  background:var(--accent-surface); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; }
+.sub-title, .freq-title{ font-size:16px; line-height:24px; font-weight:600; display:flex; align-items:center; gap:8px; }
+.sub-desc, .freq-desc{ font-size:14px; line-height:20px; color:var(--fg-secondary); margin-top:2px; }
+.tile-badge{ height:24px; padding:0 6px; border-radius:var(--r-pill); background:var(--accent);
+  color:#fff; font-size:12px; line-height:24px; font-weight:600; white-space:nowrap; }
+.freq-opt .check{ display:none; }
+
+/* ---------- Пилюли (один/набор, сумма/количество) ---------- */
+.inst-mode, .buy-mode{ display:flex; gap:8px; background:none; padding:0; margin-bottom:16px; }
+.inst-mode-btn, .buy-mode-btn{
+  height:32px; padding:0 14px; border:0; border-radius:var(--r-pill); cursor:pointer;
+  background:var(--surface-2); color:var(--fg-primary);
+  font-size:14px; line-height:20px; font-weight:500; }
+.inst-mode-btn.active, .buy-mode-btn.active{ background:var(--brand); color:#fff; }
+
+/* ---------- Панель «Инструменты к покупке» / поиска ---------- */
+.split-builder, .asset-panel, #qty-block{
+  background:var(--surface-2); border:0; border-radius:var(--r-l); padding:16px; }
+.panel-h{ font-size:16px; line-height:24px; font-weight:600; margin-bottom:12px; }
+
+/* ---------- Поля ---------- */
+.uk-input, .amount-input, .search-input, .split-name-input{
+  height:48px; padding:0 14px; border:1px solid var(--line-2); border-radius:var(--r-s);
+  background:var(--card-2); font-size:16px; line-height:24px; box-shadow:none; width:100%; }
+.uk-input:focus, .amount-input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--brand-ring); outline:none; }
+.field-label{ font-size:14px; line-height:20px; color:var(--fg-secondary); margin-bottom:6px; }
+.amount-row{ display:flex; gap:12px; align-items:stretch; }
+.amount-row .amount-input{ flex:1; }
+#amount-currency-label{ display:none; }
+.quick-add{ display:flex; gap:8px; margin:8px 0 16px; flex-wrap:wrap; }
+.quick-btn{ height:40px; padding:0 16px; border:1px solid var(--line-2); border-radius:var(--r-s);
+  background:var(--card-2); font-size:14px; line-height:20px; color:var(--fg-primary); cursor:pointer; }
+.quick-btn:hover{ background:var(--surface-2); }
+
+/* Селектор валюты рядом с суммой */
+.cur-picker{ position:relative; flex:0 0 148px; }
+.cur-picker select{
+  -webkit-appearance:none; appearance:none; width:100%; height:48px;
+  padding:0 36px 0 44px; border:1px solid var(--line-2); border-radius:var(--r-s);
+  background:var(--card-2); font-size:16px; font-weight:500; cursor:pointer; }
+.cur-picker .cur-badge{ position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; border-radius:50%; background:var(--brand); color:#fff;
+  font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+.cur-picker .cur-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  color:var(--icon-normal); pointer-events:none; }
+
+/* ---------- Чипы коллекций ---------- */
+.chip{ height:28px; padding:0 10px; border:0; border-radius:var(--r-xs);
+  background:var(--line-2); color:var(--fg-primary); font-size:13px; line-height:28px; cursor:pointer; }
+.chip.active{ background:var(--brand); color:#fff; }
+
+/* ---------- Строки инструментов ---------- */
+.asset-row{ display:flex; align-items:center; gap:12px; padding:12px; background:var(--card-2);
+  border:0; border-radius:var(--r-tile); margin-bottom:8px; cursor:pointer; }
+.asset-row:hover{ background:#fafbfc; }
+.asset-row.selected{ box-shadow:inset 0 0 0 1.5px var(--brand); }
+.asset-tk{ font-size:14px; line-height:20px; font-weight:600; }
+.asset-nm{ font-size:12px; line-height:16px; color:var(--fg-tertiary); }
+.asset-price{ font-size:14px; line-height:20px; font-weight:600; text-align:right; }
+.asset-chg{ font-size:12px; line-height:16px; text-align:right; }
+
+/* ---------- Кнопки шага ---------- */
+.step-actions{ margin-top:16px; }
+.step-next, .split-done, .confirm-btn, #submit-btn{
+  height:48px; border:0; border-radius:var(--r-s); background:var(--brand); color:#fff;
+  font-size:16px; line-height:24px; font-weight:500; width:100%; cursor:pointer; box-shadow:none; }
+.step-next:hover:not(:disabled), .split-done:hover:not(:disabled), .confirm-btn:hover:not(:disabled){ background:var(--brand-hover); }
+.step-next:disabled, .split-done:disabled, #submit-btn:disabled{ background:var(--line-2); color:var(--fg-tertiary); cursor:not-allowed; }
+.wizard-nav{ text-align:center; margin-top:12px; }
+.wizard-back{ border:0; background:none; cursor:pointer; height:40px; padding:0 16px;
+  font-size:14px; line-height:20px; color:var(--fg-secondary); }
+.wizard-back:hover{ color:var(--fg-primary); }
+
+/* ---------- Способ оплаты: карточки в ряд ---------- */
+.pay-grid{ display:flex; gap:8px; flex-wrap:wrap; }
+.pay-grid > div{ flex:1 1 190px; min-width:170px; }
+.pay-card{ display:block; height:100%; padding:12px; background:var(--surface-2);
+  border:1.5px solid transparent; border-radius:var(--r-tile); cursor:pointer; box-shadow:none; }
+.pay-card:hover{ background:#eef0f3; }
+.pay-card.selected{ background:var(--card-2); border-color:var(--brand); }
+.card-brand{ margin-bottom:24px; }
+.card-num{ font-size:14px; line-height:20px; font-weight:600; }
+.card-issuer{ font-size:12px; line-height:16px; color:var(--fg-tertiary); }
+.pay-fx{ display:inline-block; margin:6px 0 0; }
+
+/* ---------- Тумблер и чекбоксы по токенам ---------- */
+.switch-track{ width:44px; height:24px; border-radius:var(--r-pill); background:var(--line-2); }
+.switch input:checked + .switch-track{ background:var(--brand); }
+.switch-thumb{ width:20px; height:20px; border-radius:50%; background:#fff; }
+.uk-checkbox, input[type=checkbox].uk-checkbox{ width:20px; height:20px; border-radius:var(--r-xs); accent-color:var(--accent); }
+.agree-row{ display:flex; align-items:flex-start; gap:8px; font-size:14px; line-height:20px; margin-bottom:8px; }
+.agree-row a{ color:var(--accent); }
+.backup-source, .accumulate-opt{ background:var(--surface-2); border:0; border-radius:var(--r-tile); padding:12px; }
+.backup-icon{ background:var(--accent-surface); color:var(--accent); border-radius:var(--r-s); }
+/* Накопление: серая иконка на сером фоне, когда тумблер выключен;
+   акцентная — только во включённом состоянии (класс .on на .accumulate-opt). */
+.accumulate-icon{ background:#f4f5f7; color:#9ca3af; border-radius:var(--r-s); }
+.accumulate-opt.on .accumulate-icon{ background:var(--accent-surface); color:var(--accent); }
+
+/* ---------- Сообщения ---------- */
+.field-msg{ border-radius:var(--r-s); font-size:14px; line-height:20px; }
+.field-msg.is-error{ background:var(--danger-surface); border-color:#fecaca; color:var(--danger-2); }
+.field-msg.is-warn{ background:var(--warn-surface); border-color:#fde68a; color:var(--warn-2); }
+.field-msg.is-info{ background:#f4f5f7; border-color:#e5e7eb; color:#6b7280; } /* нейтральная подсказка */
+.amount-note, .qty-price{ font-size:12px; line-height:16px; color:var(--fg-tertiary); }
+
+/* ---------- Модалка подтверждения — «Request» из макета ---------- */
+.sheet{ border-radius:var(--r-l); box-shadow:0 20px 60px rgba(0,0,0,.25); }
+.sheet-wide{ max-width:760px; }
+#confirm-modal .sheet-head{ border-bottom:0; padding:24px 24px 0; }
+#confirm-modal .sheet-head-title{ font-size:16px; line-height:24px; font-weight:600; }
+.confirm-modal-body{ padding:16px 24px 24px; }
+.request-doc{ border:1px solid var(--line-2); border-radius:var(--r-tile); padding:24px; }
+.request-doc-h{ text-align:center; font-size:16px; line-height:24px; font-weight:600; margin-bottom:8px; }
+.request-doc-sub{ text-align:center; font-size:12px; line-height:18px; color:var(--fg-secondary); margin-bottom:20px; }
+.request-doc-foot{ text-align:right; font-size:12px; line-height:18px; color:var(--fg-secondary); margin-top:20px; }
+#confirm-modal .review-list{ border:0; border-radius:0; margin:0; }
+.review-row{ padding:11px 0; border-bottom:1px solid var(--line-2); font-size:14px; line-height:20px; }
+.review-row span{ color:var(--fg-secondary); }
+.review-row strong{ font-weight:400; color:var(--fg-primary); }
+.confirm-foot{ display:block; margin-top:20px; text-align:center; }
+.confirm-foot > div{ margin-bottom:16px; text-align:left; }
+.total-value{ font-size:22px; line-height:32px; font-weight:600; }
+#submit-btn{ width:auto; min-width:140px; height:40px; font-size:14px; line-height:20px; }
+
+/* ---------- Мобильный ---------- */
+/* UIkit-гуттеры и .uk-width-* на этих сетках конфликтуют с раскладкой макета */
+.sub-grid, .pay-grid{ margin-left:0; }
+.sub-grid > *, .pay-grid > *{ padding-left:0; margin-top:0; width:auto; float:none; }
+
+html.is-mobile .ff-header{ display:none; }
+html.is-mobile .ff-shell{ padding:16px 16px 88px; }
+html.is-mobile .ff-card{ border:0; padding:0; }
+html.is-mobile .sub-grid > div{ min-width:0; flex:1 1 100%; }
+html.is-mobile .pay-grid > div{ flex:1 1 calc(50% - 4px); min-width:0; }
+html.is-mobile .amount-row{ flex-direction:column; }
+html.is-mobile .cur-picker{ flex:1 1 auto; }
+html.is-mobile .ff-title{ font-size:20px; line-height:28px; }
+
+
+/* Brand/main переключается по режиму: десктоп зелёный, мобильный синий.
+   Base/green (рост, успех, логотип) остаётся зелёным в обоих. */
+html.is-mobile{
+  --brand:#3b82f6; --brand-hover:#2563eb; --brand-active:#1d4ed8; --brand-ring:rgba(59,130,246,.15);
+  --brand-surface:#dbeffe; --brand-edge:#93c5fd;
+}
+
+/* ---------- Уплотнённая типографика и отступы визарда на мобильном ----------
+   Цель: шаги 1–5 помещаются на экран телефона без вертикального скролла.
+   Затрагивает только html.is-mobile — десктоп не меняется. */
+html.is-mobile .ff-shell{ padding:10px 16px 84px; }
+html.is-mobile .ff-title{ font-size:19px; line-height:26px; margin:0 0 10px; }
+html.is-mobile .ff-tabs{ margin-bottom:14px; }
+html.is-mobile .ff-tab{ height:32px; font-size:13px; }
+html.is-mobile .flow-progress{ margin:0 0 10px; }
+html.is-mobile .flow-progress .uk-progress, html.is-mobile .flow-progress .uk-progress-bar{ height:8px; }
+html.is-mobile .type-select{ margin-bottom:14px; }
+html.is-mobile .step-topline{ margin:14px 0 8px; }
+html.is-mobile .step-topline .step-h{ font-size:16px; line-height:22px; }
+html.is-mobile .step-topline .step-count{ font-size:13px; }
+html.is-mobile .sub-grid, html.is-mobile .freq-options{ gap:8px; }
+html.is-mobile .sub-card, html.is-mobile .freq-opt{ padding:10px; gap:10px; }
+html.is-mobile .sub-title, html.is-mobile .freq-title{ font-size:14px; line-height:20px; gap:6px; }
+html.is-mobile .sub-desc, html.is-mobile .freq-desc{ font-size:12px; line-height:16px; margin-top:1px; }
+html.is-mobile .freq-ic, html.is-mobile .accumulate-icon, html.is-mobile .backup-icon{ width:32px; height:32px; }
+html.is-mobile .tile-badge{ height:20px; padding:0 6px; font-size:11px; line-height:20px; }
+html.is-mobile .chip{ height:26px; padding:0 10px; font-size:12px; line-height:26px; }
+html.is-mobile .search-wrap{ margin-bottom:4px; }
+html.is-mobile .uk-input, html.is-mobile .amount-input, html.is-mobile .search-input, html.is-mobile .split-name-input{ height:44px; }
+html.is-mobile .asset-list{ gap:6px; }
+html.is-mobile .asset-row{ padding:10px; gap:10px; margin-bottom:0; }
+html.is-mobile .qty-row{ padding:8px 0; }
+html.is-mobile .qty-total{ padding:8px 0 2px; }
+html.is-mobile .pay-grid{ gap:6px; }
+html.is-mobile .amount-row{ gap:8px; margin-bottom:8px; }
+html.is-mobile .panel-h{ margin-bottom:8px; }
+html.is-mobile .field-msg{ padding:8px 10px; margin:0 0 8px; font-size:13px; }
+html.is-mobile .step-actions{ margin-top:10px; }
+html.is-mobile .step-next, html.is-mobile .split-done, html.is-mobile .confirm-btn, html.is-mobile #submit-btn{ height:44px; font-size:15px; }
+html.is-mobile .wizard-nav{ margin-top:8px; }
+html.is-mobile .wizard-back{ height:32px; font-size:13px; }
 </style>
 </head>
 <body>
 <script>
 (function(){
   function applyMobileClass(){
-    var sw = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
-    var shortSide = Math.min(sw || window.innerWidth, window.innerWidth || sw);
-    document.documentElement.classList.toggle('is-mobile', shortSide <= 960);
+    // Режим определяется устройством, а не шириной окна: узкое окно браузера
+    // на десктопе — это по-прежнему веб-десктоп (зелёный бренд), а не мобильный.
+    var forced = new URLSearchParams(location.search).get('view');   // ?view=mobile | ?view=desktop
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    var tiny   = (window.innerWidth || 0) <= 560;                    // реально узкий вьюпорт
+    var isMobile = forced === 'mobile' ? true
+                 : forced === 'desktop' ? false
+                 : (coarse || tiny);
+    document.documentElement.classList.toggle('is-mobile', isMobile);
   }
   applyMobileClass();
   window.addEventListener('resize', applyMobileClass);
@@ -478,70 +784,38 @@
 
 <!-- Mobile top bar — вне .app, иначе становится флекс-колонкой рядом с контентом -->
 <div class="mobile-topbar">
-  <span class="mobile-title">Регулярные инвестиции</span>
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+  <span class="mobile-title">Регулярные поручения</span>
+  <svg width="20" height="20" viewBox="-2.0000 -0.0000 20.0000 20.0000" fill="var(--blue)" data-icon="bell" data-src="8af6aa44"><path d="M10 18C10 19.1 9.1 20 8 20C6.9 20 6 19.1 6 18H10ZM8 0C8.828 5.24521e-06 9.5 0.672003 9.5 1.5V2.19531C12.0868 2.86211 14 5.2048 14 8V14L15.5371 15.1562C15.8255 15.3399 16.0001 15.6581 16 16C16 16.5523 15.5523 17 15 17H1C0.44772 17 0 16.5523 0 16C-7.79629e-05 15.6581 0.174502 15.3399 0.462891 15.1562H0.464844L2 14V8C2 5.2048 3.91318 2.86209 6.5 2.19531V1.5C6.5 0.672 7.172 0 8 0Z" fill="currentColor"/></svg>
+</div>
+
+<div class="ff-header">
+  <span class="ff-logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+    FREEDOM<span style="color:var(--brand)">24</span>
+  </span>
+  <nav class="ff-nav">
+    <span>Портфель</span><span>Рынок</span><span class="on">Поручения</span><span>Аналитика</span>
+  </nav>
+  <div class="ff-header-right">
+    <span>Баланс&nbsp;<span class="ff-balance">€4 820.00</span></span>
+    <span>Krasilnikov V.</span>
+  </div>
 </div>
 
 <div class="app uk-grid uk-grid-collapse" data-uk-grid-margin>
-  <!-- Sidebar (desktop) -->
-  <aside class="sidebar uk-width-medium-1-5">
-    <div class="logo uk-margin-small-bottom">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" style="flex-shrink:0">
-        <path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>
-      </svg>
-      <span class="logo-word">FREEDOM<span class="logo-num">24</span></span>
-    </div>
-    <div class="logo-tagline uk-margin-small-bottom">by Freedom Finance</div>
-    <ul class="uk-nav uk-nav-side">
-      <li class="uk-nav-header">Денежные средства</li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17l-4-4 4-4"/><path d="M3 13h13"/><path d="M17 7l4 4-4 4"/><path d="M21 11H8"/></svg>Переводы ценных бумаг</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Вывод денег</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Пополнить счет</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Конвертация валюты</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Пакетный перевод активов</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 16l-4-4 4-4"/><path d="M17 8l4 4-4 4"/><path d="M3 12h18"/></svg>Перевод между счетами</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>Долгосрочное размещение денег</a></li>
-      <li class="uk-active"><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>Рекурренты</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Подтверждение источника средств</a></li>
-      <li class="uk-nav-header">Персональные данные</li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>Смена Email</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Смена номера телефона</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Тест на инвестиционный опыт</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Форма W-8BEN</a></li>
-      <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Изменение сведений</a></li>
-    </ul>
-    <button class="new-order-btn uk-button uk-button-primary uk-width-1-1 uk-margin-top">New Order</button>
-    <a href="#" class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Logout</a>
-  </aside>
-
   <!-- Main -->
   <main class="main uk-width-medium-4-5">
+    <div class="ff-shell"><div class="ff-card">
+    <div class="ff-title-row"><h1 class="ff-title">Регулярные поручения</h1><button type="button" class="recur-counter manage-link" id="open-manage-count" hidden><span id="recur-counter-text">0 активных поручений</span><svg width="14" height="14" viewBox="-4 -1 24 24" fill="currentColor" data-icon="chevron-right"><path d="M6.29289 4.29289C6.68342 3.90237 7.31658 3.90237 7.70711 4.29289L14.7071 11.2929C15.0976 11.6834 15.0976 12.3166 14.7071 12.7071L7.70711 19.7071C7.31658 20.0976 6.68342 20.0976 6.29289 19.7071C5.90237 19.3166 5.90237 18.6834 6.29289 18.2929L12.5858 12L6.29289 5.70711C5.90237 5.31658 5.90237 4.68342 6.29289 4.29289Z"/></svg></button></div>
+    <div class="ff-tabs" id="ff-tabs">
+      <button type="button" class="ff-tab on" data-view="connect">Подключить</button>
+      <button type="button" class="ff-tab" data-view="manage">Отключить</button>
+    </div>
     <div class="main-head uk-flex uk-flex-middle uk-flex-space-between">
       <h1 class="main-title">Регулярные инвестиции</h1>
       <div class="head-icons">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <svg width="20" height="20" viewBox="-2.0000 -0.0000 20.0000 20.0000" fill="currentColor" data-icon="bell" data-src="8af6aa44"><path d="M10 18C10 19.1 9.1 20 8 20C6.9 20 6 19.1 6 18H10ZM8 0C8.828 5.24521e-06 9.5 0.672003 9.5 1.5V2.19531C12.0868 2.86211 14 5.2048 14 8V14L15.5371 15.1562C15.8255 15.3399 16.0001 15.6581 16 16C16 16.5523 15.5523 17 15 17H1C0.44772 17 0 16.5523 0 16C-7.79629e-05 15.6581 0.174502 15.3399 0.462891 15.1562H0.464844L2 14V8C2 5.2048 3.91318 2.86209 6.5 2.19531V1.5C6.5 0.672 7.172 0 8 0Z" fill="currentColor"/></svg>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </div>
-    </div>
-
-    <div class="type-select">
-      <div class="type-select-label uk-text-bold uk-margin-small-bottom">Тип операции</div>
-      <div class="sub-grid uk-grid uk-grid-small" data-uk-grid-margin>
-        <div class="uk-width-medium-1-2">
-          <div class="uk-panel uk-panel-box sub-card" data-sub="investments">
-            <div class="uk-flex"><span class="sub-icon uk-margin-small-right"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>
-            <div><div class="sub-title uk-text-bold">Регулярные инвестиции</div><div class="sub-desc uk-text-muted uk-text-small">Автоматическая покупка выбранного инструмента</div></div></div>
-          </div>
-        </div>
-        <div class="uk-width-medium-1-2">
-          <div class="uk-panel uk-panel-box sub-card" data-sub="payments">
-            <div class="uk-flex"><span class="sub-icon uk-margin-small-right"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span>
-            <div><div class="sub-title uk-text-bold">Регулярные платежи</div><div class="sub-desc uk-text-muted uk-text-small">Автоматическое пополнение брокерского счёта</div></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="type-select-manage">
-        <button type="button" id="open-manage-top" class="manage-link uk-button uk-button-link">Управление поручениями →</button>
       </div>
     </div>
 
@@ -552,11 +826,49 @@
       </div>
     </div>
 
+    <div class="type-select">
+      <div class="step-topline">
+        <span class="step-h">Тип операции</span>
+        <span class="step-count" data-count-for="0"></span>
+      </div>
+      <div class="sub-grid">
+        <div>
+          <div class="sub-card" data-sub="investments">
+            <span class="sub-icon"><svg width="20" height="20" viewBox="-1.9965 -1.9825 25.9930 25.9930" fill="currentColor" data-icon="chart-candles"><g>
+<path d="M2.98438 11.0001C2.43286 11.0087 1.99245 11.4623 2 12.0138V13.0138H1C0.400001 13.0138 0 13.4138 0 14.0138V19.0138C0 19.6138 0.400001 20.0138 1 20.0138H2V21.0138C1.9949 21.3744 2.18438 21.7099 2.49587 21.8917C2.80737 22.0735 3.19263 22.0735 3.50413 21.8917C3.81563 21.7099 4.0051 21.3744 4 21.0138V20.0138H5C5.6 20.0138 6 19.6138 6 19.0138V14.0138C6 13.4138 5.6 13.0138 5 13.0138H4V12.0138C4.0037 11.7435 3.89782 11.4832 3.70649 11.2922C3.51516 11.1013 3.25467 10.9959 2.98438 11.0001Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M20 0.986371C19.9964 0.725945 19.8913 0.47674 19.7065 0.292242C19.5152 0.101277 19.2547 -0.00409884 18.9844 0.000122093C18.4422 0.00859659 18.0074 0.447031 18 0.985864C17.9999 0.995144 17.9999 1.00446 18 1.01379V2.0138H17C16.4 2.0138 16 2.4138 16 3.0138V11.0138C16 11.6138 16.4 12.0138 17 12.0138H18V13.0138C17.9999 13.0233 17.9999 13.0327 18 13.0422C18.0049 13.392 18.1926 13.7147 18.4959 13.8917C18.8074 14.0735 19.1926 14.0735 19.5041 13.8917C19.8074 13.7147 19.9951 13.392 20 13.0422C20.0001 13.0327 20.0001 13.0233 20 13.0138V12.0138H21C21.6 12.0138 22 11.6138 22 11.0138V3.0138C22 2.4138 21.6 2.0138 21 2.0138H20L20 1.01379C20.0001 1.00464 20.0001 0.995499 20 0.986371ZM18 4.0138L18 10.0138H20V4.0138H18Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.98637C11.9964 3.72595 11.8913 3.47674 11.7065 3.29224C11.5152 3.10128 11.2547 2.9959 10.9844 3.00012C10.4422 3.0086 10.0074 3.44703 10 3.98586C9.99987 3.99514 9.99987 4.00446 10 4.01379V5.0138H9C8.4 5.0138 8 5.4138 8 6.0138V16.0138C8 16.6138 8.4 17.0138 9 17.0138H10V18.0138C9.99987 18.0233 9.99987 18.0327 10 18.0422C10.005 18.392 10.1926 18.7147 10.4959 18.8917C10.8074 19.0735 11.1926 19.0735 11.5041 18.8917C11.8074 18.7147 11.9951 18.392 12 18.0422C12.0001 18.0327 12.0001 18.0233 12 18.0138V17.0138H13C13.6 17.0138 14 16.6138 14 16.0138V6.0138C14 5.4138 13.6 5.0138 13 5.0138H12L12 4.01379C12.0001 4.00464 12.0001 3.9955 12 3.98637ZM10 7.0138L10 15.0138H12V7.0138H10Z" fill="currentColor"/>
+</g></svg></span>
+            <div>
+              <div class="sub-title">Регулярные инвестиции <span class="tile-badge">0% комиссия</span></div>
+              <div class="sub-desc">Автоматическая покупка выбранного инструмента</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="sub-card" data-sub="payments">
+            <span class="sub-icon"><svg width="20" height="20" viewBox="-1.8000 -1.8002 23.5995 23.5995" fill="currentColor" data-icon="history-refresh"><g>
+<path d="M9.84694 0.00113475C12.7394 -0.0421453 15.3508 1.15556 17.2026 3.08903L19.1461 1.14567C19.3411 0.950665 19.6581 0.950665 19.8531 1.14567C19.9511 1.24267 19.9996 1.37119 19.9996 1.49919V5.99919C19.9996 6.55147 19.5519 6.99919 18.9996 6.99919H14.4994C14.3714 6.99919 14.2439 6.94971 14.1459 6.85271C13.9509 6.65771 13.9509 6.34068 14.1459 6.14568L15.7827 4.50896C13.9713 2.60037 11.2474 1.56825 8.30783 2.17497C5.23273 2.80998 2.76722 5.29906 2.1592 8.38006C1.14917 13.4981 5.05813 17.9992 9.99928 17.9992C14.1184 17.9992 17.5196 14.8694 17.9526 10.8644C18.0066 10.3674 18.437 9.9992 18.937 9.9992C19.5371 9.9992 20.0041 10.5243 19.9371 11.1203C19.378 16.1083 15.1334 19.9992 9.99927 19.9992C3.86308 19.9992 -1.00033 14.4429 0.176702 8.09686C0.921724 4.07386 4.18198 0.859445 8.2121 0.155445C8.76449 0.0590647 9.31048 0.00916475 9.84694 0.00113475Z" fill="currentColor"/>
+<path d="M10.0003 3.99919C9.44828 3.99919 9.00027 4.44719 9.00027 4.99919V9.99919C9.00027 10.2642 9.10524 10.5192 9.29325 10.7062L11.5863 12.9992C11.9763 13.3892 12.6104 13.3892 13.0004 12.9992C13.3904 12.6092 13.3904 11.9751 13.0004 11.5851L11.0003 9.58513V4.99919C11.0003 4.44719 10.5523 3.99919 10.0003 3.99919Z" fill="currentColor"/>
+</g></svg></span>
+            <div>
+              <div class="sub-title">Регулярные платежи</div>
+              <div class="sub-desc">Пополнение брокерского счёта по расписанию</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <section class="step locked" data-step="1" id="step-1" hidden>
+      <div class="step-topline">
+        <span class="step-h">Инструмент</span>
+        <span class="step-count" data-count-for="1"></span>
+      </div>
       <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">2</span>
         <span class="step-title-wrap"><span class="step-title">Инструмент</span><span class="step-value" id="step-value-1">Не выбран</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <svg class="step-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
       </button>
       <div class="step-body">
       <div class="inst-mode" id="inst-mode">
@@ -565,9 +877,6 @@
       </div>
 
       <div class="split-builder uk-panel uk-panel-box uk-alert-success" id="split-builder" hidden>
-        <div class="split-name-label">Название набора</div>
-        <input type="text" id="split-name" class="split-name-input uk-input uk-form-width-large" placeholder="Например, Ядро US &amp; Europe" maxlength="40" autocomplete="off">
-        <div class="split-suggest" id="split-suggest"></div>
         <div class="split-list" id="split-list"></div>
         <div class="split-empty" id="split-empty">Добавьте 2 и более инструмента из списка ниже — тап добавляет в набор.</div>
         <div class="split-foot" id="split-foot" hidden>
@@ -577,44 +886,32 @@
       </div>
 
       <p class="step-help" id="inst-help">Найдите и выберите один инструмент для регулярной покупки.</p>
+      <div class="asset-panel">
       <div class="search-wrap">
-        <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+        <span class="search-icon"><svg width="18" height="18" viewBox="-2.8965 -2.8965 25.7929 25.7929" fill="currentColor" data-icon="search-solid" data-src="2a7bdf3b"><path d="M7 0C3.14585 0 0 3.14585 0 7C0 10.8541 3.14585 14 7 14C8.748 14 10.345 13.348 11.5742 12.2813L12 12.707V14L17.5859 19.5859C18.1379 20.1379 19.0339 20.1379 19.5859 19.5859C20.1379 19.0339 20.1379 18.1379 19.5859 17.5859L14 12H12.707L12.2813 11.5742C13.348 10.345 14 8.748 14 7C14 3.14585 10.8541 1.33071e-06 7 1.33071e-06L7 0ZM7 2C9.77327 2 12 4.22673 12 7C12 9.77327 9.77327 12 7 12C4.22673 12 2 9.77327 2 7C2 4.22673 4.22673 2 7 2Z" fill="currentColor"/></svg></span>
         <input type="text" id="search-input" class="search-input uk-input" placeholder="Введите тикер, название или слово по-русски" autocomplete="off">
-        <button type="button" id="clear-button" class="clear-button uk-button uk-button-mini uk-button-link" aria-label="Очистить поиск"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 3.5l-7 7M3.5 3.5l7 7"/></svg></button>
-        <div class="search-lang" role="group" aria-label="Язык поиска">
-          <button type="button" class="lang-btn active uk-button uk-button-small uk-button-primary" data-lang="ru">RU</button>
-          <button type="button" class="lang-btn uk-button uk-button-small" data-lang="en">EN</button>
-        </div>
+        <button type="button" id="clear-button" class="clear-button uk-button uk-button-mini uk-button-link" aria-label="Очистить поиск"><svg width="13" height="13" viewBox="-5.5403 -5.5835 27.1772 27.1772" fill="currentColor" data-icon="close-thin" data-src="42fcb9d6"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>
       </div>
       <div class="col-label">Коллекции</div>
       <div class="chip-row" id="chip-row"></div>
       <div class="asset-list" id="asset-list"></div>
-      <button type="button" class="split-done uk-button uk-button-primary uk-width-1-1" id="split-done" hidden disabled>Готово — собрать набор</button>
       </div>
+      <div class="split-chips-panel" id="split-chips-panel" hidden>
+        <div class="split-chips-h">Инструменты к покупке</div>
+        <div class="split-chips" id="split-chips"></div>
+      </div>
+      <button type="button" class="split-done uk-button uk-button-primary uk-width-1-1" id="split-done" hidden disabled>Готово — собрать набор</button>
     </section>
 
     <section class="step locked" data-step="2" id="step-2" hidden>
-      <button type="button" class="step-head" aria-expanded="false">
-        <span class="step-number">3</span>
-        <span class="step-title-wrap"><span class="step-title">Валюта</span><span class="step-value" id="step-value-2">Не выбрана</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="step-body">
-        <p class="step-help">Выберите валюту списания.</p>
-        <div class="freq-options" id="currency-options">
-          <div class="freq-opt" data-currency="EUR"><span>EUR</span><span class="check">€</span></div>
-          <div class="freq-opt" data-currency="USD"><span>USD</span><span class="check">$</span></div>
-          <div class="freq-opt" data-currency="PLN"><span>PLN</span><span class="check">zł</span></div>
-        </div>
-        <select id="currency" class="cur-select" hidden><option value="EUR">EUR</option><option value="USD">USD</option><option value="PLN">PLN</option></select>
+      <div class="step-topline">
+        <span class="step-h">Тип инвестирования</span>
+        <span class="step-count" data-count-for="2"></span>
       </div>
-    </section>
-
-    <section class="step locked" data-step="3" id="step-3" hidden>
       <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">4</span>
-        <span class="step-title-wrap"><span class="step-title">Сумма</span><span class="step-value" id="step-value-3">Не указана</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="step-title-wrap"><span class="step-title">Тип инвестирования</span><span class="step-value" id="step-value-2">Не указана</span></span>
+        <svg class="step-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
       </button>
       <div class="step-body">
         <div class="buy-mode" id="buy-mode" hidden>
@@ -622,8 +919,16 @@
           <button type="button" class="buy-mode-btn uk-button uk-button-small" data-buymode="qty">По количеству</button>
         </div>
         <div id="amount-block">
+          <div class="field-label">Сумма списания</div>
           <div class="amount-row">
             <input type="text" id="amount" class="amount-input uk-input" inputmode="decimal" placeholder="0.00" value="">
+            <div class="cur-picker">
+              <span class="cur-badge" id="cur-badge">€</span>
+              <select id="currency-picker" aria-label="Валюта списания">
+                <option value="EUR">EUR</option><option value="USD">USD</option><option value="PLN">PLN</option>
+              </select>
+              <svg class="cur-chev" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
+            </div>
             <strong id="amount-currency-label">EUR</strong>
           </div>
           <div class="field-msg" id="amount-feedback" hidden></div>
@@ -632,8 +937,36 @@
             <button type="button" class="quick-btn uk-button uk-button-small" data-add="500">+500</button>
             <button type="button" class="quick-btn uk-button uk-button-small" data-add="1000">+1000</button>
           </div>
+          <div class="split-amount-panel" id="split-amount-panel" hidden>
+            <div class="panel-h">Инструменты к покупке</div>
+            <div class="split-list" id="split-amount-list"></div>
+            <div class="split-amount-foot">
+              <div class="split-amount-label">Оценка стоимости<br><span class="split-amount-sub" id="split-amount-sub"></span></div>
+              <button type="button" class="split-evenly uk-button uk-button-small" id="split-amount-evenly">Поровну</button>
+              <div class="split-amount-total" id="split-amount-total">—</div>
+            </div>
+          </div>
+        </div>
+        <div id="legacy-currency" hidden>
+<div class="freq-options" id="currency-options">
+          <div class="freq-opt" data-currency="EUR"><span>EUR</span><span class="check">€</span></div>
+          <div class="freq-opt" data-currency="USD"><span>USD</span><span class="check">$</span></div>
+          <div class="freq-opt" data-currency="PLN"><span>PLN</span><span class="check">zł</span></div>
+        </div>
+        <select id="currency" class="cur-select" hidden><option value="EUR">EUR</option><option value="USD">USD</option><option value="PLN">PLN</option></select>
         </div>
         <div id="qty-block" hidden>
+          <div class="field-label">Валюта списания</div>
+          <div class="amount-row" style="margin-bottom:16px">
+            <div class="cur-picker" style="flex:1 1 auto">
+              <span class="cur-badge" id="cur-badge-qty">€</span>
+              <select id="currency-picker-qty" aria-label="Валюта списания">
+                <option value="EUR">EUR</option><option value="USD">USD</option><option value="PLN">PLN</option>
+              </select>
+              <svg class="cur-chev" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
+            </div>
+          </div>
+          <div class="panel-h">Инструменты к покупке</div>
           <div id="qty-list"></div>
           <div class="qty-total">
             <span class="qty-total-label" id="qty-total-label">Оценка списания</span>
@@ -641,9 +974,9 @@
           </div>
           <div class="field-msg" id="qty-feedback" hidden></div>
         </div>
-        <div class="amount-note" id="amount-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
+        <div class="amount-note" id="amount-note"><svg width="14" height="14" viewBox="-0.9043 -0.9043 21.8085 21.8085" fill="currentColor" data-icon="info-20" data-src="617e26d9"><path d="M10 15C10.2833 15 10.521 14.904 10.713 14.712C10.905 14.52 11.0007 14.2827 11 14V10C11 9.71667 10.904 9.47933 10.712 9.288C10.52 9.09667 10.2827 9.00067 10 9C9.71667 9 9.47933 9.096 9.288 9.288C9.09667 9.48 9.00067 9.71733 9 10V14C9 14.2833 9.096 14.521 9.288 14.713C9.48 14.905 9.71733 15.0007 10 15ZM10 7C10.2833 7 10.521 6.904 10.713 6.712C10.905 6.52 11.0007 6.28267 11 6C11 5.71667 10.904 5.47933 10.712 5.288C10.52 5.09667 10.2827 5.00067 10 5C9.71667 5 9.47933 5.096 9.288 5.288C9.09667 5.48 9.00067 5.71733 9 6C9 6.28333 9.096 6.521 9.288 6.713C9.48 6.905 9.71733 7.00067 10 7ZM10 20C8.61667 20 7.31667 19.7373 6.1 19.212C4.88333 18.6867 3.825 17.9743 2.925 17.075C2.025 16.175 1.31267 15.1167 0.788 13.9C0.263333 12.6833 0.000666667 11.3833 0 10C0 8.61667 0.262667 7.31667 0.788 6.1C1.31333 4.88333 2.02567 3.825 2.925 2.925C3.825 2.025 4.88333 1.31267 6.1 0.788C7.31667 0.263333 8.61667 0.000666667 10 0C11.3833 0 12.6833 0.262667 13.9 0.788C15.1167 1.31333 16.175 2.02567 17.075 2.925C17.975 3.825 18.6877 4.88333 19.213 6.1C19.7383 7.31667 20.0007 8.61667 20 10C20 11.3833 19.7373 12.6833 19.212 13.9C18.6867 15.1167 17.9743 16.175 17.075 17.075C16.175 17.975 15.1167 18.6877 13.9 19.213C12.6833 19.7383 11.3833 20.0007 10 20Z" fill="currentColor"/></svg>Фактическое количество может варьироваться в зависимости от объёма торгов.</div>
         <label class="accumulate-opt" id="accumulate-opt">
-          <div class="accumulate-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="5"/><path d="M13.5 5.5a5 5 0 1 1 2 9.6"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5"/></svg></div>
+          <div class="accumulate-icon"><svg width="20" height="20" viewBox="-1.8754 -1.8750 23.7509 23.7509" fill="currentColor" data-icon="accumulate"><path d="M1 0C0.448 0 0 0.448 0 1V11C0 11.552 0.448 12 1 12H19C19.552 12 20 11.552 20 11V1C20 0.448 19.552 0 19 0H1ZM2.91211 2H17.0879C17.239 2.42592 17.5741 2.761 18 2.91211V9.08789C17.5741 9.239 17.239 9.57409 17.0879 10H2.91211C2.761 9.57409 2.42591 9.239 2 9.08789V2.91211C2.42592 2.761 2.761 2.42591 2.91211 2V2ZM10 3C8.34315 3 7 4.34315 7 6C7 7.65685 8.34315 9 10 9C11.6569 9 13 7.65685 13 6C13 4.34315 11.6569 3 10 3V3ZM5 5C4.448 5 4 5.447 4 6C4 6.553 4.448 7 5 7C5.552 7 6 6.553 6 6C6 5.447 5.552 5 5 5V5ZM15 5C14.448 5 14 5.447 14 6C14 6.553 14.448 7 15 7C15.552 7 16 6.553 16 6C16 5.447 15.552 5 15 5V5ZM9.98438 12.9863C9.43286 12.995 8.99245 13.4485 9 14V16H6.76758C6.31458 16 6.08525 16.5481 6.40625 16.8691L9.21094 19.6738C9.64694 20.1098 10.3531 20.1098 10.7891 19.6738L13.5938 16.8691C13.9148 16.5481 13.6854 16 13.2324 16H11V14C11.0037 13.7297 10.8978 13.4694 10.7065 13.2785C10.5152 13.0875 10.2547 12.9821 9.98437 12.9863H9.98438Z" fill="currentColor"/></svg></div>
           <div class="accumulate-text">
             <div class="accumulate-title">Накапливать до целой акции</div>
             <div class="accumulate-desc">Если суммы не хватает на целую акцию, остаток копится и покупка исполняется, как только средств достаточно. Деньги не простаивают, дробных акций нет.</div>
@@ -654,25 +987,49 @@
       </div>
     </section>
 
-    <section class="step locked" data-step="4" id="step-4" hidden>
+    <section class="step locked" data-step="3" id="step-3" hidden>
+      <div class="step-topline">
+        <span class="step-h">Частота</span>
+        <span class="step-count" data-count-for="3"></span>
+      </div>
       <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">5</span>
-        <span class="step-title-wrap"><span class="step-title">Частота</span><span class="step-value" id="step-value-4">Не выбрана</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="step-title-wrap"><span class="step-title">Частота</span><span class="step-value" id="step-value-3">Не выбрана</span></span>
+        <svg class="step-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
       </button>
       <div class="step-body">
         <div class="freq-options" id="freq-options">
-          <div class="freq-opt" data-freq="week"><span>Раз в неделю</span><span class="check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span></div>
-          <div class="freq-opt" data-freq="month"><span>Раз в месяц</span><span class="check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg></span></div>
+          <div class="freq-opt" data-freq="week">
+            <span class="freq-ic"><svg width="20" height="20" viewBox="-3.1171 -2.1172 24.2343 24.2343" fill="currentColor" data-icon="calendar-1w"><g>
+<path d="M4 0C3.448 0 3 0.448 3 1V2H2C0.9 2 0 2.9 0 4V18C0 19.1 0.9 20 2 20H5C5.552 20 6 19.552 6 19C6 18.448 5.552 18 5 18H2V7H16V13C16 13.552 16.448 14 17 14C17.552 14 18 13.552 18 13V4C18 2.9 17.1 2 16 2H15V1C15 0.448 14.552 0 14 0C13.448 0 13 0.448 13 1V2H5V1C5 0.448 4.552 0 4 0Z" fill="currentColor"/>
+<path d="M12.5716 19.9989L11.1419 14.9989H12.2959L13.123 18.4731H13.1644L14.0769 14.9989H15.065L15.9751 18.4804H16.019L16.846 14.9989H18.0001L16.5704 19.9989H15.5408L14.5893 16.7299H14.5502L13.6012 19.9989H12.5716Z" fill="currentColor"/>
+<path d="M10.23 14.9989V19.9989H9.17353V16.0024H9.14425L8 16.7201V15.7826L9.23697 14.9989H10.23Z" fill="currentColor"/>
+</g></svg></span>
+            <div><div class="freq-title">Раз в неделю</div><div class="freq-desc">В первый день каждой недели</div></div>
+            <span class="check"></span>
+          </div>
+          <div class="freq-opt" data-freq="month">
+            <span class="freq-ic"><svg width="20" height="20" viewBox="-3.1172 -2.1172 24.2343 24.2343" fill="currentColor" data-icon="calendar-1m"><g>
+<path d="M4 0C3.448 0 3 0.448 3 1V2H2C0.9 2 0 2.9 0 4V18C0 19.1 0.9 20 2 20H5C5.552 20 6 19.552 6 19C6 18.448 5.552 18 5 18H2V7H16V13C16 13.552 16.448 14 17 14C17.552 14 18 13.552 18 13V4C18 2.9 17.1 2 16 2H15V1C15 0.448 14.552 0 14 0C13.448 0 13 0.448 13 1V2H5V1C5 0.448 4.552 0 4 0Z" fill="currentColor"/>
+<path d="M12.4999 14.9989H13.8229L15.2202 18.3583H15.2797L16.677 14.9989H17.9999V19.9989H16.9594V16.7445H16.9173L15.6042 19.9745H14.8957L13.5826 16.7323H13.5405V19.9989H12.4999V14.9989Z" fill="currentColor"/>
+<path d="M11.2644 14.9989V19.9989H10.1917V16.0024H10.1619L9 16.7201V15.7826L10.2561 14.9989H11.2644Z" fill="currentColor"/>
+</g></svg></span>
+            <div><div class="freq-title">Раз в месяц</div><div class="freq-desc">В первое число каждого месяца</div></div>
+            <span class="check"></span>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="step locked" data-step="5" id="step-5" hidden>
+    <section class="step locked" data-step="4" id="step-4" hidden>
+      <div class="step-topline">
+        <span class="step-h">Способ оплаты</span>
+        <span class="step-count" data-count-for="4"></span>
+      </div>
       <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">6</span>
-        <span class="step-title-wrap"><span class="step-title">Способ оплаты</span><span class="step-value" id="step-value-5">Не выбран</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="step-title-wrap"><span class="step-title">Способ оплаты</span><span class="step-value" id="step-value-4">Не выбран</span></span>
+        <svg class="step-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
       </button>
       <div class="step-body">
       <div class="pay-section-label uk-text-small uk-text-muted uk-text-uppercase">Основной источник — автосписание</div>
@@ -688,7 +1045,7 @@
           <span class="pay-fx" id="fx-card2" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-medium-1-2"><div class="pay-card uk-panel uk-panel-box uk-flex" id="pay-account">
-          <div class="acct-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
+          <div class="acct-icon"><svg width="20" height="20" viewBox="-1.7627 -3.4287 20.1913 20.1913" fill="currentColor" data-icon="card" data-src="7110145a"><path d="M15 0C15.9207 0.000179291 16.666 0.74627 16.666 1.66699V11.667C16.666 12.5877 15.9207 13.3338 15 13.334H1.66602C0.745327 13.3338 0 12.5877 0 11.667V1.66699C7.15256e-07 0.746264 0.745327 0.000169516 1.66602 0H15ZM1.66602 5.83398V11.667H15V5.83398H1.66602ZM1.66602 1.66699V3.33398H15V1.66699H1.66602Z" fill="currentColor"/></svg></div>
           <div><div class="card-num">Брокерский счёт</div><div class="card-issuer" id="pay-account-balance">Баланс · EUR</div></div>
           <span class="pay-fx" id="fx-account" hidden>конвертация</span>
         </div></div>
@@ -698,7 +1055,7 @@
           <span class="pay-fx" id="fx-blik" hidden>конвертация</span>
         </div></div>
         <div class="uk-width-1-1"><div class="pay-card pay-add uk-panel uk-panel-box uk-text-center" id="pay-add">
-          <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="plus"><svg width="18" height="18" viewBox="-6.4076 -6.4076 30.8151 30.8151" fill="currentColor" data-icon="plus" data-src="ae35e292"><path d="M17 8H10V1C10 0.448 9.552 0 9 0C8.448 0 8 0.448 8 1V8H1C0.448 8 0 8.448 0 9C0 9.552 0.448 10 1 10H8V17C8 17.552 8.448 18 9 18C9.552 18 10 17.552 10 17V10H17C17.552 10 18 9.552 18 9C18 8.448 17.552 8 17 8V8Z" fill="currentColor"/></svg></span>
           Новая карта
         </div></div>
       </div>
@@ -706,7 +1063,7 @@
       <div class="field-msg pay-funds-note" id="pay-funds-note" data-cls="pay-funds-note" hidden></div>
       <div class="backup-source uk-panel uk-panel-box uk-margin-top" id="backup-source" style="display:none">
         <label class="backup-main">
-          <div class="backup-icon" id="backup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
+          <div class="backup-icon" id="backup-icon"><svg width="20" height="20" viewBox="-2.1152 -2.1148 24.2305 24.2305" fill="currentColor" data-icon="backup-source"><path d="M1 0C0.448 0 0 0.448 0 1V11C0 11.552 0.448 12 1 12H19C19.552 12 20 11.552 20 11V1C20 0.448 19.552 0 19 0H1ZM2.91211 2H17.0879C17.239 2.42592 17.5741 2.761 18 2.91211V9.08789C17.5741 9.239 17.239 9.57409 17.0879 10H2.91211C2.761 9.57409 2.42591 9.239 2 9.08789V2.91211C2.42592 2.761 2.761 2.42591 2.91211 2V2ZM10 3C8.34315 3 7 4.34315 7 6C7 7.65685 8.34315 9 10 9C11.6569 9 13 7.65685 13 6C13 4.34315 11.6569 3 10 3V3ZM5 5C4.448 5 4 5.447 4 6C4 6.553 4.448 7 5 7C5.552 7 6 6.553 6 6C6 5.447 5.552 5 5 5V5ZM15 5C14.448 5 14 5.447 14 6C14 6.553 14.448 7 15 7C15.552 7 16 6.553 16 6C16 5.447 15.552 5 15 5V5ZM9.98438 12.9863C9.43286 12.995 8.99245 13.4485 9 14V16H6.76758C6.31458 16 6.08525 16.5481 6.40625 16.8691L9.21094 19.6738C9.64694 20.1098 10.3531 20.1098 10.7891 19.6738L13.5938 16.8691C13.9148 16.5481 13.6854 16 13.2324 16H11V14C11.0037 13.7297 10.8978 13.4694 10.7065 13.2785C10.5152 13.0875 10.2547 12.9821 9.98437 12.9863H9.98438Z" fill="currentColor"/></svg></div>
           <div class="backup-text">
             <div class="backup-title" id="backup-title">Резервный источник</div>
             <div class="backup-desc" id="backup-desc">Если списание с основного источника не пройдёт, поручение будет оплачено из резерва.</div>
@@ -728,15 +1085,21 @@
                     <span>Я принимаю соглашение о хранении данных карты.</span>
         </label>
       </div>
+
+      </div>
       <div class="step-actions"><button type="button" class="step-next uk-button uk-button-primary uk-width-1-1" id="pay-next" disabled>Продолжить</button></div>
       </div>
     </section>
 
-    <section class="step locked" data-step="6" id="step-6" hidden>
+    <section class="step locked" data-step="5" id="step-5" hidden>
+      <div class="step-topline">
+        <span class="step-h">Подтверждение</span>
+        <span class="step-count" data-count-for="5"></span>
+      </div>
       <button type="button" class="step-head" aria-expanded="false">
         <span class="step-number">7</span>
-        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-6">Доступно после заполнения</span></span>
-        <svg class="step-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="step-title-wrap"><span class="step-title">Проверка и подтверждение</span><span class="step-value" id="step-value-5">Доступно после заполнения</span></span>
+        <svg class="step-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>
       </button>
       <div class="step-body">
       <div id="confirm-cta">
@@ -764,7 +1127,8 @@
       </div>
       </div>
     </section>
-    <div class="wizard-nav"><button type="button" class="wizard-back uk-button uk-button-link" id="wizard-back" hidden>← Назад</button></div>
+    <div class="wizard-nav"><button type="button" class="wizard-back uk-button uk-button-link" id="wizard-back" hidden>Предыдущий шаг</button></div>
+    </div></div>
   </main>
 </div>
 
@@ -772,7 +1136,7 @@
 <nav class="bottom-nav">
   <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Главная</div>
   <div class="bn-item active"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21H4a1 1 0 0 1-1-1V3"/><path d="M7 15l4-5 4 3 5-7"/></svg></span>Инвест</div>
-  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>Счёт</div>
+  <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="-1.7627 -3.4287 20.1913 20.1913" fill="currentColor" data-icon="card" data-src="9ba3c512"><path d="M15 0C15.9207 0.000179291 16.666 0.74627 16.666 1.66699V11.667C16.666 12.5877 15.9207 13.3338 15 13.334H1.66602C0.745327 13.3338 0 12.5877 0 11.667V1.66699C7.15256e-07 0.746264 0.745327 0.000169516 1.66602 0H15ZM1.66602 5.83398V11.667H15V5.83398H1.66602ZM1.66602 1.66699V3.33398H15V1.66699H1.66602Z" fill="currentColor"/></svg></span>Счёт</div>
   <div class="bn-item"><span class="bn-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Профиль</div>
 </nav>
 
@@ -780,11 +1144,16 @@
 <div class="sheet-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-hidden="true">
   <div class="sheet sheet-wide" role="document">
     <div class="sheet-head">
-      <div class="sheet-head-title" id="confirm-modal-title">Проверка и подтверждение</div>
-      <button type="button" class="sheet-icon-btn" id="confirm-modal-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <div class="sheet-head-title" id="confirm-modal-title">Внимательно проверьте все параметры</div>
+      <button type="button" class="sheet-icon-btn" id="confirm-modal-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>
     </div>
     <div class="confirm-modal-body">
-      <div class="review-list" id="review-list"></div>
+      <div class="request-doc">
+        <div class="request-doc-h">Поручение</div>
+        <div class="request-doc-sub">Перевод между своими счетами<br>Клиент: Krasilnikov Vladimir · ID D1478372</div>
+        <div class="review-list" id="review-list"></div>
+        <div class="request-doc-foot" id="request-doc-foot"></div>
+      </div>
       <div class="confirm-foot">
         <div>
           <div class="total-label">Общая сумма списания</div>
@@ -792,7 +1161,7 @@
           <div class="total-breakdown" id="total-breakdown"></div>
         </div>
         <button type="button" id="submit-btn" class="confirm-btn uk-button uk-button-primary uk-button-large" disabled>
-          <span class="btn-text">Подтвердить поручение</span>
+          <span class="btn-text">Отправить</span>
           <div class="spinner"></div>
         </button>
       </div>
@@ -805,25 +1174,25 @@
 <div class="manage-view" id="manage-view" aria-hidden="true">
   <div class="manage-inner">
     <div class="manage-head">
-      <button type="button" class="sheet-icon-btn" id="manage-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button type="button" class="sheet-icon-btn" id="manage-back" aria-label="Назад"><svg width="22" height="22" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="22081791"><g transform="rotate(90 5.8334 3.7500)"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></g></svg></button>
       <h1 class="manage-title">Управление поручениями</h1>
-      <button type="button" class="sheet-icon-btn" id="manage-close" aria-label="Закрыть"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <button type="button" class="sheet-icon-btn" id="manage-close" aria-label="Закрыть"><svg width="22" height="22" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>
     </div>
     <div class="manage-toolbar">
       <div class="manage-count" id="manage-count">Поручения (0)</div>
       <label class="hide-canceled"><input type="checkbox" id="hide-canceled"><span>Скрывать отменённые</span></label>
     </div>
     <div class="plan-list" id="plan-list"></div>
-    <button type="button" class="manage-new uk-button uk-button-primary uk-width-1-1" id="manage-new"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>Создать новое поручение</button>
+    <button type="button" class="manage-new uk-button uk-button-primary uk-width-1-1" id="manage-new"><svg width="16" height="16" viewBox="-6.4076 -6.4076 30.8151 30.8151" fill="currentColor" data-icon="plus" data-src="ae35e292"><path d="M17 8H10V1C10 0.448 9.552 0 9 0C8.448 0 8 0.448 8 1V8H1C0.448 8 0 8.448 0 9C0 9.552 0.448 10 1 10H8V17C8 17.552 8.448 18 9 18C9.552 18 10 17.552 10 17V10H17C17.552 10 18 9.552 18 9C18 8.448 17.552 8 17 8V8Z" fill="currentColor"/></svg>Создать новое поручение</button>
   </div>
 </div>
 
 <div class="sheet-overlay" id="backup-sheet" aria-hidden="true">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="backup-sheet-title">
     <div class="sheet-head">
-      <button type="button" class="sheet-icon-btn" id="backup-sheet-back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button type="button" class="sheet-icon-btn" id="backup-sheet-back" aria-label="Назад"><svg width="20" height="20" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="22081791"><g transform="rotate(90 5.8334 3.7500)"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></g></svg></button>
       <div class="sheet-head-title"><span class="sheet-head-badge" id="backup-sheet-badge">A</span><span id="backup-sheet-instrument">Повторяющ.</span></div>
-      <button type="button" class="sheet-icon-btn" id="backup-sheet-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <button type="button" class="sheet-icon-btn" id="backup-sheet-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>
     </div>
     <div class="sheet-body">
       <div class="sheet-shield">
@@ -839,7 +1208,7 @@
       <div class="sheet-benefits">
         <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span><span>Инвестируете без пропусков</span></div>
         <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span><span>Применяется ко всем поручениям</span></div>
-        <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span>Отключить в любое время</span></div>
+        <div class="sheet-benefit"><span class="sheet-benefit-icon"><svg width="26" height="26" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></span><span>Отключить в любое время</span></div>
       </div>
       <button type="button" class="sheet-primary uk-button uk-button-primary uk-width-1-1" id="backup-sheet-enable">Включить</button>
       <button type="button" class="sheet-skip uk-button uk-button-link uk-width-1-1" id="backup-sheet-skip">Пропустить сейчас</button>
@@ -956,8 +1325,7 @@ function updateSearchPlaceholder(){
     : 'Search ticker, company or keyword';
 }
 
-var state = { selected:null, query:'', activeCol:'popular', currency:null, frequency:null, payMethod:null, backupOn:false, backupMethod:null, backupPrompted:false, accumulate:false, buyMode:'amount', qty:1, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
-var SPLIT_SUGGEST = ['Ядро US & Europe','Развитые & Развивающиеся','Дивидендный','Технологии', 'Всепогодный'];
+var state = { selected:null, query:'', activeCol:'popular', currency:'EUR', frequency:null, payMethod:null, backupOn:false, backupMethod:null, backupPrompted:false, accumulate:false, buyMode:'amount', qty:1, subscription:null, searchLang:'ru', currentStep:1, maxStep:1, splitMode:false, split:{ name:'', items:[] } };
 var firstSchedule = true;
 
 var $ = function(id){ return document.getElementById(id); };
@@ -1186,7 +1554,7 @@ function planCard(p){
       '<span class="plan-avatar" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(p.badge)+(function(){ var t=planTicker(p); return t ? logoTag(t.base, t.ex) : ''; })()+'</span>'+
       '<div class="plan-main"><div class="plan-name">'+esc(p.name)+'</div><div class="plan-meta">'+esc(p.amount)+' · '+esc(p.interval)+(p.next!=='—'?' · следующее '+p.next:'')+' · ID '+p.planId+'</div>'+((skipFlag||accFlag)?'<div class="plan-flags">'+skipFlag+accFlag+'</div>':'')+'</div>'+
       '<span class="plan-status '+p.status+'"'+statusTip+'>'+statusLabel(p.status)+'</span>'+
-      '<svg class="plan-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'+
+      '<svg class="plan-chevron" width="18" height="18" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="55d0bc39"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></svg>'+
     '</button>'+
     '<div class="plan-body">'+
       (function(){ var ap=accProgress(p); return ap ? '<div class="acc-progress"><div class="acc-progress-top"><span>Накоплено до следующей акции</span><span class="acc-progress-val">'+ap.sym+fmt(ap.carry)+' из '+ap.sym+fmt(ap.price)+' · '+ap.pct+'%</span></div><div class="acc-bar"><span style="width:'+ap.pct+'%"></span></div><div class="acc-eta">'+(ap.ready?'Средств достаточно — покупка исполнится в ближайшее списание':'≈ наберётся к '+ap.fill)+'</div></div>' : ''; })()+
@@ -1229,6 +1597,7 @@ function renderPlans(){
   $('plan-list').innerHTML = list.length ? list.map(planCard).join('') : '<div class="manage-empty">Нет активных поручений</div>';
   $('manage-count').textContent = 'Поручения ('+list.length+')';
   if (openPlanId){ var el = $('plan-list').querySelector('.plan[data-id="'+openPlanId+'"]'); if (el) el.classList.add('open'); }
+  updateRecurCounter();
   bindPlans();
 }
 function bindPlans(){
@@ -1291,14 +1660,29 @@ function closeConfirmModal(){
   document.documentElement.style.overflow = '';
 }
 function confirmModalOpen(){ return $('confirm-modal').classList.contains('visible'); }
-function openManage(){ renderPlans(); $('manage-view').classList.add('visible'); $('manage-view').setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; $('manage-view').scrollTop=0; }
-function closeManage(){ $('manage-view').classList.remove('visible'); $('manage-view').setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
+function activePlansCount(){ return plans.filter(function(p){ return p.status === 'active'; }).length; }
+function updateRecurCounter(){
+  var n = activePlansCount(), el = $('open-manage-count');
+  if (!el) return;
+  el.hidden = n < 1;
+  var t = $('recur-counter-text');
+  if (t) t.textContent = n + ' ' + pluralRu(n, 'активное поручение', 'активных поручения', 'активных поручений');
+}
+function openManage(){
+  document.querySelectorAll('#ff-tabs .ff-tab').forEach(function(x){ x.classList.toggle('on', x.dataset.view === 'manage'); });
+  renderPlans(); $('manage-view').classList.add('visible'); $('manage-view').setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; $('manage-view').scrollTop=0; }
+function closeManage(){
+  document.querySelectorAll('#ff-tabs .ff-tab').forEach(function(x){ x.classList.toggle('on', x.dataset.view === 'connect'); });
+  $('manage-view').classList.remove('visible');
+  $('manage-view').setAttribute('aria-hidden','true');
+  document.documentElement.style.overflow='';
+}
 function rgba(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
 function fmt(v){ return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 // ===== Деньги: лимиты, комиссии, баланс =====
 // ДОПУЩЕНИЯ ПРОТОТИПА — реальные значения приходят из тарифов и с бэкенда.
 var LIMITS   = { EUR:{min:10, max:15000}, USD:{min:10, max:15000}, PLN:{min:50, max:60000} };
-var FEES     = { card:{pct:0.5, min:0.50}, card2:{pct:0.5, min:0.50}, account:{pct:0, min:0}, blik:{pct:0, min:0} };
+var FEES     = { card:{pct:0, min:0}, card2:{pct:0, min:0}, account:{pct:0, min:0}, blik:{pct:0, min:0} };
 var BALANCES = { EUR:4820.00, USD:5200.00, PLN:21000.00 };
 
 // «1 000,50», «1,000.50», «1000.50» → «1000.50».
@@ -1354,15 +1738,37 @@ function qtyProportions(){
 // работает с одной суммой независимо от того, как её задали.
 function parseAmount(){ return isQtyMode() ? qtyTotal() : parseAmountField(); }
 
-function setQty(id, v){
+function setQty(id, v, skipRender){
   var q = qtyOf(v);
   if (isSplit()){
     state.split.items.forEach(function(x){ if (x.id === id) x.qty = q; });
   } else {
     state.qty = q;
   }
-  renderQtyBlock();
+  if (!skipRender) renderQtyBlock();
   recompute();
+}
+// Живой ввод в поле количества: обновляем стоимости строк, доли и итог БЕЗ перерисовки
+// списка — иначе input в фокусе пересоздаётся и курсор вылетает. Значения не в фокусе
+// патчим на месте, как это уже сделано для %-долей набора.
+function refreshQtyLive(activeInput){
+  if (!isQtyMode()) return;
+  var rows = qtyProportions(), sym = curSym(state.currency || 'EUR'), multi = rows.length > 1, byRow = {};
+  rows.forEach(function(r){ byRow[r.id] = r; });
+  document.querySelectorAll('#qty-list .qty-row').forEach(function(row){
+    var r = byRow[parseInt(row.dataset.id, 10)]; if (!r) return;
+    var inp = row.querySelector('.qty-input');
+    if (inp && inp !== activeInput) inp.value = r.qty;
+    var costEl = row.querySelector('.qty-cost-val');
+    if (costEl) costEl.textContent = '\u2248\u202F' + sym + fmt(r.cost);
+    var pctEl = row.querySelector('.qty-cost-pct');
+    if (pctEl && multi) pctEl.textContent = fmtPct(r.pct) + '% набора';
+  });
+  var total = qtyTotal(), n = qtyCount();
+  $('qty-total-label').textContent = n
+    ? 'Оценка списания · ' + n + ' ' + pluralRu(n, 'акция', 'акции', 'акций')
+    : 'Оценка списания';
+  $('qty-total-val').textContent = total ? '\u2248\u202F' + fmt(total) + ' ' + (state.currency || 'EUR') : '—';
 }
 function bumpQty(id, delta){
   var cur = isSplit()
@@ -1386,6 +1792,7 @@ function renderQtyBlock(){
   $('qty-block').hidden = !qty;
   $('accumulate-opt').style.display = qty ? 'none' : '';   // целые акции — накапливать нечего
   $('amount-note').style.display = qty ? 'none' : '';
+  renderSplitAmountBlock();
   if (!qty) return;
 
   var rows = qtyProportions(), sym = curSym(state.currency || 'EUR'), multi = rows.length > 1;
@@ -1404,9 +1811,10 @@ function renderQtyBlock(){
         '<button type="button" class="qty-plus" aria-label="Больше">+</button>'+
       '</div>'+
       '<div class="qty-cost">'+
-        '<div class="qty-cost-val">'+sym+fmt(r.cost)+'</div>'+
+        '<div class="qty-cost-val">\u2248\u202F'+sym+fmt(r.cost)+'</div>'+
         (multi ? '<div class="qty-cost-pct">'+fmtPct(r.pct)+'% набора</div>' : '')+
       '</div>'+
+      (multi ? '<button type="button" class="qty-remove" data-id="'+r.id+'" aria-label="Убрать инструмент"><svg width=\"18\" height=\"18\" viewBox=\"-2.6200 -1.6200 21.2400 21.2400\" fill=\"currentColor\" data-icon=\"trash\"><path d=\"M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3C0.716667 3 0.479167 2.90417 0.2875 2.7125C0.0958333 2.52083 0 2.28333 0 2C0 1.71667 0.0958333 1.47917 0.2875 1.2875C0.479167 1.09583 0.716667 1 1 1H5C5 0.716667 5.09583 0.479167 5.2875 0.2875C5.47917 0.0958333 5.71667 0 6 0H10C10.2833 0 10.5208 0.0958333 10.7125 0.2875C10.9042 0.479167 11 0.716667 11 1H15C15.2833 1 15.5208 1.09583 15.7125 1.2875C15.9042 1.47917 16 1.71667 16 2C16 2.28333 15.9042 2.52083 15.7125 2.7125C15.5208 2.90417 15.2833 3 15 3V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM6.7125 13.7125C6.90417 13.5208 7 13.2833 7 13V6C7 5.71667 6.90417 5.47917 6.7125 5.2875C6.52083 5.09583 6.28333 5 6 5C5.71667 5 5.47917 5.09583 5.2875 5.2875C5.09583 5.47917 5 5.71667 5 6V13C5 13.2833 5.09583 13.5208 5.2875 13.7125C5.47917 13.9042 5.71667 14 6 14C6.28333 14 6.52083 13.9042 6.7125 13.7125ZM10.7125 13.7125C10.9042 13.5208 11 13.2833 11 13V6C11 5.71667 10.9042 5.47917 10.7125 5.2875C10.5208 5.09583 10.2833 5 10 5C9.71667 5 9.47917 5.09583 9.2875 5.2875C9.09583 5.47917 9 5.71667 9 6V13C9 13.2833 9.09583 13.5208 9.2875 13.7125C9.47917 13.9042 9.71667 14 10 14C10.2833 14 10.5208 13.9042 10.7125 13.7125Z\" fill=\"currentColor\"/></svg></button>' : '')+
     '</div>';
   }).join('') || '<div class="qty-price">Сначала выберите инструмент.</div>';
 
@@ -1414,16 +1822,45 @@ function renderQtyBlock(){
   $('qty-total-label').textContent = n
     ? 'Оценка списания · ' + n + ' ' + pluralRu(n, 'акция', 'акции', 'акций')
     : 'Оценка списания';
-  $('qty-total-val').textContent = total ? fmt(total) + ' ' + (state.currency || 'EUR') : '—';
+  $('qty-total-val').textContent = total ? '\u2248\u202F' + fmt(total) + ' ' + (state.currency || 'EUR') : '—';
 
   document.querySelectorAll('#qty-list .qty-row').forEach(function(row){
     var id = parseInt(row.dataset.id, 10), input = row.querySelector('.qty-input');
     row.querySelector('.qty-minus').addEventListener('click', function(){ bumpQty(id, -1); });
     row.querySelector('.qty-plus').addEventListener('click', function(){ bumpQty(id, 1); });
-    input.addEventListener('input', function(){ setQty(id, input.value.replace(/[^\d]/g, '')); });
+    input.addEventListener('input', function(){
+      var d = input.value.replace(/[^\d]/g, '').slice(0, 4); input.value = d;
+      setQty(id, d, true);          // true = не перерисовывать список, курсор остаётся в поле
+      refreshQtyLive(input);
+    });
+    input.addEventListener('blur', function(){ renderQtyBlock(); });  // на уходе из поля — полная нормализация
+    input.addEventListener('focus', function(){ input.select(); });
+    var rm = row.querySelector('.qty-remove');
+    if (rm) rm.addEventListener('click', function(){ var inst = byId(parseInt(rm.dataset.id, 10)); if (inst) toggleSplit(inst); });
   });
 }
 function fmtPct(v){ return (Math.round(v*10)/10).toFixed(1).replace(/\.0$/, ''); }
+
+// Валюта задаётся из двух пикеров (сумма/количество) и из прежней скрытой сетки —
+// держим их и подписи в одном состоянии.
+function syncCurrencyPickers(){
+  var c = state.currency || 'EUR', sym = curSym(c);
+  ['currency-picker','currency-picker-qty'].forEach(function(id){ var el=$(id); if (el) el.value = c; });
+  ['cur-badge','cur-badge-qty'].forEach(function(id){ var el=$(id); if (el) el.textContent = sym; });
+  var legacy = $('currency'); if (legacy) legacy.value = c;
+  var lbl = $('amount-currency-label'); if (lbl) lbl.textContent = c;
+  document.querySelectorAll('#currency-options .freq-opt').forEach(function(o){
+    o.classList.toggle('active', o.dataset.currency === c);
+  });
+}
+function selectCurrency(c){
+  if (!c) return;
+  state.currency = c;
+  syncCurrencyPickers();
+  renderQtyBlock();
+  recompute();
+  updatePayAvailability();
+}
 
 function setBuyMode(mode){
   state.buyMode = (mode === 'qty' && qtyModeAvailable()) ? 'qty' : 'amount';
@@ -1513,9 +1950,9 @@ function amountIssue(){
 function amountBlocked(){ var i = amountIssue(); return !!i && i.level === 'error'; }
 
 var MSG_ICONS = {
-  error: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 17h.01"/></svg>',
+  error: '<svg width="15" height="15" viewBox="-0.9043 -0.9043 21.8085 21.8085" fill="currentColor" data-icon="info-20" data-src="1a682f8d"><path d="M10 15C10.2833 15 10.521 14.904 10.713 14.712C10.905 14.52 11.0007 14.2827 11 14V10C11 9.71667 10.904 9.47933 10.712 9.288C10.52 9.09667 10.2827 9.00067 10 9C9.71667 9 9.47933 9.096 9.288 9.288C9.09667 9.48 9.00067 9.71733 9 10V14C9 14.2833 9.096 14.521 9.288 14.713C9.48 14.905 9.71733 15.0007 10 15ZM10 7C10.2833 7 10.521 6.904 10.713 6.712C10.905 6.52 11.0007 6.28267 11 6C11 5.71667 10.904 5.47933 10.712 5.288C10.52 5.09667 10.2827 5.00067 10 5C9.71667 5 9.47933 5.096 9.288 5.288C9.09667 5.48 9.00067 5.71733 9 6C9 6.28333 9.096 6.521 9.288 6.713C9.48 6.905 9.71733 7.00067 10 7ZM10 20C8.61667 20 7.31667 19.7373 6.1 19.212C4.88333 18.6867 3.825 17.9743 2.925 17.075C2.025 16.175 1.31267 15.1167 0.788 13.9C0.263333 12.6833 0.000666667 11.3833 0 10C0 8.61667 0.262667 7.31667 0.788 6.1C1.31333 4.88333 2.02567 3.825 2.925 2.925C3.825 2.025 4.88333 1.31267 6.1 0.788C7.31667 0.263333 8.61667 0.000666667 10 0C11.3833 0 12.6833 0.262667 13.9 0.788C15.1167 1.31333 16.175 2.02567 17.075 2.925C17.975 3.825 18.6877 4.88333 19.213 6.1C19.7383 7.31667 20.0007 8.61667 20 10C20 11.3833 19.7373 12.6833 19.212 13.9C18.6867 15.1167 17.9743 16.175 17.075 17.075C16.175 17.975 15.1167 18.6877 13.9 19.213C12.6833 19.7383 11.3833 20.0007 10 20Z" fill="currentColor"/></svg>',
   warn:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
-  info:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+  info:  '<svg width="15" height="15" viewBox="-0.9043 -0.9043 21.8085 21.8085" fill="currentColor" data-icon="info-20" data-src="617e26d9"><path d="M10 15C10.2833 15 10.521 14.904 10.713 14.712C10.905 14.52 11.0007 14.2827 11 14V10C11 9.71667 10.904 9.47933 10.712 9.288C10.52 9.09667 10.2827 9.00067 10 9C9.71667 9 9.47933 9.096 9.288 9.288C9.09667 9.48 9.00067 9.71733 9 10V14C9 14.2833 9.096 14.521 9.288 14.713C9.48 14.905 9.71733 15.0007 10 15ZM10 7C10.2833 7 10.521 6.904 10.713 6.712C10.905 6.52 11.0007 6.28267 11 6C11 5.71667 10.904 5.47933 10.712 5.288C10.52 5.09667 10.2827 5.00067 10 5C9.71667 5 9.47933 5.096 9.288 5.288C9.09667 5.48 9.00067 5.71733 9 6C9 6.28333 9.096 6.521 9.288 6.713C9.48 6.905 9.71733 7.00067 10 7ZM10 20C8.61667 20 7.31667 19.7373 6.1 19.212C4.88333 18.6867 3.825 17.9743 2.925 17.075C2.025 16.175 1.31267 15.1167 0.788 13.9C0.263333 12.6833 0.000666667 11.3833 0 10C0 8.61667 0.262667 7.31667 0.788 6.1C1.31333 4.88333 2.02567 3.825 2.925 2.925C3.825 2.025 4.88333 1.31267 6.1 0.788C7.31667 0.263333 8.61667 0.000666667 10 0C11.3833 0 12.6833 0.262667 13.9 0.788C15.1167 1.31333 16.175 2.02567 17.075 2.925C17.975 3.825 18.6877 4.88333 19.213 6.1C19.7383 7.31667 20.0007 8.61667 20 10C20 11.3833 19.7373 12.6833 19.212 13.9C18.6867 15.1167 17.9743 16.175 17.075 17.075C16.175 17.975 15.1167 18.6877 13.9 19.213C12.6833 19.7383 11.3833 20.0007 10 20Z" fill="currentColor"/></svg>'
 };
 function paintMsg(el, issue, actionId){
   if (!el) return;
@@ -1539,7 +1976,7 @@ function renderAmountFeedback(){
     t.checked = true;
     state.accumulate = true;
     $('accumulate-opt').classList.toggle('on', true);
-    if (state.maxStep >= 6) renderReview();
+    if (state.maxStep >= 5) renderReview();
     recompute();
   });
 }
@@ -1577,7 +2014,7 @@ function renderFundsNote(){
 }
 
 function toast(m){ $('toast-message').textContent=m; $('toast').classList.add('visible'); setTimeout(function(){ $('toast').classList.remove('visible'); },3000); }
-function confetti(){ var c=$('confetti-canvas'),ctx=c.getContext('2d'); c.width=innerWidth;c.height=innerHeight; var p=[],cols=['#15824a','#FFD700','#2563eb','#4ECDC4','#45B7D1']; for(var i=0;i<100;i++)p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8}); var f=0;(function a(){ctx.clearRect(0,0,c.width,c.height);p.forEach(function(o){o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs;ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);ctx.restore();});if(++f<100)requestAnimationFrame(a);else ctx.clearRect(0,0,c.width,c.height);})(); }
+function confetti(){ var c=$('confetti-canvas'),ctx=c.getContext('2d'); c.width=innerWidth;c.height=innerHeight; var p=[],cols=['#15824a','#FFD700','#3b82f6','#4ECDC4','#45B7D1']; for(var i=0;i<100;i++)p.push({x:c.width/2,y:c.height/2,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15-8,c:cols[i%5],s:Math.random()*6+3,r:Math.random()*360,rs:(Math.random()-.5)*8}); var f=0;(function a(){ctx.clearRect(0,0,c.width,c.height);p.forEach(function(o){o.x+=o.vx;o.y+=o.vy;o.vy+=.2;o.r+=o.rs;ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.r*Math.PI/180);ctx.fillStyle=o.c;ctx.fillRect(-o.s/2,-o.s/2,o.s,o.s*.6);ctx.restore();});if(++f<100)requestAnimationFrame(a);else ctx.clearRect(0,0,c.width,c.height);})(); }
 
 function renderChips(){
   $('chip-row').innerHTML = collections.map(function(c){
@@ -1649,8 +2086,8 @@ function renderTotal(){
   if (isQtyMode()) parts.push('оценка по текущим ценам — итог зависит от цены в день исполнения');
   bd.textContent = parts.join(' · ');
 }
-var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>';
-var BACKUP_ICON_CARD = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>';
+var BACKUP_ICON_ACCOUNT = '<svg width="20" height="20" viewBox="-2.1152 -2.1148 24.2305 24.2305" fill="currentColor" data-icon="backup-source"><path d="M1 0C0.448 0 0 0.448 0 1V11C0 11.552 0.448 12 1 12H19C19.552 12 20 11.552 20 11V1C20 0.448 19.552 0 19 0H1ZM2.91211 2H17.0879C17.239 2.42592 17.5741 2.761 18 2.91211V9.08789C17.5741 9.239 17.239 9.57409 17.0879 10H2.91211C2.761 9.57409 2.42591 9.239 2 9.08789V2.91211C2.42592 2.761 2.761 2.42591 2.91211 2V2ZM10 3C8.34315 3 7 4.34315 7 6C7 7.65685 8.34315 9 10 9C11.6569 9 13 7.65685 13 6C13 4.34315 11.6569 3 10 3V3ZM5 5C4.448 5 4 5.447 4 6C4 6.553 4.448 7 5 7C5.552 7 6 6.553 6 6C6 5.447 5.552 5 5 5V5ZM15 5C14.448 5 14 5.447 14 6C14 6.553 14.448 7 15 7C15.552 7 16 6.553 16 6C16 5.447 15.552 5 15 5V5ZM9.98438 12.9863C9.43286 12.995 8.99245 13.4485 9 14V16H6.76758C6.31458 16 6.08525 16.5481 6.40625 16.8691L9.21094 19.6738C9.64694 20.1098 10.3531 20.1098 10.7891 19.6738L13.5938 16.8691C13.9148 16.5481 13.6854 16 13.2324 16H11V14C11.0037 13.7297 10.8978 13.4694 10.7065 13.2785C10.5152 13.0875 10.2547 12.9821 9.98437 12.9863H9.98438Z" fill="currentColor"/></svg>';
+var BACKUP_ICON_CARD = '<svg width="20" height="20" viewBox="-0.8369 -2.5029 18.3397 18.3397" fill="currentColor" data-icon="card" data-src="c3366a3f"><path d="M15 0C15.9207 0.000179291 16.666 0.74627 16.666 1.66699V11.667C16.666 12.5877 15.9207 13.3338 15 13.334H1.66602C0.745327 13.3338 0 12.5877 0 11.667V1.66699C7.15256e-07 0.746264 0.745327 0.000169516 1.66602 0H15ZM1.66602 5.83398V11.667H15V5.83398H1.66602ZM1.66602 1.66699V3.33398H15V1.66699H1.66602Z" fill="currentColor"/></svg>';
 var BACKUP_ICON_BLIK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M6 5.5h12"/><path d="M6 18h12"/><path d="M10 21h4"/></svg>';
 
 // Единый реестр способов оплаты: любой способ может резервировать любой другой
@@ -1741,7 +2178,7 @@ function updateBackupBlock(){
 function setBackupMethod(m){
   state.backupMethod = m;
   updateBackupBlock();
-  if (state.payMethod) setStepValue(5, payValue());
+  if (state.payMethod) setStepValue(4, payValue());
   updatePayStepUI();
 }
 function updatePayStepUI(){
@@ -1753,7 +2190,7 @@ function updatePayStepUI(){
   renderFxNote();
   renderFundsNote();
   renderTotal();
-  if (state.maxStep >= 6 && orderValid()) renderReview();
+  if (state.maxStep >= 5 && orderValid()) renderReview();
   validate();
 }
 var FX_BADGES = { card:'fx-card', card2:'fx-card2', account:'fx-account', blik:'fx-blik' };
@@ -1778,7 +2215,7 @@ function updatePayAvailability(){
     state.backupMethod = defaultBackupFor(state.payMethod);
   }
   updateBackupBlock();
-  if (state.payMethod) setStepValue(5, payValue());
+  if (state.payMethod) setStepValue(4, payValue());
   updatePayStepUI();
 }
 function selectPay(method){
@@ -1798,7 +2235,7 @@ function selectPay(method){
   $('pay-blik').classList.toggle('selected', method === 'blik');
   updateBackupBlock();
   $('backup-source').style.display = '';
-  setStepValue(5, payValue());
+  setStepValue(4, payValue());
   updatePayStepUI();
   if (!state.backupPrompted) openBackupSheet();
 }
@@ -1810,7 +2247,7 @@ function setBackup(on){
   $('backup-options').hidden = !on;
   if (on && !state.backupMethod) state.backupMethod = defaultBackupFor(state.payMethod);
   if (on) updateBackupBlock();
-  if (state.payMethod) setStepValue(5, payValue());
+  if (state.payMethod) setStepValue(4, payValue());
   updatePayStepUI();
 }
 function openBackupSheet(){
@@ -1835,22 +2272,32 @@ function validate(){
 }
 
 function recompute(){
+  refreshSplitAmountEstimates();
   renderTotal();
   renderAmountFeedback();
   renderFundsNote();
   $('amount-next').disabled = parseAmount() <= 0 || amountBlocked();
-  if (parseAmount() > 0) $('step-value-3').textContent = amountStepLabel();
+  if (parseAmount() > 0) $('step-value-2').textContent = amountStepLabel();
   validate();
 }
 
 function stepEl(n){ return $('step-'+n); }
 function setStepValue(n, value){ $('step-value-'+n).textContent = value; }
-function totalStepsCount(){ return state.subscription === 'payments' ? 6 : 7; } // Тип операции + шаги мастера (для платежей — без шага «Инструмент»)
+function totalStepsCount(){ return state.subscription === 'payments' ? 4 : 5; } // макет: 5 шагов (для платежей — без шага «Инструмент») // Тип операции + шаги мастера (для платежей — без шага «Инструмент»)
+function stepPos(n){
+  if (n < 1) return 1;
+  return state.subscription === 'payments' ? n : n + 1;   // у платежей нет шага «Инструмент»
+}
 function renderProgress(){
-  var pos = state.currentStep < 1 ? 1 : (state.subscription === 'payments' ? state.currentStep : state.currentStep + 1);
-  var total = totalStepsCount();
+  var total = totalStepsCount(), pos = Math.min(stepPos(state.currentStep), total);
   $('progress-text').textContent = 'Шаг '+pos+' из '+total;
   $('progress-bar').style.width = (pos/total*100)+'%';
+  // «N / 5» справа от заголовка шага — как в макете.
+  // Подтверждение в макете сделано модалкой, а не нумерованным шагом, поэтому счётчика у него нет.
+  document.querySelectorAll('.step-count').forEach(function(el){
+    var n = parseInt(el.dataset.countFor, 10), p = stepPos(n);
+    el.textContent = p > total ? '' : (p + ' / ' + total);
+  });
 }
 function isFirstContentStep(n){ return state.subscription === 'payments' ? n <= 2 : n <= 1; }
 function prevStep(n){
@@ -1897,14 +2344,14 @@ function openStep(n, scroll){
       step.classList.toggle('completed', num < n);
       step.querySelector('.step-head').setAttribute('aria-expanded', active ? 'true' : 'false');
     });
-    if (n === 6){ renderReview(); openConfirmModal(); }
+    if (n === 5){ renderReview(); openConfirmModal(); }
   }
   $('wizard-back').hidden = isFirstContentStep(n);
   renderProgress();
 }
 function completeStep(n){
   stepEl(n).classList.add('completed');
-  var nxt = Math.min(6, n+1);
+  var nxt = Math.min(5, n+1);
   state.maxStep = Math.max(state.maxStep, nxt);
   openStep(nxt);
 }
@@ -1944,8 +2391,8 @@ function renderReview(){
     '<div class="review-row"><span>Тип операции</span><strong>'+type+'</strong></div>'+
     instRow+
     qtyRow+
-    '<div class="review-row"><span>'+(isQtyMode() ? 'Оценка списания' : 'Сумма')+'</span><strong>'+(isQtyMode() ? '≈' : '')+fmt(amt)+' '+state.currency+'</strong></div>'+
-    '<div class="review-row"><span>Комиссия за платёж</span><strong>'+(feeFor(state.payMethod, amt) > 0 ? fmt(feeFor(state.payMethod, amt))+' '+state.currency : 'Не взимается')+'</strong></div>'+
+    '<div class="review-row"><span>'+(isQtyMode() ? 'Оценка списания' : 'Сумма')+'</span><strong>'+(isQtyMode() ? '≈' : '')+fmt(amt)+' '+(state.currency||'EUR')+'</strong></div>'+
+    '<div class="review-row"><span>Комиссия за платёж</span><strong>'+(feeFor(state.payMethod, amt) > 0 ? fmt(feeFor(state.payMethod, amt))+' '+(state.currency||'EUR') : 'Не взимается')+'</strong></div>'+
     '<div class="review-row"><span>Частота</span><strong>'+period+'</strong></div>'+
     '<div class="review-row"><span>Первое списание</span><strong>'+nextDate(state.frequency || 'month')+'</strong></div>'+
     accRow+
@@ -1958,8 +2405,14 @@ function renderReview(){
         parts.push('резерв ' + fxFrom(state.backupMethod)+' → '+state.currency);
       return parts.length ? '<div class="review-row"><span>Конвертация</span><strong>'+esc(parts.join(' · '))+'</strong></div>' : '';
     })();
+  var foot = $('request-doc-foot');
+  if (foot){
+    var d = new Date(), p2 = function(x){ return (x<10?'0':'')+x; };
+    foot.innerHTML = 'Дата: ' + d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()) +
+                     '<br>Клиент: Krasilnikov Vladimir';
+  }
   renderTotal();
-  setStepValue(6, 'Готово к подтверждению');
+  setStepValue(5, 'Готово к подтверждению');
 }
 
 function selectAsset(inst){
@@ -1977,9 +2430,13 @@ function inSplit(id){ return state.split.items.some(function(x){ return x.id===i
 function splitTotal(){ return state.split.items.reduce(function(s,x){ return s + x.pct; }, 0); }
 function isSplit(){ return state.splitMode && state.split.items.length >= 2; }
 function orderValid(){ if (state.subscription === 'payments') return true; return state.splitMode ? (state.split.items.length>=2 && splitTotal()===100) : !!state.selected; }
-function splitName(){ return (state.split.name || '').trim() || 'Без названия'; }
 function splitAvgPrice(){ var s=0; state.split.items.forEach(function(x){ var i=byId(x.id); if(i) s += i.price * x.pct/100; }); return s; }
-function splitStepLabel(){ return 'Набор «'+splitName()+'» · '+state.split.items.length+' инстр.'; }
+function splitName(){
+  var tickers = state.split.items.map(function(x){ var i=byId(x.id); return i ? i.base : ''; }).filter(Boolean);
+  if (!tickers.length) return 'Без названия';
+  return tickers.length <= 2 ? tickers.join(' + ') : tickers.slice(0,2).join(' + ') + ' +' + (tickers.length-2);
+}
+function splitStepLabel(){ return 'Набор из '+state.split.items.length+' инстр.'; }
 
 function toggleSplit(inst){
   if (inSplit(inst.id)) state.split.items = state.split.items.filter(function(x){ return x.id!==inst.id; });
@@ -2000,9 +2457,11 @@ function syncSplitTotals(){
   $('split-total').textContent = 'Итого '+tot+'%'+(n>=2 && tot!==100 ? ' — должно быть 100%' : '');
   $('split-total').classList.toggle('off', !(n>=2 && tot===100));
   $('split-done').disabled = !orderValid();
+  refreshSplitInputs();
+  refreshSplitAmountEstimates();
   if (state.splitMode && state.maxStep > 1){
     if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
-    if (state.maxStep >= 6 && orderValid()) renderReview();
+    if (state.maxStep >= 5 && orderValid()) renderReview();
     validate();
   }
 }
@@ -2035,20 +2494,42 @@ function rebalanceOthers(editedId){
   for (var k=0; k<leftover; k++){ fl[order[k % order.length].i]++; }
   others.forEach(function(x,i){ x.pct = fl[i]; });
 }
-function refreshSplitInputs(exceptId){
-  document.querySelectorAll('#split-list .split-item').forEach(function(r){
-    var rid = parseInt(r.dataset.id);
-    if (rid === exceptId) return;
-    var it = itemById(rid), inp = r.querySelector('.split-pct-input');
-    if (it && inp) inp.value = it.pct;
+// Патчит значения %-инпутов в ОБЕИХ панелях (список набора и панель «По сумме»),
+// не трогая тот инпут, в который сейчас печатает пользователь — иначе прыгал бы курсор.
+function refreshSplitInputs(){
+  document.querySelectorAll('#split-list .split-pct-input, #split-amount-list .split-pct-input').forEach(function(inp){
+    if (inp === document.activeElement) return;
+    var row = inp.closest('[data-id]'); if (!row) return;
+    var it = itemById(parseInt(row.dataset.id, 10));
+    if (it) inp.value = it.pct;
   });
+}
+// Пересчитывает «≈ N шт.» и итог панели «По сумме» из текущих state.split.items[].pct
+// и суммы списания — вызывается и при правке %, и при правке суммы (см. recompute()).
+function refreshSplitAmountEstimates(){
+  if (!isSplit() || isQtyMode()) return;
+  var total = parseAmountField(), sym = curSym(state.currency || 'EUR');
+  document.querySelectorAll('#split-amount-list .split-item').forEach(function(row){
+    var id = parseInt(row.dataset.id, 10), i = byId(id), it = itemById(id);
+    if (!i || !it) return;
+    var q = total > 0 ? Math.max(0, Math.round(total * it.pct / 100 / i.price)) : 0;
+    var estEl = row.querySelector('.split-amount-est');
+    if (estEl) estEl.textContent = '≈ '+q+' '+pluralRu(q,'шт.','шт.','шт.');
+  });
+  var n = state.split.items.length;
+  if ($('split-amount-sub')) $('split-amount-sub').textContent = n+' '+pluralRu(n,'инструмент','инструмента','инструментов');
+  var estTotal = state.split.items.reduce(function(s,x){
+    var i = byId(x.id); if (!i) return s;
+    var q = total > 0 ? Math.max(0, Math.round(total * x.pct/100 / i.price)) : 0;
+    return s + q * i.price;
+  }, 0);
+  if ($('split-amount-total')) $('split-amount-total').textContent = total > 0 ? '≈\u202F'+sym+fmt(estTotal) : '—';
 }
 function stepAndRebalance(id, delta){
   snapshotSplit();
   var it = itemById(id); if (!it) return;
   it.pct = Math.max(0, Math.min(100, it.pct + delta));
   rebalanceOthers(id);
-  refreshSplitInputs();
   syncSplitTotals();
 }
 function splitItemRow(x){
@@ -2058,8 +2539,42 @@ function splitItemRow(x){
     '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+logoTag(i.base, i.ex)+'</span>'+
     '<div class="split-item-main"><div class="split-item-tk">'+esc(i.base)+'.'+esc(i.ex)+'</div><div class="split-item-nm">'+esc(i.name)+'</div></div>'+
     '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><input type="text" inputmode="numeric" class="split-pct-input" value="'+x.pct+'" maxlength="3" aria-label="Доля в процентах"><span class="split-pct-suffix">%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
-    '<button type="button" class="split-remove" aria-label="Убрать"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'+
+    '<button type="button" class="split-remove" aria-label="Убрать"><svg width="16" height="16" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>'+
   '</div>';
+}
+// Строка панели «По сумме»: та же %-доля из state.split.items, но справа — цена за акцию
+// и оценка количества акций при текущей сумме списания. Без кнопки удаления — убрать
+// инструмент из набора можно только на шаге «Инструмент».
+function splitAmountRow(x){
+  var i = byId(x.id); if (!i) return '';
+  var col = color(i.base), sym = curSym(state.currency || 'EUR');
+  return '<div class="split-item" data-id="'+i.id+'">'+
+    '<span class="split-item-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+logoTag(i.base, i.ex)+'</span>'+
+    '<div class="split-item-main"><div class="split-item-tk">'+esc(i.base)+'.'+esc(i.ex)+'</div><div class="split-item-nm">'+esc(i.name)+'</div></div>'+
+    '<div class="split-stepper"><button type="button" class="split-minus" aria-label="Меньше">−</button><input type="text" inputmode="numeric" class="split-pct-input" value="'+x.pct+'" maxlength="3" aria-label="Доля в процентах"><span class="split-pct-suffix">%</span><button type="button" class="split-plus" aria-label="Больше">+</button></div>'+
+    '<div class="split-amount-right"><div class="split-amount-price">'+sym+fmt(i.price)+'</div><div class="split-amount-est"></div></div>'+
+  '</div>';
+}
+function splitChipRow(x){
+  var i = byId(x.id); if (!i) return '';
+  var col = color(i.base);
+  return '<span class="split-chip" data-id="'+i.id+'">'+
+    '<span class="split-chip-av" style="background:'+rgba(col,0.14)+';color:'+col+'">'+esc(i.base.charAt(0))+logoTag(i.base, i.ex)+'</span>'+
+    '<span class="split-chip-tk">'+esc(i.base)+'.'+esc(i.ex)+'</span>'+
+    '<button type="button" class="split-chip-x" aria-label="Убрать '+esc(i.base)+'"><svg width="10" height="10" viewBox="0 0 16.0967 16.0102" fill="currentColor" data-icon="close-thin"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>'+
+  '</span>';
+}
+// Панель «Инструменты к покупке» под списком: компактные чипы выбранных тикеров с крестиком.
+// Читает те же state.split.items; крестик зовёт тот же toggleSplit, что и клик по строке.
+function renderSplitChips(){
+  var n = state.split.items.length;
+  $('split-chips-panel').hidden = n < 1;
+  if (n < 1){ $('split-chips').innerHTML = ''; return; }
+  $('split-chips').innerHTML = state.split.items.map(splitChipRow).join('');
+  document.querySelectorAll('#split-chips .split-chip-x').forEach(function(btn){
+    var id = parseInt(btn.closest('.split-chip').dataset.id, 10);
+    btn.addEventListener('click', function(){ var inst = byId(id); if (inst) toggleSplit(inst); });
+  });
 }
 function updateSplitUI(){
   var n = state.split.items.length, tot = splitTotal();
@@ -2070,26 +2585,37 @@ function updateSplitUI(){
   $('split-total').classList.toggle('off', !(n>=2 && tot===100));
   $('split-done').disabled = !orderValid();
   bindSplitItems();
-  // keep downstream in sync if the набор was already confirmed
+  renderSplitChips();
+  renderSplitAmountBlock();
+  // keep downstream in sync if the набор was already подтверждён
   if (state.splitMode && state.maxStep > 1){
     if (isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); }
-    if (state.maxStep >= 6 && orderValid()) renderReview();
+    if (state.maxStep >= 5 && orderValid()) renderReview();
     validate();
   }
+}
+// Показывает/перерисовывает панель %-долей внутри режима «По сумме» (только для набора).
+// Вызывается из renderQtyBlock() при переключении режима и из updateSplitUI() при правке набора.
+function renderSplitAmountBlock(){
+  var show = isSplit() && !isQtyMode();
+  $('split-amount-panel').hidden = !show;
+  if (!show) return;
+  $('split-amount-list').innerHTML = state.split.items.map(splitAmountRow).join('');
+  bindSplitAmountItems();
+  refreshSplitAmountEstimates();
 }
 function bindSplitItems(){
   document.querySelectorAll('#split-list .split-item').forEach(function(row){
     var id = parseInt(row.dataset.id);
     var input = row.querySelector('.split-pct-input');
-    row.querySelector('.split-minus').addEventListener('click', function(){ stepAndRebalance(id, -1); var it=itemById(id); if(it) input.value = it.pct; });
-    row.querySelector('.split-plus').addEventListener('click', function(){ stepAndRebalance(id, 1); var it=itemById(id); if(it) input.value = it.pct; });
+    row.querySelector('.split-minus').addEventListener('click', function(){ stepAndRebalance(id, -1); });
+    row.querySelector('.split-plus').addEventListener('click', function(){ stepAndRebalance(id, 1); });
     input.addEventListener('focus', function(){ this.select(); snapshotSplit(); });
     input.addEventListener('input', function(){
       var d = this.value.replace(/[^0-9]/g,'').slice(0,3); this.value = d;
       var it = itemById(id); if (!it) return;
       it.pct = Math.max(0, Math.min(100, d==='' ? 0 : parseInt(d,10)));
       rebalanceOthers(id);
-      refreshSplitInputs(id);
       syncSplitTotals();
     });
     input.addEventListener('blur', function(){ var it=itemById(id); this.value = it ? it.pct : 0; syncSplitTotals(); });
@@ -2098,6 +2624,23 @@ function bindSplitItems(){
       splitEvenly();
       renderAssets(); updateSplitUI();
     });
+  });
+}
+function bindSplitAmountItems(){
+  document.querySelectorAll('#split-amount-list .split-item').forEach(function(row){
+    var id = parseInt(row.dataset.id);
+    var input = row.querySelector('.split-pct-input');
+    row.querySelector('.split-minus').addEventListener('click', function(){ stepAndRebalance(id, -1); });
+    row.querySelector('.split-plus').addEventListener('click', function(){ stepAndRebalance(id, 1); });
+    input.addEventListener('focus', function(){ this.select(); snapshotSplit(); });
+    input.addEventListener('input', function(){
+      var d = this.value.replace(/[^0-9]/g,'').slice(0,3); this.value = d;
+      var it = itemById(id); if (!it) return;
+      it.pct = Math.max(0, Math.min(100, d==='' ? 0 : parseInt(d,10)));
+      rebalanceOthers(id);
+      syncSplitTotals();
+    });
+    input.addEventListener('blur', function(){ var it=itemById(id); this.value = it ? it.pct : 0; syncSplitTotals(); });
   });
 }
 function setSplitSelected(){
@@ -2115,6 +2658,7 @@ function setInstMode(mode){
   document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.mode===mode); });
   $('split-builder').hidden = !state.splitMode;
   $('split-done').hidden = !state.splitMode;
+  if (!state.splitMode){ $('split-chips-panel').hidden = true; $('split-chips').innerHTML = ''; }
   $('inst-help').textContent = state.splitMode
     ? 'Соберите набор из 2+ инструментов и задайте доли. Сумма распределится пропорционально.'
     : 'Найдите и выберите один инструмент для регулярной покупки.';
@@ -2126,17 +2670,13 @@ function setInstMode(mode){
   renderQtyBlock();
   validate();
 }
-function renderSplitSuggest(){
-  $('split-suggest').innerHTML = SPLIT_SUGGEST.map(function(s){ return '<button type="button" class="chip" data-name="'+esc(s)+'">'+esc(s)+'</button>'; }).join('');
-  document.querySelectorAll('#split-suggest .chip').forEach(function(c){ c.addEventListener('click', function(){ state.split.name=c.dataset.name; $('split-name').value=c.dataset.name; if(state.maxStep>1&&isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if(state.maxStep>=6) renderReview(); } }); });
-}
 
 function setCollection(id){ state.activeCol=id; state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); }
 function setFrequency(f){
   state.frequency=f;
   document.querySelectorAll('#freq-options .freq-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.freq===f); });
-  setStepValue(4, f==='week' ? 'Раз в неделю' : 'Раз в месяц');
-  completeStep(4);
+  setStepValue(3, f==='week' ? 'Раз в неделю' : 'Раз в месяц');
+  completeStep(3);
 }
 
 function resetFirstPurchaseChoice(){
@@ -2249,35 +2789,22 @@ function bind(){
 
   $('search-input').addEventListener('input', function(e){ state.query=e.target.value.trim(); $('clear-button').classList.toggle('visible', !!state.query); renderChips(); renderAssets(); });
   $('clear-button').addEventListener('click', function(){ state.query=''; $('search-input').value=''; $('clear-button').classList.remove('visible'); renderChips(); renderAssets(); $('search-input').focus(); });
-  document.querySelectorAll('.lang-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      state.searchLang = btn.dataset.lang;
-      document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b===btn); });
-      updateSearchPlaceholder();
-      renderAssets();
-    });
-  });
+
 
   $('chip-row').addEventListener('click', function(e){ var c=e.target.closest('.chip'); if (c) setCollection(c.dataset.col); });
   $('asset-list').addEventListener('click', function(e){ var r=e.target.closest('.asset-row'); if (r){ var inst=byId(parseInt(r.dataset.id)); if (inst) selectAsset(inst); } });
 
   document.querySelectorAll('#currency-options .freq-opt').forEach(function(opt){
-    opt.addEventListener('click', function(){
-      state.currency = opt.dataset.currency;
-      $('currency').value = state.currency;
-      $('amount-currency-label').textContent = state.currency;
-      document.querySelectorAll('#currency-options .freq-opt').forEach(function(o){ o.classList.toggle('active', o===opt); });
-      setStepValue(2, state.currency);
-      recompute();
-      updatePayAvailability();
-      completeStep(2);
-    });
+    opt.addEventListener('click', function(){ selectCurrency(opt.dataset.currency); });
   });
-  $('currency').addEventListener('change', function(e){ state.currency=e.target.value; recompute(); updatePayAvailability(); });
+  $('currency').addEventListener('change', function(e){ selectCurrency(e.target.value); });
+  ['currency-picker','currency-picker-qty'].forEach(function(id){
+    var el = $(id); if (el) el.addEventListener('change', function(){ selectCurrency(el.value); });
+  });
   $('amount').addEventListener('input', recompute);
   $('amount').addEventListener('blur', function(){ var n=parseAmountField(); if (n>0) $('amount').value=fmt(n); recompute(); });
   document.querySelectorAll('.quick-btn').forEach(function(b){ b.addEventListener('click', function(){ $('amount').value=fmt(parseAmountField()+parseFloat(b.dataset.add)); recompute(); }); });
-  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0 && !amountBlocked()){ setStepValue(3, amountStepLabel()); completeStep(3); } });
+  $('amount-next').addEventListener('click', function(){ if (parseAmount()>0 && !amountBlocked()){ setStepValue(2, amountStepLabel()); completeStep(2); } });
   document.querySelectorAll('#buy-mode .buy-mode-btn').forEach(function(b){
     b.addEventListener('click', function(){ setBuyMode(b.dataset.buymode); });
   });
@@ -2297,22 +2824,28 @@ function bind(){
   $('backup-sheet').addEventListener('click', function(e){ if (e.target === this) closeBackupSheet(); });
   $('check-tos').addEventListener('change', updatePayStepUI);
   $('check-data').addEventListener('change', updatePayStepUI);
-  $('pay-next').addEventListener('click', function(){ if (!$('pay-next').disabled) completeStep(5); });
+  $('pay-next').addEventListener('click', function(){ if (!$('pay-next').disabled) completeStep(4); });
   $('submit-btn').addEventListener('click', handleSubmit);
   $('buy-now-btn').addEventListener('click', function(){ chooseFirstPurchase(true); });
   $('buy-scheduled-btn').addEventListener('click', function(){ chooseFirstPurchase(false); });
   Array.prototype.forEach.call(document.querySelectorAll('.manage-link'), function(el){
     el.addEventListener('click', openManage);
   });
+  document.querySelectorAll('#ff-tabs .ff-tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      if (t.dataset.view === 'manage'){ openManage(); return; }
+      document.querySelectorAll('#ff-tabs .ff-tab').forEach(function(x){ x.classList.toggle('on', x===t); });
+    });
+  });
   $('open-confirm').addEventListener('click', openConfirmModal);
   $('confirm-modal-close').addEventListener('click', closeConfirmModal);
   $('confirm-modal').addEventListener('click', function(e){ if (e.target === this) closeConfirmModal(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && confirmModalOpen()) closeConfirmModal(); });
   document.querySelectorAll('#inst-mode .inst-mode-btn').forEach(function(b){ b.addEventListener('click', function(){ setInstMode(b.dataset.mode); }); });
-  $('split-name').addEventListener('input', function(){ state.split.name = this.value; if (state.maxStep>1 && isSplit()){ setSplitSelected(); setStepValue(1, splitStepLabel()); if (state.maxStep>=6) renderReview(); } });
   $('split-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
+  $('split-amount-evenly').addEventListener('click', function(){ splitEvenly(); updateSplitUI(); });
   $('split-done').addEventListener('click', finalizeSplit);
-  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); renderAmountFeedback(); if (state.maxStep >= 6) renderReview(); });
+  $('accumulate-toggle').addEventListener('change', function(){ state.accumulate = this.checked; $('accumulate-opt').classList.toggle('on', this.checked); renderAmountFeedback(); if (state.maxStep >= 5) renderReview(); });
   $('wizard-back').addEventListener('click', function(){ openStep(prevStep(state.currentStep)); });
   $('manage-back').addEventListener('click', closeManage);
   $('manage-close').addEventListener('click', closeManage);
@@ -2332,10 +2865,11 @@ function init(){
   bind();
   updateSearchPlaceholder();
   renderChips();
-  renderSplitSuggest();
   renderAssets();
+  syncCurrencyPickers();
   renderQtyBlock();
   recompute();
+  updateRecurCounter();
   openStep(0, false);
 }
 document.addEventListener('DOMContentLoaded', init);
