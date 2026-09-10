@@ -809,6 +809,235 @@ html.is-mobile .sheet{ max-height:92%; }
 html.is-mobile #confirm-modal .request-doc{ padding:10px; }
 html.is-mobile #confirm-modal .review-row{ padding:5px 0; }
 html.is-mobile #confirm-modal .review-split{ max-height:80px; }
+
+
+/* ==========================================================================
+   Mobile confirmation layout — audited against the Figma token scale.
+   The modal itself never scrolls. Two instruments fit without an inner scroll;
+   for larger groups only the instrument list (.review-split) scrolls.
+   ========================================================================== */
+html.is-mobile #confirm-modal.sheet-overlay{
+  padding:8px 10px max(8px, env(safe-area-inset-bottom));
+  align-items:center;
+  overflow:hidden;
+}
+html.is-mobile #confirm-modal .sheet{
+  width:100%;
+  max-width:520px;
+  height:auto;
+  max-height:calc(100dvh - 16px - env(safe-area-inset-bottom));
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+@supports not (height: 100dvh){
+  html.is-mobile #confirm-modal .sheet{ max-height:calc(100vh - 16px); }
+}
+html.is-mobile #confirm-modal .sheet-head{
+  flex:0 0 auto;
+  padding:10px 14px 0;
+}
+html.is-mobile #confirm-modal .sheet-head-title{
+  font-size:14px;
+  line-height:20px;
+}
+html.is-mobile #confirm-modal .confirm-modal-body{
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:8px 14px 12px;
+}
+html.is-mobile #confirm-modal .request-doc{
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:10px 12px;
+}
+html.is-mobile #confirm-modal .request-doc-h{
+  flex:0 0 auto;
+  font-size:14px;
+  line-height:20px;
+  margin-bottom:2px;
+}
+html.is-mobile #confirm-modal .request-doc-sub,
+html.is-mobile #confirm-modal .request-doc-foot{
+  flex:0 0 auto;
+  font-size:12px;
+  line-height:16px;
+}
+html.is-mobile #confirm-modal .request-doc-sub{ margin-bottom:6px; }
+html.is-mobile #confirm-modal .request-doc-foot{ margin-top:6px; }
+html.is-mobile #confirm-modal .review-list{
+  min-height:0;
+  overflow:visible;
+}
+html.is-mobile #confirm-modal .review-row{
+  min-height:28px;
+  box-sizing:border-box;
+  padding:4px 0;
+  gap:10px;
+  align-items:flex-start;
+  font-size:12px;
+  line-height:16px;
+}
+html.is-mobile #confirm-modal .review-row > span{ flex:0 0 44%; }
+html.is-mobile #confirm-modal .review-row > strong{
+  flex:1 1 auto;
+  min-width:0;
+  text-align:right;
+}
+html.is-mobile #confirm-modal .review-split{
+  margin:2px 0 4px;
+  padding:2px 6px;
+  border:1px solid var(--line-2);
+  border-radius:var(--r-s);
+  max-height:none;
+  overflow:visible;
+}
+html.is-mobile #confirm-modal .review-split .review-sub{
+  min-height:24px;
+  box-sizing:border-box;
+  padding:4px 0;
+  gap:8px;
+  font-size:12px;
+  line-height:16px;
+}
+html.is-mobile #confirm-modal .review-split.is-scrollable{
+  max-height:56px; /* a little over two compact instrument rows */
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable;
+}
+html.is-mobile #confirm-modal .confirm-foot{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;
+  gap:10px;
+  margin-top:8px;
+  text-align:left;
+}
+html.is-mobile #confirm-modal .confirm-foot > div{ margin:0; min-width:0; }
+html.is-mobile #confirm-modal .total-label{ font-size:12px; line-height:16px; margin:0; }
+html.is-mobile #confirm-modal .total-value{ font-size:18px; line-height:26px; }
+html.is-mobile #confirm-modal .total-breakdown{ font-size:12px; line-height:16px; margin-top:0; }
+html.is-mobile #confirm-modal #submit-btn{
+  width:auto;
+  min-width:112px;
+  height:40px;
+  padding:0 16px;
+  font-size:14px;
+  line-height:20px;
+}
+@media (max-height:700px){
+  html.is-mobile #confirm-modal.sheet-overlay{ align-items:flex-start; padding-top:4px; }
+  html.is-mobile #confirm-modal .sheet{ max-height:calc(100dvh - 8px - env(safe-area-inset-bottom)); }
+  html.is-mobile #confirm-modal .sheet-head{ padding-top:6px; }
+  html.is-mobile #confirm-modal .confirm-modal-body{ padding-top:6px; padding-bottom:8px; }
+  html.is-mobile #confirm-modal .request-doc{ padding-top:8px; padding-bottom:8px; }
+  html.is-mobile #confirm-modal .review-row{ min-height:26px; padding:3px 0; }
+}
+
+
+/* ==========================================================================
+   Desktop confirmation layout — fit the full confirmation into one viewport.
+   The modal itself does not scroll; for groups larger than two instruments,
+   only the instruments frame becomes scrollable.
+   ========================================================================== */
+html:not(.is-mobile) #confirm-modal.sheet-overlay{
+  padding:12px 20px;
+  align-items:center;
+  overflow:hidden;
+}
+html:not(.is-mobile) #confirm-modal .sheet{
+  width:100%;
+  max-width:760px;
+  height:auto;
+  max-height:calc(100dvh - 24px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+@supports not (height: 100dvh){
+  html:not(.is-mobile) #confirm-modal .sheet{ max-height:calc(100vh - 24px); }
+}
+html:not(.is-mobile) #confirm-modal .sheet-head{
+  flex:0 0 auto;
+  padding:16px 20px 0;
+}
+html:not(.is-mobile) #confirm-modal .confirm-modal-body{
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:12px 20px 16px;
+}
+html:not(.is-mobile) #confirm-modal .request-doc{
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:16px 20px;
+}
+html:not(.is-mobile) #confirm-modal .request-doc-h{
+  margin-bottom:4px;
+}
+html:not(.is-mobile) #confirm-modal .request-doc-sub{
+  margin-bottom:12px;
+}
+html:not(.is-mobile) #confirm-modal .request-doc-foot{
+  margin-top:12px;
+}
+html:not(.is-mobile) #confirm-modal .review-row{
+  padding:7px 0;
+}
+html:not(.is-mobile) #confirm-modal .review-split{
+  margin:2px 0 4px;
+  padding:2px 10px;
+  border:1px solid var(--line-2);
+  border-radius:var(--r-s);
+  max-height:none;
+  overflow:visible;
+}
+html:not(.is-mobile) #confirm-modal .review-split .review-sub{
+  min-height:28px;
+  box-sizing:border-box;
+  padding:5px 0;
+}
+html:not(.is-mobile) #confirm-modal .review-split.is-scrollable{
+  max-height:66px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+html:not(.is-mobile) #confirm-modal .confirm-foot{
+  flex:0 0 auto;
+  margin-top:12px;
+}
+html:not(.is-mobile) #confirm-modal .confirm-foot > div{
+  margin-bottom:10px;
+}
+html:not(.is-mobile) #confirm-modal .total-label{
+  margin-bottom:0;
+}
+html:not(.is-mobile) #confirm-modal .total-breakdown{
+  margin-top:2px;
+}
+@media (max-height:760px){
+  html:not(.is-mobile) #confirm-modal.sheet-overlay{ padding-top:8px; padding-bottom:8px; }
+  html:not(.is-mobile) #confirm-modal .sheet{ max-height:calc(100dvh - 16px); }
+  html:not(.is-mobile) #confirm-modal .sheet-head{ padding-top:10px; }
+  html:not(.is-mobile) #confirm-modal .confirm-modal-body{ padding-top:8px; padding-bottom:10px; }
+  html:not(.is-mobile) #confirm-modal .request-doc{ padding-top:12px; padding-bottom:12px; }
+  html:not(.is-mobile) #confirm-modal .request-doc-sub{ margin-bottom:8px; }
+  html:not(.is-mobile) #confirm-modal .request-doc-foot{ margin-top:8px; }
+  html:not(.is-mobile) #confirm-modal .review-row{ padding:5px 0; }
+  html:not(.is-mobile) #confirm-modal .confirm-foot{ margin-top:8px; }
+  html:not(.is-mobile) #confirm-modal .confirm-foot > div{ margin-bottom:6px; }
+}
 </style>
 </head>
 <body>
@@ -2470,6 +2699,10 @@ function renderReview(){
       if (!deal || deal === state.currency) return '';
       return '<div class="review-row"><span>Конвертация</span><strong>'+esc(state.currency + ' → ' + deal)+'</strong></div>';
     })();
+  var reviewSplit = $('review-list').querySelector('.review-split');
+  if (reviewSplit){
+    reviewSplit.classList.toggle('is-scrollable', isSplit() && state.split.items.length > 2);
+  }
   var foot = $('request-doc-foot');
   if (foot){
     var d = new Date(), p2 = function(x){ return (x<10?'0':'')+x; };
