@@ -776,9 +776,9 @@ html.is-mobile #backup-sheet .sheet-primary,
 html.is-mobile #backup-sheet .sheet-skip{ height:40px; font-size:14px; }
 html.is-mobile #backup-sheet .sheet-skip{ margin-top:2px; }
 
-html.is-mobile #confirm-modal .sheet-head{ padding:14px 16px 0; }
+html.is-mobile #confirm-modal .sheet-head{ padding:10px 16px 0; }
 html.is-mobile #confirm-modal .sheet-head-title{ font-size:14px; line-height:20px; }
-html.is-mobile #confirm-modal .confirm-modal-body{ padding:12px 16px 16px; }
+html.is-mobile #confirm-modal .confirm-modal-body{ padding:10px 16px 12px; }
 html.is-mobile #confirm-modal .request-doc{ padding:14px; }
 html.is-mobile #confirm-modal .request-doc-h{ font-size:14px; line-height:18px; margin-bottom:4px; }
 html.is-mobile #confirm-modal .request-doc-sub{ font-size:11px; line-height:15px; margin-bottom:10px; }
@@ -789,12 +789,26 @@ html.is-mobile #confirm-modal .review-split{
   border:1px solid var(--line-2); border-radius:6px; padding:2px 6px;
 }
 html.is-mobile #confirm-modal .review-sub{ font-size:11.5px; padding:2px 0 2px 10px; }
-html.is-mobile #confirm-modal .confirm-foot{ margin-top:10px; }
-html.is-mobile #confirm-modal .confirm-foot > div{ margin-bottom:10px; }
+html.is-mobile #confirm-modal .confirm-foot{ margin-top:6px; }
+html.is-mobile #confirm-modal .confirm-foot > div{ margin-bottom:6px; }
 html.is-mobile #confirm-modal .total-label{ font-size:12px; margin-bottom:2px; }
 html.is-mobile #confirm-modal .total-value{ font-size:19px; line-height:26px; }
 html.is-mobile #confirm-modal .total-breakdown{ font-size:11px; margin-top:3px; }
 html.is-mobile #confirm-modal #submit-btn{ height:42px; font-size:14px; }
+
+/* На мобильных браузерах с адресной строкой (Chrome/OEM-браузеры на Android) высота через
+   vh считается от максимального viewport, а не от того, что реально видно, пока строка
+   развёрнута — из-за этого шторка могла упираться в невидимую область снизу. .sheet-overlay
+   зафиксирован через position:fixed; inset:0, поэтому его пиксельная высота отслеживает
+   реальный видимый экран корректно — считаем потолок шторки от неё, а не от vh. */
+html.is-mobile .sheet-overlay{ padding:10px; }
+html.is-mobile .sheet{ max-height:92%; }
+
+/* Небольшой запас поверх фикса vh — на реальных устройствах шрифты и метрики
+   чуть отличаются от headless-замеров, оставляем немного воздуха. */
+html.is-mobile #confirm-modal .request-doc{ padding:10px; }
+html.is-mobile #confirm-modal .review-row{ padding:5px 0; }
+html.is-mobile #confirm-modal .review-split{ max-height:80px; }
 </style>
 </head>
 <body>
