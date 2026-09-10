@@ -759,6 +759,37 @@ html.is-mobile .step-actions{ margin-top:10px; }
 html.is-mobile .step-next, html.is-mobile .split-done, html.is-mobile .confirm-btn, html.is-mobile #submit-btn{ height:44px; font-size:15px; }
 html.is-mobile .wizard-nav{ margin-top:8px; }
 html.is-mobile .wizard-back{ height:32px; font-size:13px; }
+
+/* ---------- Компактные шторки на мобильном: резерв и подтверждение помещаются без скролла ---------- */
+html.is-mobile #backup-sheet .sheet-head{ padding:14px 16px 0; }
+html.is-mobile #backup-sheet .sheet-body{ padding:14px 16px 16px; }
+html.is-mobile .sheet-shield{ width:48px; margin:0 auto 8px; }
+html.is-mobile .sheet-title{ font-size:18px; line-height:24px; margin:0 0 6px; }
+html.is-mobile .sheet-desc{ font-size:12.5px; line-height:17px; margin:0 0 8px; }
+html.is-mobile .sheet-divider{ margin:2px 0; }
+html.is-mobile .sheet-why-label{ font-size:12px; margin:8px 0 4px; }
+html.is-mobile .sheet-benefits{ margin:8px 0 14px; }
+html.is-mobile .sheet-benefit{ font-size:11px; }
+html.is-mobile .sheet-benefit-icon svg{ width:20px; height:20px; }
+html.is-mobile .sheet-benefit-icon{ margin:0 auto 4px; }
+html.is-mobile #backup-sheet .sheet-primary,
+html.is-mobile #backup-sheet .sheet-skip{ height:40px; font-size:14px; }
+html.is-mobile #backup-sheet .sheet-skip{ margin-top:2px; }
+
+html.is-mobile #confirm-modal .sheet-head{ padding:14px 16px 0; }
+html.is-mobile #confirm-modal .sheet-head-title{ font-size:14px; line-height:20px; }
+html.is-mobile #confirm-modal .confirm-modal-body{ padding:12px 16px 16px; }
+html.is-mobile #confirm-modal .request-doc{ padding:14px; }
+html.is-mobile #confirm-modal .request-doc-h{ font-size:14px; line-height:18px; margin-bottom:4px; }
+html.is-mobile #confirm-modal .request-doc-sub{ font-size:11px; line-height:15px; margin-bottom:10px; }
+html.is-mobile #confirm-modal .request-doc-foot{ font-size:11px; line-height:15px; margin-top:10px; }
+html.is-mobile #confirm-modal .review-row{ padding:7px 0; font-size:12.5px; line-height:17px; }
+html.is-mobile #confirm-modal .confirm-foot{ margin-top:10px; }
+html.is-mobile #confirm-modal .confirm-foot > div{ margin-bottom:10px; }
+html.is-mobile #confirm-modal .total-label{ font-size:12px; margin-bottom:2px; }
+html.is-mobile #confirm-modal .total-value{ font-size:19px; line-height:26px; }
+html.is-mobile #confirm-modal .total-breakdown{ font-size:11px; margin-top:3px; }
+html.is-mobile #confirm-modal #submit-btn{ height:42px; font-size:14px; }
 </style>
 </head>
 <body>
@@ -1191,7 +1222,7 @@ html.is-mobile .wizard-back{ height:32px; font-size:13px; }
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="backup-sheet-title">
     <div class="sheet-head">
       <button type="button" class="sheet-icon-btn" id="backup-sheet-back" aria-label="Назад"><svg width="20" height="20" viewBox="-4.5772 -6.6605 20.8211 20.8211" fill="currentColor" data-icon="chevron-down" data-src="22081791"><g transform="rotate(90 5.8334 3.7500)"><path d="M11.6667 1.48607L10.2252 3.83952e-07L5.83333 4.52786L1.44144 0L0 1.48607L5.83333 7.5L11.6667 1.48607Z" fill="currentColor"/></g></svg></button>
-      <div class="sheet-head-title"><span class="sheet-head-badge" id="backup-sheet-badge">A</span><span id="backup-sheet-instrument">Повторяющ.</span></div>
+      <div class="sheet-head-title"><span class="sheet-head-badge" id="backup-sheet-badge">A</span><span id="backup-sheet-instrument">Резерв</span></div>
       <button type="button" class="sheet-icon-btn" id="backup-sheet-close" aria-label="Закрыть"><svg width="20" height="20" viewBox="-6.3527 -6.3960 28.8022 28.8022" fill="currentColor" data-icon="close-thin" data-src="f5547e85"><path d="M1.00475 0.000438776C0.597825 0.000546218 0.231539 0.247194 0.078416 0.624209C-0.0747054 1.00122 0.0158695 1.43342 0.307482 1.71724L6.60045 8.0102L0.307482 14.3032C0.0462448 14.554 -0.0589882 14.9264 0.0323695 15.2769C0.123727 15.6273 0.397398 15.901 0.747839 15.9923C1.09828 16.0837 1.47073 15.9785 1.72155 15.7172L8.01452 9.42427L14.3075 15.7172C14.5583 15.9785 14.9308 16.0837 15.2812 15.9924C15.6316 15.901 15.9053 15.6273 15.9967 15.2769C16.088 14.9264 15.9828 14.554 15.7215 14.3032L9.42858 8.0102L15.7215 1.71723C16.0173 1.42974 16.1062 0.990168 15.9455 0.610322C15.7847 0.230475 15.4073 -0.0117202 14.995 0.000437445C14.7352 0.00817884 14.4886 0.116758 14.3075 0.303172L8.01452 6.59614L1.72155 0.303172C1.53328 0.10964 1.27475 0.00045552 1.00475 0.000438776Z" fill="currentColor"/></svg></button>
     </div>
     <div class="sheet-body">
@@ -2265,7 +2296,9 @@ function setBackup(on){
 function openBackupSheet(){
   if (state.selected){
     $('backup-sheet-badge').innerHTML = esc(state.selected.base.charAt(0)) + logoTag(state.selected.base, state.selected.ex);
-    $('backup-sheet-instrument').textContent = state.selected.base + '.' + state.selected.ex + ' — Повторяющ.';
+    $('backup-sheet-instrument').textContent = isSplit()
+      ? 'Набор · ' + state.split.items.length + ' инстр.'
+      : state.selected.base + '.' + state.selected.ex;
   }
   $('backup-sheet-desc').textContent = 'Если списание через «'+payMainLabel(state.payMethod)+'» не пройдёт, поручение будет оплачено из резерва. Вы сами выбираете, что послужит резервом — карту, счёт или BLIK, — и можете изменить это в любой момент.';
   $('backup-sheet').classList.add('visible');
@@ -2411,16 +2444,12 @@ function renderReview(){
     '<div class="review-row"><span>Способ оплаты</span><strong>'+payMainLabel(state.payMethod)+'</strong></div>'+
     '<div class="review-row"><span>Резервный источник</span><strong>'+(state.backupOn ? backupLabel() : '—')+'</strong></div>'+
     (function(){
-      var parts = [];
+      // Простое сообщение: валюта списания -> валюта, в которой торгуется инструмент.
+      // Карточную конвертацию (валюта карты -> валюта списания) сюда не дублируем —
+      // о ней уже предупреждает отдельная плашка на шаге выбора способа оплаты.
       var deal = dealCurrency();
-      // Валюта списания -> валюта, в которой торгуется инструмент (если отличаются).
-      // Это отдельная конвертация от карточной: карта может уже совпадать с валютой списания,
-      // а вот сама сделка на бирже всё равно пройдёт в валюте листинга инструмента.
-      if (deal && deal !== state.currency) parts.push('сделка ' + state.currency + ' → ' + deal);
-      if (needsFx(state.payMethod, state.currency)) parts.push(fxFrom(state.payMethod)+' → '+state.currency);
-      if (state.backupOn && state.backupMethod && needsFx(state.backupMethod, state.currency))
-        parts.push('резерв ' + fxFrom(state.backupMethod)+' → '+state.currency);
-      return parts.length ? '<div class="review-row"><span>Конвертация</span><strong>'+esc(parts.join(' · '))+'</strong></div>' : '';
+      if (!deal || deal === state.currency) return '';
+      return '<div class="review-row"><span>Конвертация</span><strong>'+esc(state.currency + ' → ' + deal)+'</strong></div>';
     })();
   var foot = $('request-doc-foot');
   if (foot){
